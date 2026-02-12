@@ -1,0 +1,29 @@
+# robots.txt für CF Veranstaltungstechnik
+
+# Alle gängigen Crawler zulassen
+User-agent: *
+Allow: /
+
+# Admin-Bereich ausschließen
+Disallow: /admin
+Disallow: /admin/*
+
+# Sitemap
+Sitemap: https://www.cf-veranstaltungstechnik.berlin/sitemap.xml
+
+# Spezifische Bots (optional)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Bad Bots blockieren (optional)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /

@@ -1,0 +1,231 @@
+import { Lightbulb, Wrench, Users, Building2, ArrowRight, CheckCircle2 } from 'lucide-react';
+import BackButton from '../components/BackButton';
+
+export default function ServicesPage() {
+  const services = [
+    {
+      icon: Lightbulb,
+      title: 'Technische Planung',
+      description:
+        'Wir planen Ihr Event technisch bis ins Detail, damit am Veranstaltungstag alles stabil und planbar laeuft.',
+      details: [
+        'Analyse von Anlass, Location und Ablauf',
+        'Konzept fuer Licht-, Ton- und Buehnentechnik',
+        'Abstimmung mit Location und weiteren Gewerken',
+        'Budgetorientierte Varianten und klare Empfehlungen',
+        'Transparente Angebotsbasis ohne Ueberraschungen',
+      ],
+      process: [
+        'Briefing und Zielklaerung',
+        'Technische Einschraetzung und Konzeptvorschlag',
+        'Feinabstimmung nach Budget und Ablauf',
+        'Finales Setup inkl. Zeit- und Aufbauplan',
+        'Uebergabe an Umsetzungsteam',
+      ],
+      useCases:
+        'Ideal fuer Firmenveranstaltungen, Konferenzen, Galas, Messen und private Feiern mit hohem Qualitaetsanspruch.',
+    },
+    {
+      icon: Wrench,
+      title: 'Aufbau & Installation',
+      description:
+        'Wir uebernehmen Lieferung, Aufbau und technische Inbetriebnahme, damit Sie keinen Koordinationsaufwand haben.',
+      details: [
+        'Puenktliche Anlieferung der Technik',
+        'Fachgerechter Aufbau nach abgestimmtem Plan',
+        'Sichere Verkabelung und Systemtests',
+        'Soundcheck und finale Lichtabstimmung',
+        'Geordneter Rueckbau nach Veranstaltungsende',
+      ],
+      process: [
+        'Zeitplan fuer Anlieferung und Aufbau',
+        'Montage vor Ort',
+        'Systemtest und Abnahme mit Ihnen',
+        'Eventbetrieb gemaess Ablauf',
+        'Abbau und Ruecktransport',
+      ],
+      useCases:
+        'Ideal, wenn Sie die Technik nicht selbst aufbauen moechten und einen verlaesslichen Full-Service benoetigen.',
+    },
+    {
+      icon: Users,
+      title: 'Technische Betreuung',
+      description:
+        'Unsere Techniker begleiten Ihr Event vor Ort und sorgen fuer einen stoerungsfreien Ablauf.',
+      details: [
+        'Technische Betreuung waehrend der Veranstaltung',
+        'Bedienung von Licht- und Tonsystemen',
+        'Schnelle Reaktion auf kurzfristige Aenderungen',
+        'Fehlerbehebung ohne Umwege',
+        'Klare Kommunikation mit Regie, Moderation oder DJ',
+      ],
+      process: [
+        'Ablaufbriefing vor Veranstaltungsstart',
+        'Finaler Technikcheck',
+        'Laufender Betrieb und Monitoring',
+        'Situative Anpassungen in Echtzeit',
+        'Abschluss und geordnete Uebergabe',
+      ],
+      useCases:
+        'Ideal fuer Events mit Liveslots, mehreren Programmpunkten oder wechselnden Sprecher- und Showelementen.',
+    },
+    {
+      icon: Building2,
+      title: 'Festinstallationen',
+      description:
+        'Wir planen und installieren dauerhafte Technikloesungen fuer Locations in Berlin und Brandenburg.',
+      details: [
+        'Konzeption passender Festinstallationen',
+        'Integration in bestehende Infrastruktur',
+        'Montage und technische Einrichtung',
+        'Dokumentation und Einweisung des Teams',
+        'Optionaler Wartungs- und Supportvertrag',
+      ],
+      process: [
+        'Bestandsaufnahme vor Ort',
+        'Technik- und Installationskonzept',
+        'Freigabe und Terminierung',
+        'Montage und Inbetriebnahme',
+        'Schulung und Support-Setup',
+      ],
+      useCases:
+        'Ideal fuer Clubs, Bars, Saele, Konferenzflaechen und Eventlocations mit regelmaessigem Betrieb.',
+    },
+  ];
+
+  const faq = [
+    {
+      question: 'Wie viel Vorlaufzeit ist sinnvoll?',
+      answer:
+        'Fuer groessere Produktionen empfehlen wir 3 bis 6 Wochen Vorlauf. Kurzfristige Einsaetze sind moeglich, wenn Material und Team verfuegbar sind.',
+    },
+    {
+      question: 'Uebernehmen Sie Aufbau und Abbau komplett?',
+      answer:
+        'Ja. Wir koennen Lieferung, Aufbau, Betreuung und Abbau vollstaendig uebernehmen. Sie entscheiden den gewuenschten Serviceumfang.',
+    },
+    {
+      question: 'In welchem Gebiet bieten Sie den Service an?',
+      answer:
+        'Unser Kerngebiet ist Berlin und Brandenburg. Einsaetze ausserhalb der Region kalkulieren wir transparent als individuelles Angebot.',
+    },
+    {
+      question: 'Arbeiten Sie mit Privat- und Geschaeftskunden?',
+      answer:
+        'Ja. Wir betreuen private Feiern, Vereine, Agenturen und Unternehmen mit jeweils passender technischer und organisatorischer Tiefe.',
+    },
+    {
+      question: 'Wie werden Preise berechnet?',
+      answer:
+        'Preise orientieren sich an Technikumfang, Laufzeit, Transport, Aufbauaufwand und Betreuungslevel. Sie erhalten vorab ein klares, unverbindliches Angebot.',
+    },
+  ];
+
+  return (
+    <div className="bg-app-bg text-white min-h-screen">
+      <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="container mx-auto px-4">
+          <BackButton href="/" label="Zurueck zur Startseite" className="mb-8" />
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">Dienstleistungen fuer reibungslose Events</h1>
+            <p className="text-xl text-gray-300 leading-relaxed">
+              Wir uebernehmen die technische Umsetzung Ihrer Veranstaltung in Berlin und Brandenburg - von der Planung bis zur Betreuung vor Ort. Sie konzentrieren sich auf Gaeste und Inhalte.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="space-y-20">
+            {services.map((service, index) => (
+              <div key={index} className="max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-1">
+                    <div className="w-16 h-16 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
+                      <service.icon className="w-8 h-8 text-blue-400" />
+                    </div>
+                    <h2 className="text-3xl font-bold mb-4">{service.title}</h2>
+                    <p className="text-gray-300 leading-relaxed mb-6">{service.description}</p>
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                      <p className="text-sm text-gray-300">{service.useCases}</p>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-2 space-y-8">
+                    <div>
+                      <h3 className="text-xl font-bold mb-4 flex items-center space-x-2">
+                        <CheckCircle2 className="w-5 h-5 text-blue-400" />
+                        <span>Leistungsumfang</span>
+                      </h3>
+                      <div className="bg-card-bg border border-gray-800 rounded-xl p-6">
+                        <ul className="space-y-3">
+                          {service.details.map((detail, i) => (
+                            <li key={i} className="flex items-start space-x-3">
+                              <div className="flex-shrink-0 w-1.5 h-1.5 bg-blue-400 rounded-full mt-2"></div>
+                              <span className="text-gray-300 leading-relaxed">{detail}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-xl font-bold mb-4">Ablauf</h3>
+                      <div className="space-y-3">
+                        {service.process.map((step, i) => (
+                          <div key={i} className="flex items-start space-x-4 bg-card-bg border border-gray-800 rounded-lg p-4">
+                            <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
+                              <span className="text-blue-400 font-bold text-sm">{i + 1}</span>
+                            </div>
+                            <p className="text-gray-300 leading-relaxed pt-1">{step}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {index < services.length - 1 && <div className="border-b border-gray-800 mt-20"></div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-card-bg/50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-4xl font-bold mb-12 text-center">Haeufige Fragen</h2>
+            <div className="space-y-6">
+              {faq.map((item, index) => (
+                <div key={index} className="bg-card-bg border border-gray-800 rounded-xl p-6">
+                  <h3 className="text-xl font-bold mb-3">{item.question}</h3>
+                  <p className="text-gray-300 leading-relaxed">{item.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Planen Sie Ihr Event mit technischer Sicherheit</h2>
+            <p className="text-xl text-gray-300 mb-8">
+              Fordern Sie ein unverbindliches Angebot an. Wir stimmen Technik, Ablauf und Budget exakt auf Ihre Veranstaltung ab.
+            </p>
+            <a
+              href="/kontakt"
+              className="inline-flex items-center space-x-2 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg shadow-lg"
+            >
+              <span>Unverbindliches Angebot anfragen</span>
+              <ArrowRight className="w-5 h-5" />
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
