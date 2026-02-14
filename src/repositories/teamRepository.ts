@@ -1,15 +1,68 @@
 import { supabase } from '../lib/supabase';
+import type { Database } from '../lib/database.types';
+
+type TeamRow = Database['public']['Tables']['team_members']['Row'];
+type TeamInsert = Database['public']['Tables']['team_members']['Insert'];
+type TeamUpdate = Database['public']['Tables']['team_members']['Update'];
 
 export interface TeamMemberDTO {
-  id?: string;
+  id: string;
   name: string;
-  slug?: string;
   role: string;
-  bio?: string;
-  image_url?: string;
-  email?: string;
-  phone?: string;
-  order_index?: number;
+  bio?: string | null;
+  image_url?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  order_index?: number | null;
+}
+
+export interface TeamMemberWriteDTO {
+  name: string;
+  role: string;
+  bio?: string | null;
+  image_url?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  order_index?: number | null;
+}
+
+function mapTeamRow(row: TeamRow): TeamMemberDTO {
+  return {
+    id: row.id,
+    name: row.name,
+    role: row.role,
+    bio: row.bio,
+    image_url: row.image_url,
+    email: row.email,
+    phone: row.phone,
+    order_index: row.order_index ?? row.display_order ?? 0,
+  };
+}
+
+function toTeamInsert(member: TeamMemberWriteDTO): TeamInsert {
+  return {
+    name: member.name,
+    role: member.role,
+    bio: member.bio ?? null,
+    image_url: member.image_url ?? null,
+    email: member.email ?? null,
+    phone: member.phone ?? null,
+    order_index: member.order_index ?? 0,
+  };
+}
+
+function toTeamUpdate(member: Partial<TeamMemberWriteDTO>): TeamUpdate {
+  const payload: TeamUpdate = {};
+
+  if (member.name !== undefined) payload.name = member.name;
+  if (member.role !== undefined) payload.role = member.role;
+  if (member.bio !== undefined) payload.bio = member.bio;
+  if (member.image_url !== undefined) payload.image_url = member.image_url;
+  if (member.email !== undefined) payload.email = member.email;
+  if (member.phone !== undefined) payload.phone = member.phone;
+  if (member.order_index !== undefined) payload.order_index = member.order_index;
+
+  return payload;
 }
 
 export const teamRepository = {
@@ -20,7 +73,7 @@ export const teamRepository = {
       .order('order_index', { ascending: true });
 
     if (error) throw error;
-    return data || [];
+    return (data ?? []).map(mapTeamRow);
   },
 
   async getById(id: string): Promise<TeamMemberDTO | null> {
@@ -31,30 +84,30 @@ export const teamRepository = {
       .maybeSingle();
 
     if (error) throw error;
-    return data;
+    return data ? mapTeamRow(data) : null;
   },
 
-  async create(member: TeamMemberDTO): Promise<TeamMemberDTO> {
+  async create(member: TeamMemberWriteDTO): Promise<TeamMemberDTO> {
     const { data, error } = await supabase
       .from('team_members')
-      .insert([member])
+      .insert(toTeamInsert(member))
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return mapTeamRow(data);
   },
 
-  async update(id: string, member: Partial<TeamMemberDTO>): Promise<TeamMemberDTO> {
+  async update(id: string, member: Partial<TeamMemberWriteDTO>): Promise<TeamMemberDTO> {
     const { data, error } = await supabase
       .from('team_members')
-      .update(member)
+      .update(toTeamUpdate(member))
       .eq('id', id)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return mapTeamRow(data);
   },
 
   async delete(id: string): Promise<void> {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Package, FolderOpen, Users as UsersIcon, Mail, LogOut, TrendingUp } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/useAuth';
 import { supabase } from '../../lib/supabase';
 
 export default function DashboardPage() {
@@ -9,7 +9,7 @@ export default function DashboardPage() {
     products: 0,
     projects: 0,
     team: 0,
-    inquiries: 0
+    inquiries: 0,
   });
 
   useEffect(() => {
@@ -17,28 +17,29 @@ export default function DashboardPage() {
       window.location.href = '/admin/login';
       return;
     }
+
+    const loadStats = async () => {
+      try {
+        const [productsRes, projectsRes, teamRes, inquiriesRes] = await Promise.all([
+          supabase.from('products').select('id', { count: 'exact', head: true }),
+          supabase.from('projects').select('id', { count: 'exact', head: true }),
+          supabase.from('team_members').select('id', { count: 'exact', head: true }),
+          supabase.from('inquiries').select('id', { count: 'exact', head: true }).eq('status', 'new'),
+        ]);
+
+        setStats({
+          products: productsRes.count || 0,
+          projects: projectsRes.count || 0,
+          team: teamRes.count || 0,
+          inquiries: inquiriesRes.count || 0,
+        });
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    };
+
     loadStats();
   }, [user]);
-
-  const loadStats = async () => {
-    try {
-      const [productsRes, projectsRes, teamRes, inquiriesRes] = await Promise.all([
-        supabase.from('products').select('id', { count: 'exact', head: true }),
-        supabase.from('projects').select('id', { count: 'exact', head: true }),
-        supabase.from('team_members').select('id', { count: 'exact', head: true }),
-        supabase.from('inquiries').select('id', { count: 'exact', head: true }).eq('status', 'new')
-      ]);
-
-      setStats({
-        products: productsRes.count || 0,
-        projects: projectsRes.count || 0,
-        team: teamRes.count || 0,
-        inquiries: inquiriesRes.count || 0
-      });
-    } catch (error) {
-      console.error('Error loading stats:', error);
-    }
-  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -46,9 +47,11 @@ export default function DashboardPage() {
   };
 
   if (!user) {
-    return <div className="min-h-screen bg-app-bg flex items-center justify-center">
-      <div className="text-white">Laden...</div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-app-bg flex items-center justify-center">
+        <div className="text-white">Laden...</div>
+      </div>
+    );
   }
 
   return (
@@ -83,7 +86,7 @@ export default function DashboardPage() {
 
       <main className="container mx-auto px-4 py-8 md:py-12">
         <div className="mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Willkommen zurück!</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Willkommen zurueck!</h2>
           <p className="text-gray-400">Verwalten Sie hier Ihre Website-Inhalte</p>
         </div>
 
@@ -137,7 +140,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <a
             href="/admin/products"
             className="bg-card-bg border border-card rounded-xl p-6 sm:p-8 hover:border-blue-500/50 transition-all group"
@@ -164,7 +167,7 @@ export default function DashboardPage() {
               Projekte verwalten
             </h3>
             <p className="text-gray-400 text-sm">
-              Verwalten Sie Ihre Referenzprojekte und fügen Sie neue hinzu
+              Verwalten Sie Ihre Referenzprojekte und fuegen Sie neue hinzu
             </p>
           </a>
 
@@ -179,7 +182,22 @@ export default function DashboardPage() {
               Team verwalten
             </h3>
             <p className="text-gray-400 text-sm">
-              Fügen Sie Team-Mitglieder hinzu oder bearbeiten Sie Profile
+              Fuegen Sie Team-Mitglieder hinzu oder bearbeiten Sie Profile
+            </p>
+          </a>
+
+          <a
+            href="/admin/inquiries"
+            className="bg-card-bg border border-card rounded-xl p-6 sm:p-8 hover:border-blue-500/50 transition-all group"
+          >
+            <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-500/20 transition-colors">
+              <Mail className="w-7 h-7 text-blue-400" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+              Anfragen verwalten
+            </h3>
+            <p className="text-gray-400 text-sm">
+              Neue Leads ansehen, priorisieren und Status aktualisieren
             </p>
           </a>
         </div>

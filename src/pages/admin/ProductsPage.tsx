@@ -1,28 +1,38 @@
 /**
- * Produktverwaltung für den Mietshop
+ * Produktverwaltung fÃ¼r den Mietshop
  *
- * Hier können neue Produkte angelegt, bearbeitet und aktiviert/deaktiviert werden.
+ * Hier kÃ¶nnen neue Produkte angelegt, bearbeitet und aktiviert/deaktiviert werden.
  *
- * Neues Produkt hinzufügen:
+ * Neues Produkt hinzufÃ¼gen:
  * 1. Auf "Neues Produkt" klicken
  * 2. Name: Produktbezeichnung (z.B. "LED Par 64 Set (4x)")
  * 3. Slug: URL-freundlicher Name (z.B. "led-par-64-set")
- * 4. Kategorie auswählen
- * 5. Kurzbeschreibung: 1-2 Sätze für Produktkarten
- * 6. Ausführliche Beschreibung: Detaillierte Info für Produktseite
+ * 4. Kategorie auswÃ¤hlen
+ * 5. Kurzbeschreibung: 1-2 SÃ¤tze fÃ¼r Produktkarten
+ * 6. AusfÃ¼hrliche Beschreibung: Detaillierte Info fÃ¼r Produktseite
  * 7. Technische Spezifikationen als JSON-Array:
  *    [{"label": "Leistung", "value": "150W"}, {"label": "Farben", "value": "RGBW"}]
- * 8. "Geeignet für": Anwendungsfälle beschreiben
+ * 8. "Geeignet fÃ¼r": AnwendungsfÃ¤lle beschreiben
  * 9. "Lieferumfang": Was wird mitgeliefert
  * 10. Tags: Schlagworte wie "Beliebt", "Indoor", "Einsteigerfreundlich"
- * 11. "Produkt ist aktiv" aktivieren für Sichtbarkeit im Shop
+ * 11. "Produkt ist aktiv" aktivieren fÃ¼r Sichtbarkeit im Shop
  */
 
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Eye, EyeOff, Filter, Upload, X, FolderOpen } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/useAuth';
 import { supabase } from '../../lib/supabase';
+import type { Database, Json } from '../../lib/database.types';
 import { buildSlugImagePath, resolveImageUrl } from '../../utils/image';
+import { normalizeVatRate, parseMoneyToCents } from '../../utils/price';
+
+type CategoryRow = Database['public']['Tables']['categories']['Row'];
+type ProductRow = Database['public']['Tables']['products']['Row'];
+type ProductInsert = Database['public']['Tables']['products']['Insert'];
+type ProductUpdate = Database['public']['Tables']['products']['Update'];
+type ProductRowWithCategory = ProductRow & {
+  categories: Pick<CategoryRow, 'name'> | null;
+};
 
 interface Category {
   id: string;
@@ -42,6 +52,80 @@ interface Product {
   tags: string[];
 }
 
+interface ProductFormData {
+  name: string;
+  slug: string;
+  category_id: string;
+  short_description: string;
+  full_description: string;
+  specs: string;
+  suitable_for: string;
+  scope_of_delivery: string;
+  tags: string;
+  image_url: string;
+  is_active: boolean;
+  show_price: boolean;
+  price_net_input: string;
+  vat_rate_input: string;
+}
+
+const DEFAULT_PRODUCT_FORM_DATA: ProductFormData = {
+  name: '',
+  slug: '',
+  category_id: '',
+  short_description: '',
+  full_description: '',
+  specs: '',
+  suitable_for: '',
+  scope_of_delivery: '',
+  tags: '',
+  image_url: '',
+  is_active: true,
+  show_price: false,
+  price_net_input: '',
+  vat_rate_input: '19',
+};
+
+function mapProductListRow(row: ProductRowWithCategory): Product {
+  return {
+    id: row.id,
+    name: row.name ?? '',
+    slug: row.slug ?? '',
+    image_url: row.image_url ?? '',
+    categories: { name: row.categories?.name ?? '' },
+    is_active: row.is_active ?? true,
+    tags: row.tags ?? [],
+  };
+}
+
+function formatCentsForInput(cents: number | null | undefined): string {
+  if (typeof cents !== 'number' || !Number.isFinite(cents)) {
+    return '';
+  }
+  return (cents / 100).toFixed(2).replace('.', ',');
+}
+
+function normalizeVatInputToPercent(value: string): number | null {
+  const trimmed = value.trim();
+  if (trimmed === '') {
+    return null;
+  }
+
+  const parsed = Number(trimmed.replace(',', '.'));
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+
+  return Math.round(normalizeVatRate(parsed) * 100);
+}
+
+function formatVatForInput(vatRate: number | null | undefined): string {
+  if (typeof vatRate !== 'number' || !Number.isFinite(vatRate)) {
+    return '19';
+  }
+  return String(Math.round(normalizeVatRate(vatRate) * 100));
+}
+
 export default function ProductsPage() {
   const { user } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
@@ -50,19 +134,7 @@ export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    slug: '',
-    category_id: '',
-    short_description: '',
-    full_description: '',
-    specs: '',
-    suitable_for: '',
-    scope_of_delivery: '',
-    tags: '',
-    image_url: '',
-    is_active: true
-  });
+  const [formData, setFormData] = useState<ProductFormData>(DEFAULT_PRODUCT_FORM_DATA);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -92,10 +164,11 @@ export default function ProductsPage() {
       ]);
 
       if (productsRes.data) {
-        setProducts(productsRes.data as Product[]);
-        setFilteredProducts(productsRes.data as Product[]);
+        const mappedProducts = (productsRes.data as ProductRowWithCategory[]).map(mapProductListRow);
+        setProducts(mappedProducts);
+        setFilteredProducts(mappedProducts);
       }
-      if (categoriesRes.data) setCategories(categoriesRes.data);
+      if (categoriesRes.data) setCategories(categoriesRes.data as Category[]);
     } catch (error) {
       console.error('Error loading data:', error);
     }
@@ -109,12 +182,12 @@ export default function ProductsPage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Bitte wähle eine Bilddatei aus');
+      alert('Bitte wÃ¤hle eine Bilddatei aus');
       return;
     }
 
     if (file.size > 5242880) {
-      alert('Bild ist zu groß. Maximale Größe: 5 MB');
+      alert('Bild ist zu groÃŸ. Maximale GrÃ¶ÃŸe: 5 MB');
       return;
     }
 
@@ -159,27 +232,47 @@ export default function ProductsPage() {
     setUploading(true);
 
     try {
-      const specs = formData.specs ? JSON.parse(formData.specs) : [];
-      const tags = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
-
+      const specs = formData.specs ? (JSON.parse(formData.specs) as Json) : ([] as Json);
+      const tags = formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean);
       const imageUrl = await uploadImage();
+      const normalizedPriceNet = parseMoneyToCents(formData.price_net_input);
+      const normalizedVatRate = normalizeVatInputToPercent(formData.vat_rate_input);
 
-      const productData = {
-        ...formData,
+      const productData: ProductInsert = {
+        name: formData.name.trim(),
+        slug: formData.slug.trim(),
+        category_id: formData.category_id || null,
+        short_description: formData.short_description.trim() || null,
+        full_description: formData.full_description.trim() || null,
         specs,
+        suitable_for: formData.suitable_for.trim() || null,
+        scope_of_delivery: formData.scope_of_delivery.trim() || null,
         tags,
-        image_url: imageUrl,
+        image_url: imageUrl || null,
+        price_net: normalizedPriceNet,
+        vat_rate: normalizedVatRate,
+        show_price: formData.show_price,
+        is_active: formData.is_active,
         updated_at: new Date().toISOString()
       };
 
       if (editingProduct) {
-        await supabase.from('products').update(productData).eq('id', editingProduct);
+        const { error } = await supabase
+          .from('products')
+          .update(productData as ProductUpdate)
+          .eq('id', editingProduct);
+        if (error) {
+          throw error;
+        }
       } else {
-        await supabase.from('products').insert(productData);
+        const { error } = await supabase.from('products').insert(productData);
+        if (error) {
+          throw error;
+        }
       }
 
       resetForm();
-      loadData();
+      await loadData();
     } catch (error) {
       console.error('Error saving product:', error);
       alert('Fehler beim Speichern: ' + (error as Error).message);
@@ -198,7 +291,7 @@ export default function ProductsPage() {
   };
 
   const deleteProduct = async (id: string) => {
-    if (!confirm('Produkt wirklich löschen?')) return;
+    if (!confirm('Produkt wirklich lÃ¶schen?')) return;
 
     try {
       await supabase.from('products').delete().eq('id', id);
@@ -212,25 +305,34 @@ export default function ProductsPage() {
     const product = products.find(p => p.id === id);
     if (!product) return;
 
-    const { data } = await supabase.from('products').select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
+    if (error) {
+      console.error('Error loading product for edit:', error);
+      return;
+    }
+
     if (data) {
+      const row = data as ProductRow;
       setFormData({
-        name: data.name,
-        slug: data.slug,
-        category_id: data.category_id,
-        short_description: data.short_description,
-        full_description: data.full_description,
-        specs: JSON.stringify(data.specs, null, 2),
-        suitable_for: data.suitable_for,
-        scope_of_delivery: data.scope_of_delivery,
-        tags: data.tags.join(', '),
-        image_url: data.image_url || '',
-        is_active: data.is_active
+        name: row.name ?? '',
+        slug: row.slug ?? '',
+        category_id: row.category_id ?? '',
+        short_description: row.short_description ?? '',
+        full_description: row.full_description ?? '',
+        specs: JSON.stringify(row.specs ?? [], null, 2),
+        suitable_for: row.suitable_for ?? '',
+        scope_of_delivery: row.scope_of_delivery ?? '',
+        tags: (row.tags ?? []).join(', '),
+        image_url: row.image_url ?? '',
+        is_active: row.is_active ?? true,
+        show_price: row.show_price ?? false,
+        price_net_input: formatCentsForInput(row.price_net),
+        vat_rate_input: formatVatForInput(row.vat_rate),
       });
-      if (data.image_url) {
-        setImagePreview(data.image_url);
+      if (row.image_url) {
+        setImagePreview(row.image_url);
       } else {
-        setImagePreview(getDefaultImagePath(data.slug));
+        setImagePreview(getDefaultImagePath(row.slug ?? ''));
       }
       setEditingProduct(id);
       setShowForm(true);
@@ -238,19 +340,7 @@ export default function ProductsPage() {
   };
 
   const resetForm = () => {
-    setFormData({
-      name: '',
-      slug: '',
-      category_id: '',
-      short_description: '',
-      full_description: '',
-      specs: '',
-      suitable_for: '',
-      scope_of_delivery: '',
-      tags: '',
-      image_url: '',
-      is_active: true
-    });
+    setFormData(DEFAULT_PRODUCT_FORM_DATA);
     setImageFile(null);
     setImagePreview('');
     setEditingProduct(null);
@@ -312,11 +402,11 @@ export default function ProductsPage() {
     });
 
     if (productsInCategory.length > 0) {
-      alert(`Diese Kategorie kann nicht gelöscht werden, da sie ${productsInCategory.length} Produkt(e) enthält.`);
+      alert(`Diese Kategorie kann nicht gelÃ¶scht werden, da sie ${productsInCategory.length} Produkt(e) enthÃ¤lt.`);
       return;
     }
 
-    if (!confirm('Kategorie wirklich löschen?')) return;
+    if (!confirm('Kategorie wirklich lÃ¶schen?')) return;
 
     try {
       await supabase.from('categories').delete().eq('id', id);
@@ -346,7 +436,7 @@ export default function ProductsPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
-              <span>Zurück zum Dashboard</span>
+              <span>ZurÃ¼ck zum Dashboard</span>
             </a>
             {!showForm && !showCategoryManager && (
               <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-3">
@@ -372,7 +462,7 @@ export default function ProductsPage() {
                 className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-all"
               >
                 <ArrowLeft className="w-5 h-5" />
-                <span>Zurück zu Produkten</span>
+                <span>ZurÃ¼ck zu Produkten</span>
               </button>
             )}
           </div>
@@ -493,7 +583,7 @@ export default function ProductsPage() {
                       type="submit"
                       className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20"
                     >
-                      {editingCategory ? 'Änderungen speichern' : 'Kategorie erstellen'}
+                      {editingCategory ? 'Ã„nderungen speichern' : 'Kategorie erstellen'}
                     </button>
                     <button
                       type="button"
@@ -612,7 +702,7 @@ export default function ProductsPage() {
                     onChange={(e) => setFormData({...formData, category_id: e.target.value})}
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
                   >
-                    <option value="">Bitte wählen</option>
+                    <option value="">Bitte wÃ¤hlen</option>
                     {categories.map(cat => (
                       <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
@@ -628,6 +718,46 @@ export default function ProductsPage() {
                     placeholder="Indoor, Outdoor, Bestseller"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Nettopreis (EUR)</label>
+                  <input
+                    type="text"
+                    value={formData.price_net_input}
+                    onChange={(e) => setFormData({ ...formData, price_net_input: e.target.value })}
+                    placeholder="z. B. 49,00"
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    Erwartet Euro-Betrag, wird als Cent-Integer gespeichert.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">MwSt.-Satz (%)</label>
+                  <input
+                    type="text"
+                    value={formData.vat_rate_input}
+                    onChange={(e) => setFormData({ ...formData, vat_rate_input: e.target.value })}
+                    placeholder="19"
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    Speicherung als Prozentwert (z. B. 19).
+                  </p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.show_price}
+                      onChange={(e) => setFormData({ ...formData, show_price: e.target.checked })}
+                      className="w-5 h-5 rounded"
+                    />
+                    <span className="text-gray-300">Preis im Shop anzeigen</span>
+                  </label>
                 </div>
 
                 <div className="md:col-span-2">
@@ -698,7 +828,7 @@ export default function ProductsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Ausführliche Beschreibung</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">AusfÃ¼hrliche Beschreibung</label>
                   <textarea
                     value={formData.full_description}
                     onChange={(e) => setFormData({...formData, full_description: e.target.value})}
@@ -721,7 +851,7 @@ export default function ProductsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Geeignet für</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Geeignet fÃ¼r</label>
                   <textarea
                     value={formData.suitable_for}
                     onChange={(e) => setFormData({...formData, suitable_for: e.target.value})}
@@ -759,7 +889,7 @@ export default function ProductsPage() {
                   disabled={uploading}
                   className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {uploading ? 'Wird gespeichert...' : (editingProduct ? 'Änderungen speichern' : 'Produkt erstellen')}
+                  {uploading ? 'Wird gespeichert...' : (editingProduct ? 'Ã„nderungen speichern' : 'Produkt erstellen')}
                 </button>
                 <button
                   type="button"

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, X, AlertCircle, Info } from 'lucide-react';
+import { TOAST_EVENT_NAME, type ToastType } from '../lib/toast';
 
-export type ToastType = 'success' | 'error' | 'info';
-
-export interface ToastMessage {
+interface ToastMessage {
   id: string;
   type: ToastType;
   message: string;
@@ -64,16 +63,17 @@ export default function ToastContainer() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   useEffect(() => {
-    const handleToast = (event: CustomEvent<Omit<ToastMessage, 'id'>>) => {
+    const handleToast: EventListener = (event) => {
+      const customEvent = event as CustomEvent<Omit<ToastMessage, 'id'>>;
       const newToast: ToastMessage = {
-        ...event.detail,
+        ...customEvent.detail,
         id: Date.now().toString()
       };
       setToasts(prev => [...prev, newToast]);
     };
 
-    window.addEventListener('show-toast' as any, handleToast);
-    return () => window.removeEventListener('show-toast' as any, handleToast);
+    window.addEventListener(TOAST_EVENT_NAME, handleToast);
+    return () => window.removeEventListener(TOAST_EVENT_NAME, handleToast);
   }, []);
 
   const removeToast = (id: string) => {
@@ -87,11 +87,4 @@ export default function ToastContainer() {
       ))}
     </div>
   );
-}
-
-export function showToast(type: ToastType, message: string) {
-  const event = new CustomEvent('show-toast', {
-    detail: { type, message }
-  });
-  window.dispatchEvent(event);
 }

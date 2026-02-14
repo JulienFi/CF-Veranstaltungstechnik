@@ -7,12 +7,12 @@ import { resolveImageUrl } from '../utils/image';
 interface Project {
   id: string;
   title: string;
-  slug?: string;
+  slug?: string | null;
   description: string;
   image_url: string;
-  location?: string;
-  date?: string;
-  category?: string;
+  location?: string | null;
+  date?: string | null;
+  category?: string | null;
 }
 
 export default function ProjectsPage() {

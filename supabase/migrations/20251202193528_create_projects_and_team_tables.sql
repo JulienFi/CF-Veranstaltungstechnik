@@ -67,60 +67,148 @@ ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
 
 -- Policies für projects: Öffentlicher Lesezugriff
-CREATE POLICY "Anyone can view projects"
-  ON projects
-  FOR SELECT
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'projects'
+      AND policyname = 'Anyone can view projects'
+  ) THEN
+    CREATE POLICY "Anyone can view projects"
+      ON projects
+      FOR SELECT
+      USING (true);
+  END IF;
+END $$;
 
 -- Policies für projects: Nur authentifizierte Benutzer können erstellen
-CREATE POLICY "Authenticated users can insert projects"
-  ON projects
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'projects'
+      AND policyname = 'Authenticated users can insert projects'
+  ) THEN
+    CREATE POLICY "Authenticated users can insert projects"
+      ON projects
+      FOR INSERT
+      TO authenticated
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- Policies für projects: Nur authentifizierte Benutzer können aktualisieren
-CREATE POLICY "Authenticated users can update projects"
-  ON projects
-  FOR UPDATE
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'projects'
+      AND policyname = 'Authenticated users can update projects'
+  ) THEN
+    CREATE POLICY "Authenticated users can update projects"
+      ON projects
+      FOR UPDATE
+      TO authenticated
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- Policies für projects: Nur authentifizierte Benutzer können löschen
-CREATE POLICY "Authenticated users can delete projects"
-  ON projects
-  FOR DELETE
-  TO authenticated
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'projects'
+      AND policyname = 'Authenticated users can delete projects'
+  ) THEN
+    CREATE POLICY "Authenticated users can delete projects"
+      ON projects
+      FOR DELETE
+      TO authenticated
+      USING (true);
+  END IF;
+END $$;
 
 -- Policies für team_members: Öffentlicher Lesezugriff
-CREATE POLICY "Anyone can view team members"
-  ON team_members
-  FOR SELECT
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'team_members'
+      AND policyname = 'Anyone can view team members'
+  ) THEN
+    CREATE POLICY "Anyone can view team members"
+      ON team_members
+      FOR SELECT
+      USING (true);
+  END IF;
+END $$;
 
 -- Policies für team_members: Nur authentifizierte Benutzer können erstellen
-CREATE POLICY "Authenticated users can insert team members"
-  ON team_members
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'team_members'
+      AND policyname = 'Authenticated users can insert team members'
+  ) THEN
+    CREATE POLICY "Authenticated users can insert team members"
+      ON team_members
+      FOR INSERT
+      TO authenticated
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- Policies für team_members: Nur authentifizierte Benutzer können aktualisieren
-CREATE POLICY "Authenticated users can update team members"
-  ON team_members
-  FOR UPDATE
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'team_members'
+      AND policyname = 'Authenticated users can update team members'
+  ) THEN
+    CREATE POLICY "Authenticated users can update team members"
+      ON team_members
+      FOR UPDATE
+      TO authenticated
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- Policies für team_members: Nur authentifizierte Benutzer können löschen
-CREATE POLICY "Authenticated users can delete team members"
-  ON team_members
-  FOR DELETE
-  TO authenticated
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'team_members'
+      AND policyname = 'Authenticated users can delete team members'
+  ) THEN
+    CREATE POLICY "Authenticated users can delete team members"
+      ON team_members
+      FOR DELETE
+      TO authenticated
+      USING (true);
+  END IF;
+END $$;
 
 -- Trigger für updated_at bei projects
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -131,12 +219,40 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_projects_updated_at
-  BEFORE UPDATE ON projects
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_trigger t
+    JOIN pg_class c ON c.oid = t.tgrelid
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE t.tgname = 'update_projects_updated_at'
+      AND n.nspname = 'public'
+      AND c.relname = 'projects'
+      AND NOT t.tgisinternal
+  ) THEN
+    CREATE TRIGGER update_projects_updated_at
+      BEFORE UPDATE ON projects
+      FOR EACH ROW
+      EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
 
-CREATE TRIGGER update_team_members_updated_at
-  BEFORE UPDATE ON team_members
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_trigger t
+    JOIN pg_class c ON c.oid = t.tgrelid
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE t.tgname = 'update_team_members_updated_at'
+      AND n.nspname = 'public'
+      AND c.relname = 'team_members'
+      AND NOT t.tgisinternal
+  ) THEN
+    CREATE TRIGGER update_team_members_updated_at
+      BEFORE UPDATE ON team_members
+      FOR EACH ROW
+      EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;

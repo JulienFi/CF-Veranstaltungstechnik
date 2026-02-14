@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Upload, X } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { teamRepository, TeamMemberDTO } from '../../repositories/teamRepository';
+import { useAuth } from '../../contexts/useAuth';
+import { teamRepository, TeamMemberDTO, TeamMemberWriteDTO } from '../../repositories/teamRepository';
 import { supabase } from '../../lib/supabase';
 import { buildSlugImagePath, resolveImageUrl } from '../../utils/image';
 
@@ -10,7 +10,7 @@ export default function AdminTeamPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMemberDTO[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingMember, setEditingMember] = useState<string | null>(null);
-  const [formData, setFormData] = useState<TeamMemberDTO>({
+  const [formData, setFormData] = useState<TeamMemberWriteDTO>({
     name: '',
     role: '',
     bio: '',
@@ -48,12 +48,12 @@ export default function AdminTeamPage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Bitte wähle eine Bilddatei aus');
+      alert('Bitte wÃ¤hle eine Bilddatei aus');
       return;
     }
 
     if (file.size > 5242880) {
-      alert('Bild ist zu groß. Maximale Größe: 5 MB');
+      alert('Bild ist zu groÃŸ. Maximale GrÃ¶ÃŸe: 5 MB');
       return;
     }
 
@@ -116,7 +116,7 @@ export default function AdminTeamPage() {
   };
 
   const deleteMember = async (id: string) => {
-    if (!confirm('Teammitglied wirklich löschen?')) return;
+    if (!confirm('Teammitglied wirklich lÃ¶schen?')) return;
 
     try {
       await teamRepository.delete(id);
@@ -129,7 +129,6 @@ export default function AdminTeamPage() {
   const editMember = (member: TeamMemberDTO) => {
     setFormData({
       name: member.name,
-      slug: member.slug,
       role: member.role,
       bio: member.bio || '',
       image_url: member.image_url || '',
@@ -140,9 +139,9 @@ export default function AdminTeamPage() {
     if (member.image_url) {
       setImagePreview(member.image_url);
     } else {
-      setImagePreview(getDefaultImagePath(member.slug ?? member.name));
+      setImagePreview(getDefaultImagePath(member.name));
     }
-    setEditingMember(member.id!);
+    setEditingMember(member.id);
     setShowForm(true);
   };
 
@@ -163,7 +162,7 @@ export default function AdminTeamPage() {
   };
 
   const removeImage = () => {
-    setImagePreview(getDefaultImagePath(formData.slug ?? formData.name));
+    setImagePreview(getDefaultImagePath(formData.name));
     setImageFile(null);
     setFormData({ ...formData, image_url: '' });
   };
@@ -177,7 +176,7 @@ export default function AdminTeamPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
-              <span>Zurück zum Dashboard</span>
+              <span>ZurÃ¼ck zum Dashboard</span>
             </a>
             {!showForm && (
               <button
@@ -215,8 +214,8 @@ export default function AdminTeamPage() {
                     value={formData.name}
                     onChange={(e) => {
                       const nextName = e.target.value;
-                      const currentDefault = getDefaultImagePath(formData.slug ?? formData.name);
-                      const nextDefault = getDefaultImagePath(formData.slug ?? nextName);
+                      const currentDefault = getDefaultImagePath(formData.name);
+                      const nextDefault = getDefaultImagePath(nextName);
                       const currentImage = (formData.image_url || '').trim();
                       const shouldSyncImagePath =
                         !editingMember &&
@@ -253,7 +252,7 @@ export default function AdminTeamPage() {
                       const nextValue = e.target.value;
                       setFormData({ ...formData, image_url: nextValue });
                       if (!imageFile) {
-                        setImagePreview(nextValue || getDefaultImagePath(formData.slug ?? formData.name));
+                        setImagePreview(nextValue || getDefaultImagePath(formData.name));
                       }
                     }}
                     placeholder="/images/team/max-mustermann.jpg"
@@ -270,7 +269,7 @@ export default function AdminTeamPage() {
                     {imagePreview ? (
                       <div className="relative inline-block">
                         <img
-                          src={resolveImageUrl(imagePreview, 'team', formData.slug ?? formData.name)}
+                          src={resolveImageUrl(imagePreview, 'team', formData.name)}
                           alt="Teammitglied Vorschau"
                           className="w-48 h-48 object-cover rounded-lg border-2 border-gray-700"
                         />
@@ -348,7 +347,7 @@ export default function AdminTeamPage() {
                   disabled={uploading}
                   className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {uploading ? 'Wird gespeichert...' : (editingMember ? 'Änderungen speichern' : 'Teammitglied erstellen')}
+                  {uploading ? 'Wird gespeichert...' : (editingMember ? 'Ã„nderungen speichern' : 'Teammitglied erstellen')}
                 </button>
                 <button
                   type="button"
@@ -379,7 +378,7 @@ export default function AdminTeamPage() {
                   <tr key={member.id} className="hover:bg-gray-800/50">
                     <td className="px-6 py-4">
                       <img
-                        src={resolveImageUrl(member.image_url, 'team', member.slug ?? member.name)}
+                        src={resolveImageUrl(member.image_url, 'team', member.name)}
                         alt={member.name}
                         className="w-12 h-12 object-cover rounded-full border border-gray-700"
                         loading="lazy"
@@ -398,7 +397,7 @@ export default function AdminTeamPage() {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => deleteMember(member.id!)}
+                          onClick={() => deleteMember(member.id)}
                           className="p-2 text-gray-400 hover:text-red-400 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />

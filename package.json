@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run sitemap && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "test:webhook": "node scripts/test-inquiry-webhook.mjs",
     "optimize:products": "node scripts/optimize-images.js products",
     "optimize:projects": "node scripts/optimize-images.js projects",
     "optimize:team": "node scripts/optimize-images.js team"

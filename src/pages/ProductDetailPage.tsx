@@ -1,16 +1,23 @@
-﻿import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle2, Package, Target, Plus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { ProductDetailSkeleton } from '../components/SkeletonLoader';
 import Breadcrumb from '../components/Breadcrumb';
 import BackButton from '../components/BackButton';
 import ScrollToTop from '../components/ScrollToTop';
-import { showToast } from '../components/Toast';
+import { showToast } from '../lib/toast';
 import { useInquiryList } from '../hooks/useInquiryList';
 import { usePriceMode } from '../hooks/usePriceMode';
 import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
+import type { Json } from '../lib/database.types';
 import { resolveImageUrl } from '../utils/image';
-import { formatPrice } from '../utils/price';
+import PriceDisplay from '../components/PriceDisplay';
+import PriceModeToggle from '../components/PriceModeToggle';
+import MobileStickyCTA from '../components/MobileStickyCTA';
+import { navigate } from '../lib/navigation';
+import { useSEO } from '../contexts/seo-state';
+import { generateProductSchema } from '../lib/seo';
+import { getBaseUrl } from '../lib/site';
 
 interface ProductSpec {
   label: string;
@@ -41,19 +48,111 @@ interface ProductDetailPageProps {
   slug: string;
 }
 
+interface ProductQueryRow {
+  id: string;
+  name: string | null;
+  slug: string | null;
+  short_description: string | null;
+  full_description: string | null;
+  specs: Json | null;
+  suitable_for: string | null;
+  scope_of_delivery: string | null;
+  tags: string[] | null;
+  category_id: string | null;
+  image_url: string | null;
+  price_net: number | null;
+  vat_rate: number | null;
+  show_price: boolean | null;
+  categories: {
+    name: string | null;
+  } | null;
+}
+
+interface ProductSpecJson {
+  label: string;
+  value: string;
+  [key: string]: Json | undefined;
+}
+
+function isProductSpec(value: Json): value is ProductSpecJson {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return false;
+  }
+
+  const maybeSpec = value as { label?: unknown; value?: unknown };
+  return typeof maybeSpec.label === 'string' && typeof maybeSpec.value === 'string';
+}
+
+function parseSpecs(value: Json | null): ProductSpec[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter(isProductSpec).map((spec) => ({
+    label: spec.label,
+    value: spec.value,
+  }));
+}
+
+function mapProductRow(row: ProductQueryRow): Product {
+  return {
+    id: row.id,
+    name: row.name ?? '',
+    slug: row.slug ?? '',
+    short_description: row.short_description ?? '',
+    full_description: row.full_description ?? '',
+    specs: parseSpecs(row.specs),
+    suitable_for: row.suitable_for ?? '',
+    scope_of_delivery: row.scope_of_delivery ?? '',
+    tags: row.tags ?? [],
+    category_id: row.category_id ?? '',
+    image_url: row.image_url ?? '',
+    price_net: row.price_net,
+    vat_rate: row.vat_rate,
+    show_price: row.show_price ?? false,
+    categories: {
+      name: row.categories?.name ?? '',
+    },
+  };
+}
+
+function trimToLength(value: string, maxLength: number): string {
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  return `${value.slice(0, maxLength - 1).trimEnd()}…`;
+}
+
 export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showStickyCta, setShowStickyCta] = useState(false);
   const { addToInquiry, isInInquiry } = useInquiryList();
   const { priceMode } = usePriceMode();
   const { addToRecentlyViewed } = useRecentlyViewed();
+  const { setSEO } = useSEO();
 
-  useEffect(() => {
-    loadProduct();
-  }, [slug]);
+  const loadRelatedProducts = useCallback(async (categoryId: string, currentProductId: string) => {
+    try {
+      const { data } = await supabase
+        .from('products')
+        .select('*, categories(*)')
+        .eq('category_id', categoryId)
+        .eq('is_active', true)
+        .neq('id', currentProductId)
+        .limit(3);
 
-  const loadProduct = async () => {
+      if (data) {
+        setRelatedProducts((data as ProductQueryRow[]).map(mapProductRow));
+      }
+    } catch (error) {
+      console.error('Error loading related products:', error);
+    }
+  }, []);
+
+  const loadProduct = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('products')
@@ -64,32 +163,77 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
       if (error) throw error;
       if (data) {
-        setProduct(data as Product);
-        loadRelatedProducts(data.category_id, data.id);
-        addToRecentlyViewed(data.id);
+        const mappedProduct = mapProductRow(data as ProductQueryRow);
+        setProduct(mappedProduct);
+        if (mappedProduct.category_id) {
+          void loadRelatedProducts(mappedProduct.category_id, mappedProduct.id);
+        }
+        addToRecentlyViewed(mappedProduct.id);
       }
     } catch (error) {
       console.error('Error loading product:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToRecentlyViewed, loadRelatedProducts, slug]);
 
-  const loadRelatedProducts = async (categoryId: string, currentProductId: string) => {
-    try {
-      const { data } = await supabase
-        .from('products')
-        .select('*, categories(*)')
-        .eq('category_id', categoryId)
-        .eq('is_active', true)
-        .neq('id', currentProductId)
-        .limit(3);
+  useEffect(() => {
+    void loadProduct();
+  }, [loadProduct]);
 
-      if (data) setRelatedProducts(data as Product[]);
-    } catch (error) {
-      console.error('Error loading related products:', error);
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowStickyCta(window.scrollY > window.innerHeight * 0.5);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const baseUrl = getBaseUrl();
+    const canonicalSlug = encodeURIComponent((product?.slug || slug || '').trim());
+    const canonical = `${baseUrl}/mietshop/${canonicalSlug}`;
+
+    if (!product) {
+      setSEO({
+        title: 'Produkt mieten in Berlin | CF Veranstaltungstechnik',
+        description: 'Entdecken Sie professionelle Veranstaltungstechnik im Mietshop von CF Veranstaltungstechnik.',
+        canonical,
+        ogImage: '/images/products/placeholder.png',
+        schemaData: {
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: 'Produktdetail',
+          url: canonical,
+        },
+      });
+      return;
     }
-  };
+
+    const descriptionBase =
+      product.short_description ||
+      product.full_description ||
+      `Jetzt ${product.name} bei CF Veranstaltungstechnik in Berlin mieten.`;
+    const description = trimToLength(descriptionBase, 160);
+    const imageUrl = resolveImageUrl(product.image_url, 'product', product.slug);
+
+    setSEO({
+      title: `${product.name} mieten in Berlin | CF Veranstaltungstechnik`,
+      description,
+      canonical,
+      ogImage: imageUrl,
+      schemaData: generateProductSchema(
+        {
+          name: product.name,
+          description,
+          imageUrl,
+        },
+        canonical
+      ),
+    });
+  }, [product, slug, setSEO]);
 
   const handleAddToInquiry = (productId: string) => {
     addToInquiry(productId);
@@ -97,13 +241,6 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
   };
 
   const isProductInInquiry = product ? isInInquiry(product.id) : false;
-  const hasVisiblePrice = (value: Product): value is Product & { price_net: number } => {
-    return (
-      value.show_price === true &&
-      typeof value.price_net === 'number' &&
-      Number.isFinite(value.price_net)
-    );
-  };
 
   if (loading) {
     return <ProductDetailSkeleton />;
@@ -121,7 +258,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
   }
 
   return (
-    <div className="bg-app-bg text-white min-h-screen">
+    <div className="bg-app-bg text-white min-h-screen pb-24 md:pb-0">
       <section className="py-8 md:py-12 bg-card-bg/50">
         <div className="container mx-auto px-4">
           <BackButton href="/mietshop" label="ZurÃƒÂ¼ck zum Shop" className="mb-6" />
@@ -161,21 +298,27 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">{product.name}</h1>
               <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">{product.short_description}</p>
-              {hasVisiblePrice(product) && (
-                <div className="mb-8">
-                  <div className="text-3xl font-bold text-primary-300">
-                    {formatPrice(product.price_net, product.vat_rate, priceMode)}
-                  </div>
-                  <p className="text-sm text-gray-400">
-                    {priceMode === 'gross' ? 'inkl. MwSt.' : 'zzgl. MwSt.'}
-                  </p>
+              <div className="mb-8">
+                <div className="mb-3">
+                  <PriceModeToggle />
                 </div>
-              )}
+                <div>
+                  <p className="text-sm text-gray-400 mb-1">Preis</p>
+                  <div className="text-3xl">
+                    <PriceDisplay
+                      priceNet={product.price_net}
+                      showPrice={product.show_price}
+                      vatRate={product.vat_rate}
+                      mode={priceMode}
+                    />
+                  </div>
+                </div>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-12">
                 {isProductInInquiry ? (
                   <a
-                    href="/mietshop/anfrage"
+                    href={`/mietshop/anfrage?product=${encodeURIComponent(product.slug || product.id)}`}
                     className="flex-1 px-8 py-4 bg-blue-500 text-white text-center rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg flex items-center justify-center space-x-2"
                   >
                     <CheckCircle2 className="w-5 h-5" />
@@ -289,6 +432,12 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
       </section>
 
       <ScrollToTop />
+
+      <MobileStickyCTA
+        label="Dieses Produkt anfragen"
+        isVisible={showStickyCta}
+        onClick={() => navigate(`/mietshop/anfrage?product=${encodeURIComponent(product.slug || product.id)}`)}
+      />
     </div>
   );
 }

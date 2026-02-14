@@ -7,12 +7,11 @@ import { resolveImageUrl } from '../utils/image';
 interface TeamMember {
   id: string;
   name: string;
-  slug?: string;
   role: string;
-  bio?: string;
-  image_url?: string;
-  email?: string;
-  phone?: string;
+  bio?: string | null;
+  image_url?: string | null;
+  email?: string | null;
+  phone?: string | null;
 }
 
 export default function TeamPage() {
@@ -66,7 +65,7 @@ export default function TeamPage() {
               >
                                 <div className="aspect-square bg-gradient-to-br from-card-hover to-card-bg overflow-hidden">
                   <img
-                    src={resolveImageUrl(member.image_url, 'team', member.slug ?? member.name)}
+                    src={resolveImageUrl(member.image_url, 'team', member.name)}
                     alt={member.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"

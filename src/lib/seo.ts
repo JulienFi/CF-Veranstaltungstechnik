@@ -5,6 +5,7 @@
  */
 
 import { COMPANY_INFO } from '../config/company';
+import { getBaseUrl } from './site';
 
 export interface PageMeta {
   title: string;
@@ -24,7 +25,7 @@ export const DEFAULT_OG_IMAGE = '/images/og-cf-veranstaltungstechnik.jpg';
 /**
  * Basis-URL der Website
  */
-export const SITE_URL = 'https://www.cf-veranstaltungstechnik.berlin';
+export const SITE_URL = getBaseUrl();
 
 /**
  * Meta-Konfiguration für alle Seiten
@@ -82,6 +83,14 @@ export const PAGE_META: Record<string, PageMeta> = {
     title: 'Kontakt – CF Veranstaltungstechnik | Beratung & Angebot',
     description: `Kontaktieren Sie CF Veranstaltungstechnik für ein unverbindliches Angebot. Telefon: ${COMPANY_INFO.contact.phone} | ${COMPANY_INFO.address.full}`,
     keywords: 'Kontakt Veranstaltungstechnik, Angebot anfordern, Beratung, Berlin, Brandenburg, Mühlenbecker Land',
+    ogImage: DEFAULT_OG_IMAGE,
+    ogType: 'website',
+  },
+
+  anfrage: {
+    title: 'Anfrage | CF Veranstaltungstechnik',
+    description: 'Senden Sie Ihre unverbindliche Mietshop-Anfrage. Wir erstellen ein individuelles Angebot für Ihr Event in Berlin und Brandenburg.',
+    keywords: 'Angebotsanfrage, Veranstaltungstechnik Anfrage, Mietshop Anfrage, Eventtechnik Berlin',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
@@ -165,8 +174,20 @@ export function generateLocalBusinessSchema(): object {
 /**
  * Generiert Schema.org für Produkt-Seiten (später)
  */
-export function generateProductSchema(product: any): object {
-  return {
+interface ProductSchemaInput {
+  name: string;
+  description: string;
+  imageUrl: string;
+}
+
+interface EventSchemaInput {
+  title: string;
+  description: string;
+  location: string;
+}
+
+export function generateProductSchema(product: ProductSchemaInput, canonicalUrl?: string): object {
+  const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
@@ -177,12 +198,18 @@ export function generateProductSchema(product: any): object {
       name: COMPANY_INFO.name,
     },
   };
+
+  if (canonicalUrl) {
+    schema.url = canonicalUrl;
+  }
+
+  return schema;
 }
 
 /**
  * Generiert Schema.org für Events/Projekte (später)
  */
-export function generateEventSchema(event: any): object {
+export function generateEventSchema(event: EventSchemaInput): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'Event',

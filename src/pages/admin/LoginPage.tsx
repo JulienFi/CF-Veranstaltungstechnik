@@ -1,5 +1,5 @@
 /**
- * Admin Login Page mit erhöhter Sicherheit
+ * Admin Login Page mit erhÃ¶hter Sicherheit
  *
  * Features:
  * - Rate Limiting (5 Versuche / 15 Min)
@@ -11,7 +11,7 @@
 
 import { useState } from 'react';
 import { Lock, Mail, AlertTriangle, Shield } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/useAuth';
 import { COMPANY_INFO } from '../../config/company';
 
 export default function LoginPage() {
@@ -110,7 +110,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading || blockedUntil !== null}
                   className="w-full pl-11 pr-4 py-3 bg-card-hover border border-card rounded-lg focus:border-primary-500 focus:outline-none transition-colors text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   autoComplete="current-password"
                 />
               </div>
@@ -131,7 +131,7 @@ export default function LoginPage() {
 
                     {blockedUntil !== null && blockedUntil > 0 && (
                       <p className="text-xs text-red-300 mt-2">
-                        Gesperrt für {formatBlockedTime(blockedUntil)}
+                        Gesperrt fÃ¼r {formatBlockedTime(blockedUntil)}
                       </p>
                     )}
                   </div>
@@ -150,14 +150,14 @@ export default function LoginPage() {
               disabled={loading || blockedUntil !== null}
               className="w-full px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/20"
             >
-              {loading ? 'Anmeldung läuft...' : blockedUntil ? 'Gesperrt' : 'Anmelden'}
+              {loading ? 'Anmeldung lÃ¤uft...' : blockedUntil ? 'Gesperrt' : 'Anmelden'}
             </button>
           </form>
 
           <div className="mt-6 pt-6 border-t border-card">
             <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
               <p className="text-xs text-gray-400">
-                <strong className="text-blue-400">Sicherheitshinweis:</strong> Dieser Login ist durch Rate-Limiting geschützt (max. 5 Versuche pro 15 Minuten). Admin-Zugang nur für autorisierte Personen.
+                <strong className="text-blue-400">Sicherheitshinweis:</strong> Dieser Login ist durch Rate-Limiting geschÃ¼tzt (max. 5 Versuche pro 15 Minuten). Admin-Zugang nur fÃ¼r autorisierte Personen.
               </p>
             </div>
           </div>
@@ -165,14 +165,14 @@ export default function LoginPage() {
 
         <div className="text-center mt-6">
           <a href="/" className="text-sm text-gray-400 hover:text-primary-400 transition-colors">
-            ← Zurück zur Website
+            â† ZurÃ¼ck zur Website
           </a>
         </div>
 
         <div className="mt-6 card p-4">
           <p className="text-xs text-gray-500 text-center">
             <strong>Setup:</strong> Admin-Benutzer muss in Supabase Auth erstellt werden.
-            Siehe <code className="text-gray-400">ADMIN_SECURITY.md</code> für Details.
+            Siehe <code className="text-gray-400">ADMIN_SECURITY.md</code> fÃ¼r Details.
           </p>
         </div>
       </div>

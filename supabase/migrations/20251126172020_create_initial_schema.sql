@@ -85,26 +85,70 @@ CREATE TABLE IF NOT EXISTS categories (
 
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Kategorien sind öffentlich lesbar"
-  ON categories FOR SELECT
-  TO public
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'categories'
+      AND policyname = 'Kategorien sind öffentlich lesbar'
+  ) THEN
+    CREATE POLICY "Kategorien sind öffentlich lesbar"
+      ON categories FOR SELECT
+      TO public
+      USING (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Kategorien erstellen"
-  ON categories FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'categories'
+      AND policyname = 'Nur Admins können Kategorien erstellen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Kategorien erstellen"
+      ON categories FOR INSERT
+      TO authenticated
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Kategorien aktualisieren"
-  ON categories FOR UPDATE
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'categories'
+      AND policyname = 'Nur Admins können Kategorien aktualisieren'
+  ) THEN
+    CREATE POLICY "Nur Admins können Kategorien aktualisieren"
+      ON categories FOR UPDATE
+      TO authenticated
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Kategorien löschen"
-  ON categories FOR DELETE
-  TO authenticated
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'categories'
+      AND policyname = 'Nur Admins können Kategorien löschen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Kategorien löschen"
+      ON categories FOR DELETE
+      TO authenticated
+      USING (true);
+  END IF;
+END $$;
 
 -- Products table
 CREATE TABLE IF NOT EXISTS products (
@@ -126,26 +170,70 @@ CREATE TABLE IF NOT EXISTS products (
 
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Aktive Produkte sind öffentlich lesbar"
-  ON products FOR SELECT
-  TO public
-  USING (is_active = true OR auth.uid() IS NOT NULL);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'products'
+      AND policyname = 'Aktive Produkte sind öffentlich lesbar'
+  ) THEN
+    CREATE POLICY "Aktive Produkte sind öffentlich lesbar"
+      ON products FOR SELECT
+      TO public
+      USING (is_active = true OR auth.uid() IS NOT NULL);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Produkte erstellen"
-  ON products FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'products'
+      AND policyname = 'Nur Admins können Produkte erstellen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Produkte erstellen"
+      ON products FOR INSERT
+      TO authenticated
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Produkte aktualisieren"
-  ON products FOR UPDATE
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'products'
+      AND policyname = 'Nur Admins können Produkte aktualisieren'
+  ) THEN
+    CREATE POLICY "Nur Admins können Produkte aktualisieren"
+      ON products FOR UPDATE
+      TO authenticated
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Produkte löschen"
-  ON products FOR DELETE
-  TO authenticated
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'products'
+      AND policyname = 'Nur Admins können Produkte löschen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Produkte löschen"
+      ON products FOR DELETE
+      TO authenticated
+      USING (true);
+  END IF;
+END $$;
 
 -- Projects table
 CREATE TABLE IF NOT EXISTS projects (
@@ -166,26 +254,70 @@ CREATE TABLE IF NOT EXISTS projects (
 
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Veröffentlichte Projekte sind öffentlich lesbar"
-  ON projects FOR SELECT
-  TO public
-  USING (is_published = true OR auth.uid() IS NOT NULL);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'projects'
+      AND policyname = 'Veröffentlichte Projekte sind öffentlich lesbar'
+  ) THEN
+    CREATE POLICY "Veröffentlichte Projekte sind öffentlich lesbar"
+      ON projects FOR SELECT
+      TO public
+      USING (is_published = true OR auth.uid() IS NOT NULL);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Projekte erstellen"
-  ON projects FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'projects'
+      AND policyname = 'Nur Admins können Projekte erstellen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Projekte erstellen"
+      ON projects FOR INSERT
+      TO authenticated
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Projekte aktualisieren"
-  ON projects FOR UPDATE
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'projects'
+      AND policyname = 'Nur Admins können Projekte aktualisieren'
+  ) THEN
+    CREATE POLICY "Nur Admins können Projekte aktualisieren"
+      ON projects FOR UPDATE
+      TO authenticated
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Projekte löschen"
-  ON projects FOR DELETE
-  TO authenticated
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'projects'
+      AND policyname = 'Nur Admins können Projekte löschen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Projekte löschen"
+      ON projects FOR DELETE
+      TO authenticated
+      USING (true);
+  END IF;
+END $$;
 
 -- Team members table
 CREATE TABLE IF NOT EXISTS team_members (
@@ -200,26 +332,70 @@ CREATE TABLE IF NOT EXISTS team_members (
 
 ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Teammitglieder sind öffentlich lesbar"
-  ON team_members FOR SELECT
-  TO public
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'team_members'
+      AND policyname = 'Teammitglieder sind öffentlich lesbar'
+  ) THEN
+    CREATE POLICY "Teammitglieder sind öffentlich lesbar"
+      ON team_members FOR SELECT
+      TO public
+      USING (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Teammitglieder erstellen"
-  ON team_members FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'team_members'
+      AND policyname = 'Nur Admins können Teammitglieder erstellen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Teammitglieder erstellen"
+      ON team_members FOR INSERT
+      TO authenticated
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Teammitglieder aktualisieren"
-  ON team_members FOR UPDATE
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'team_members'
+      AND policyname = 'Nur Admins können Teammitglieder aktualisieren'
+  ) THEN
+    CREATE POLICY "Nur Admins können Teammitglieder aktualisieren"
+      ON team_members FOR UPDATE
+      TO authenticated
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Teammitglieder löschen"
-  ON team_members FOR DELETE
-  TO authenticated
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'team_members'
+      AND policyname = 'Nur Admins können Teammitglieder löschen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Teammitglieder löschen"
+      ON team_members FOR DELETE
+      TO authenticated
+      USING (true);
+  END IF;
+END $$;
 
 -- Inquiries table
 CREATE TABLE IF NOT EXISTS inquiries (
@@ -240,21 +416,54 @@ CREATE TABLE IF NOT EXISTS inquiries (
 
 ALTER TABLE inquiries ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Jeder kann Anfragen erstellen"
-  ON inquiries FOR INSERT
-  TO public
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'inquiries'
+      AND policyname = 'Jeder kann Anfragen erstellen'
+  ) THEN
+    CREATE POLICY "Jeder kann Anfragen erstellen"
+      ON inquiries FOR INSERT
+      TO public
+      WITH CHECK (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Anfragen lesen"
-  ON inquiries FOR SELECT
-  TO authenticated
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'inquiries'
+      AND policyname = 'Nur Admins können Anfragen lesen'
+  ) THEN
+    CREATE POLICY "Nur Admins können Anfragen lesen"
+      ON inquiries FOR SELECT
+      TO authenticated
+      USING (true);
+  END IF;
+END $$;
 
-CREATE POLICY "Nur Admins können Anfragen aktualisieren"
-  ON inquiries FOR UPDATE
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'inquiries'
+      AND policyname = 'Nur Admins können Anfragen aktualisieren'
+  ) THEN
+    CREATE POLICY "Nur Admins können Anfragen aktualisieren"
+      ON inquiries FOR UPDATE
+      TO authenticated
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);

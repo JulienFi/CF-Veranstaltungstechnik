@@ -1,4 +1,5 @@
-type AnalyticsEventProps = Record<string, string | number | boolean>;
+type AnalyticsPrimitive = string | number | boolean;
+export type AnalyticsEventProps = Record<string, AnalyticsPrimitive | null | undefined>;
 
 const DEFAULT_PLAUSIBLE_DOMAIN = 'analytics-domain.example.com';
 const DEFAULT_PLAUSIBLE_SCRIPT_SRC = 'https://plausible.io/js/script.js';
@@ -9,6 +10,23 @@ export const ANALYTICS_CONFIG = {
   domain: import.meta.env.VITE_PLAUSIBLE_DOMAIN || DEFAULT_PLAUSIBLE_DOMAIN,
   scriptSrc: import.meta.env.VITE_PLAUSIBLE_SCRIPT_SRC || DEFAULT_PLAUSIBLE_SCRIPT_SRC,
 };
+
+function sanitizeProps(props?: AnalyticsEventProps): Record<string, AnalyticsPrimitive> | undefined {
+  if (!props) {
+    return undefined;
+  }
+
+  const entries = Object.entries(props).filter(
+    (entry): entry is [string, AnalyticsPrimitive] =>
+      entry[1] !== null && entry[1] !== undefined
+  );
+
+  if (entries.length === 0) {
+    return undefined;
+  }
+
+  return Object.fromEntries(entries);
+}
 
 export function setupAnalyticsScript(): void {
   if (!import.meta.env.PROD) return;
@@ -25,19 +43,33 @@ export function setupAnalyticsScript(): void {
   document.head.appendChild(script);
 }
 
-export function trackAnalyticsEvent(eventName: string, props?: AnalyticsEventProps): void {
-  if (!import.meta.env.PROD) return;
-  if (typeof window === 'undefined') return;
+export function track(eventName: string, props?: AnalyticsEventProps): void {
+  const sanitizedProps = sanitizeProps(props);
 
-  const plausible = window.plausible;
-  if (typeof plausible !== 'function') return;
+  if (import.meta.env.DEV) {
+    console.debug('[analytics]', eventName, sanitizedProps ?? {});
+  }
 
-  if (props) {
-    plausible(eventName, { props });
+  if (typeof window === 'undefined') {
     return;
   }
 
-  plausible(eventName);
+  const plausible = window.plausible;
+  if (typeof plausible === 'function') {
+    if (sanitizedProps) {
+      plausible(eventName, { props: sanitizedProps });
+    } else {
+      plausible(eventName);
+    }
+  }
+
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', eventName, sanitizedProps ?? {});
+  }
+}
+
+export function trackAnalyticsEvent(eventName: string, props?: AnalyticsEventProps): void {
+  track(eventName, props);
 }
 
 declare global {
@@ -46,5 +78,6 @@ declare global {
       eventName: string,
       options?: { props?: AnalyticsEventProps }
     ) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }

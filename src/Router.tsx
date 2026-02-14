@@ -3,6 +3,8 @@ import AdminGuard from './components/AdminGuard';
 import SEOHead from './components/SEOHead';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { SEOProvider } from './contexts/SEOContext';
+import { useSEO } from './contexts/seo-state';
 import { generateLocalBusinessSchema } from './lib/seo';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
@@ -20,9 +22,11 @@ import DashboardPage from './pages/admin/DashboardPage';
 import ProductsPage from './pages/admin/ProductsPage';
 import AdminProjectsPage from './pages/admin/AdminProjectsPage';
 import AdminTeamPage from './pages/admin/AdminTeamPage';
+import AdminInquiriesPage from './pages/admin/AdminInquiriesPage';
 
-export default function Router() {
+function RouterContent() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const { resetSEO } = useSEO();
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -47,7 +51,11 @@ export default function Router() {
     window.scrollTo(0, 0);
   }, [currentPath]);
 
-  const adminPaths = ['/admin/login', '/admin', '/admin/products', '/admin/projects', '/admin/team'];
+  useEffect(() => {
+    resetSEO();
+  }, [currentPath, resetSEO]);
+
+  const adminPaths = ['/admin/login', '/admin', '/admin/products', '/admin/projects', '/admin/team', '/admin/inquiries'];
   const isAdminRoute = adminPaths.some(path => currentPath === path || currentPath.startsWith(path + '/'));
 
   if (isAdminRoute) {
@@ -67,13 +75,16 @@ export default function Router() {
     if (currentPath === '/admin/team') {
       return <AdminGuard><AdminTeamPage /></AdminGuard>;
     }
+    if (currentPath === '/admin/inquiries') {
+      return <AdminGuard><AdminInquiriesPage /></AdminGuard>;
+    }
 
     return <AdminGuard><DashboardPage /></AdminGuard>;
   }
 
   let content;
   let seoPageKey = 'home';
-  let schemaData = null;
+  let schemaData: object | undefined;
 
   if (currentPath === '/') {
     content = <HomePage />;
@@ -85,8 +96,10 @@ export default function Router() {
   } else if (currentPath.startsWith('/mietshop/') && currentPath !== '/mietshop/anfrage') {
     const slug = currentPath.replace('/mietshop/', '');
     content = <ProductDetailPage slug={slug} />;
+    seoPageKey = 'mietshop';
   } else if (currentPath === '/mietshop/anfrage') {
     content = <InquiryPage />;
+    seoPageKey = 'anfrage';
   } else if (currentPath === '/dienstleistungen') {
     content = <ServicesPage />;
     seoPageKey = 'dienstleistungen';
@@ -133,5 +146,13 @@ export default function Router() {
         <Footer />
       </div>
     </>
+  );
+}
+
+export default function Router() {
+  return (
+    <SEOProvider>
+      <RouterContent />
+    </SEOProvider>
   );
 }

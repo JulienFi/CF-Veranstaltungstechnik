@@ -10,8 +10,10 @@
  */
 
 import { useEffect } from 'react';
-import { getPageMeta, SITE_URL } from '../lib/seo';
+import { useSEO } from '../contexts/seo-state';
+import { getPageMeta, DEFAULT_OG_IMAGE } from '../lib/seo';
 import { setupAnalyticsScript } from '../lib/analytics';
+import { getBaseUrl, toAbsoluteUrl } from '../lib/site';
 
 interface SEOHeadProps {
   pageKey: string;
@@ -28,11 +30,14 @@ export default function SEOHead({
   customImage,
   schemaData,
 }: SEOHeadProps) {
+  const { seo } = useSEO();
   const meta = getPageMeta(pageKey);
-  const title = customTitle || meta.title;
-  const description = customDescription || meta.description;
-  const image = customImage || meta.ogImage || '/og-default.jpg';
-  const canonicalUrl = meta.canonicalUrl || `${SITE_URL}${window.location.pathname}`;
+  const baseUrl = getBaseUrl();
+  const title = seo.title || customTitle || meta.title;
+  const description = seo.description || customDescription || meta.description;
+  const image = seo.ogImage || customImage || meta.ogImage || DEFAULT_OG_IMAGE;
+  const canonicalUrl = seo.canonical || meta.canonicalUrl || `${baseUrl}${window.location.pathname}`;
+  const effectiveSchemaData = seo.schemaData ?? schemaData;
 
   useEffect(() => {
     setupAnalyticsScript();
@@ -48,6 +53,8 @@ export default function SEOHead({
     // Keywords
     if (meta.keywords) {
       setMetaTag('keywords', meta.keywords);
+    } else {
+      removeMetaTag('keywords');
     }
 
     // Canonical URL
@@ -65,7 +72,7 @@ export default function SEOHead({
     setMetaTag('og:description', description, 'property');
     setMetaTag('og:url', canonicalUrl, 'property');
     setMetaTag('og:type', meta.ogType || 'website', 'property');
-    setMetaTag('og:image', `${SITE_URL}${image}`, 'property');
+    setMetaTag('og:image', toAbsoluteUrl(image), 'property');
     setMetaTag('og:locale', 'de_DE', 'property');
     setMetaTag('og:site_name', 'CF Veranstaltungstechnik', 'property');
 
@@ -73,13 +80,15 @@ export default function SEOHead({
     setMetaTag('twitter:card', 'summary_large_image');
     setMetaTag('twitter:title', title);
     setMetaTag('twitter:description', description);
-    setMetaTag('twitter:image', `${SITE_URL}${image}`);
+    setMetaTag('twitter:image', toAbsoluteUrl(image));
 
     // Schema.org JSON-LD
-    if (schemaData) {
-      setJSONLD('schema-org', schemaData);
+    if (effectiveSchemaData) {
+      setJSONLD('schema-org', effectiveSchemaData);
+    } else {
+      removeJSONLD('schema-org');
     }
-  }, [pageKey, title, description, image, canonicalUrl, meta, schemaData]);
+  }, [pageKey, title, description, image, canonicalUrl, meta, effectiveSchemaData]);
 
   return null; // Dieser Component rendert nichts sichtbar
 }
@@ -103,6 +112,13 @@ function setMetaTag(
   element.setAttribute('content', content);
 }
 
+function removeMetaTag(name: string, attribute: 'name' | 'property' = 'name'): void {
+  const element = document.querySelector(`meta[${attribute}="${name}"]`);
+  if (element) {
+    element.remove();
+  }
+}
+
 /**
  * Hilfsfunktion: Link-Tag setzen oder aktualisieren
  */
@@ -122,14 +138,22 @@ function setLinkTag(rel: string, href: string): void {
  * Hilfsfunktion: JSON-LD Script setzen oder aktualisieren
  */
 function setJSONLD(id: string, data: object): void {
-  let element = document.getElementById(id);
+  let element = document.getElementById(id) as HTMLScriptElement | null;
 
   if (!element) {
-    element = document.createElement('script');
-    element.id = id;
-    element.type = 'application/ld+json';
-    document.head.appendChild(element);
+    const script = document.createElement('script');
+    script.id = id;
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+    element = script;
   }
 
   element.textContent = JSON.stringify(data, null, 2);
+}
+
+function removeJSONLD(id: string): void {
+  const element = document.getElementById(id);
+  if (element) {
+    element.remove();
+  }
 }

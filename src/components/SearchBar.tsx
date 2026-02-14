@@ -5,14 +5,20 @@ interface SearchBarProps {
   onSearch: (query: string) => void;
   placeholder?: string;
   debounceMs?: number;
+  initialQuery?: string;
 }
 
 export default function SearchBar({
   onSearch,
   placeholder = 'Produkte durchsuchen...',
   debounceMs = 250,
+  initialQuery = '',
 }: SearchBarProps) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
