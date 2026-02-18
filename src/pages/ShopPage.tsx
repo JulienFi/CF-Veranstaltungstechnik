@@ -120,8 +120,16 @@ export default function ShopPage() {
     try {
       const [categoriesRes, productsRes] = await Promise.all([
         supabase.from('categories').select('*').order('display_order'),
-        supabase.from('products').select('*, categories(*)').eq('is_active', true)
+        supabase.from('products').select('*, categories!products_category_id_fkey(*)').eq('is_active', true),
       ]);
+
+      if (categoriesRes.error) {
+        throw categoriesRes.error;
+      }
+
+      if (productsRes.error) {
+        throw productsRes.error;
+      }
 
       if (categoriesRes.data) {
         setCategories((categoriesRes.data as CategoryRow[]).map(mapCategoryRow));

@@ -136,13 +136,17 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
   const loadRelatedProducts = useCallback(async (categoryId: string, currentProductId: string) => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('products')
-        .select('*, categories(*)')
+        .select('*, categories!products_category_id_fkey(*)')
         .eq('category_id', categoryId)
         .eq('is_active', true)
         .neq('id', currentProductId)
         .limit(3);
+
+      if (error) {
+        throw error;
+      }
 
       if (data) {
         setRelatedProducts((data as ProductQueryRow[]).map(mapProductRow));
@@ -156,7 +160,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('*, categories(*)')
+        .select('*, categories!products_category_id_fkey(*)')
         .eq('slug', slug)
         .eq('is_active', true)
         .maybeSingle();
