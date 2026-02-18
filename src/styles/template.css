@@ -1,3 +1,14 @@
+:root {
+  --r-card: var(--radius-lg);
+  --pad-card: clamp(1rem, 0.9rem + 0.5vw, 1.35rem);
+  --pad-inner: 0.34rem;
+  --r-inner: calc(var(--r-card) - var(--pad-inner));
+  --border-subtle: rgb(var(--border) / 0.14);
+  --surface-1: rgb(var(--card) / 0.56);
+  --surface-2: rgb(var(--card-strong) / 0.8);
+  --glow-soft: 0 18px 42px rgb(3 7 14 / 0.32);
+}
+
 .global-stage-bg {
   position: fixed;
   inset: 0;
@@ -27,9 +38,9 @@
 }
 
 .glass-panel {
-  background: linear-gradient(160deg, rgb(var(--card-strong) / 0.8), rgb(var(--card) / 0.66));
-  border: 1px solid rgb(var(--border) / 0.16);
-  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, var(--surface-2), rgb(var(--card) / 0.66));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-card);
   backdrop-filter: blur(14px) saturate(130%);
   -webkit-backdrop-filter: blur(14px) saturate(130%);
   box-shadow:
@@ -50,9 +61,9 @@
 }
 
 .glass-panel--soft {
-  background: rgb(var(--card) / 0.56);
-  border: 1px solid rgb(var(--border) / 0.12);
-  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  border: 1px solid rgb(var(--border) / 0.11);
+  border-radius: var(--r-inner);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 14px 32px rgb(3 7 14 / 0.26), inset 0 1px 0 rgb(255 255 255 / 0.05);
@@ -73,6 +84,7 @@
 
 .btn-primary,
 .btn-secondary {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -114,12 +126,118 @@
   box-shadow: 0 16px 34px rgb(3 7 14 / 0.36);
 }
 
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
+
 .btn-primary:focus-visible,
 .btn-secondary:focus-visible {
   outline: none;
   box-shadow:
     0 0 0 1px rgb(var(--accent) / 0.94),
     0 0 0 4px rgb(var(--accent) / 0.3);
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.56;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-primary[aria-busy='true'],
+.btn-secondary[aria-busy='true'],
+.btn-primary.is-loading,
+.btn-secondary.is-loading {
+  pointer-events: none;
+}
+
+.btn-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--radius-round);
+  animation: btnSpin 0.7s linear infinite;
+}
+
+.card {
+  border-radius: var(--r-card);
+  padding: var(--pad-card);
+}
+
+.card-inner {
+  border-radius: var(--r-inner);
+}
+
+.border-subtle {
+  border: 1px solid var(--border-subtle);
+}
+
+.border-subtle-top {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.border-subtle-bottom {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.interactive {
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+
+.interactive:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.interactive:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
+
+.interactive:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 1px rgb(var(--accent) / 0.9),
+    0 0 0 4px rgb(var(--accent) / 0.28),
+    var(--glow-soft);
+}
+
+.interactive:disabled {
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.field-control {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: rgb(var(--card) / 0.85);
+  padding: 0.74rem 1rem;
+  color: var(--text-main);
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.field-control::placeholder {
+  color: rgb(var(--muted) / 0.8);
+}
+
+.field-control:hover {
+  border-color: rgb(var(--border) / 0.24);
+}
+
+.field-control:focus-visible {
+  border-color: rgb(var(--accent) / 0.72);
+}
+
+.field-control--error {
+  border-color: rgb(248 113 113 / 0.72);
+}
+
+.field-control--error:focus-visible {
+  border-color: rgb(248 113 113 / 0.9);
 }
 
 .hero-title {
@@ -202,6 +320,29 @@
   text-decoration-color: rgb(var(--accent) / 0.8);
 }
 
+.interactive-link:focus-visible {
+  text-decoration: underline;
+  text-decoration-color: rgb(var(--accent) / 0.8);
+}
+
+.icon-std {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  vertical-align: middle;
+  stroke-width: 1.9;
+}
+
+.icon-std--sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.icon-std--lg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .tap-target {
   min-height: 2.75rem;
   min-width: 2.75rem;
@@ -234,7 +375,38 @@
   }
 }
 
+@keyframes btnSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .btn-spinner {
+    animation: none;
+  }
+
+  .interactive,
+  .btn-primary,
+  .btn-secondary,
+  .interactive-card {
+    transition-duration: 1ms !important;
+  }
+
+  .interactive:hover:not(:disabled),
+  .interactive:active:not(:disabled),
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active:not(:disabled),
+  .interactive-card:hover {
+    transform: none !important;
+  }
+
   .marquee-track {
     animation: none;
     transform: none;

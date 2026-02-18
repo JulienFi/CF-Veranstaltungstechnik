@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu, Phone, ShoppingBag, X } from 'lucide-react';
 import { COMPANY_INFO } from '../config/company';
 import { Button, Container } from './ui';
@@ -17,6 +17,17 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [inquiryCount, setInquiryCount] = useState(0);
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const mobileButtonRef = useRef<HTMLButtonElement | null>(null);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  const lastFocusedElementRef = useRef<HTMLElement | null>(null);
+
+  const isActivePath = (href: string): boolean => {
+    if (href === '/') {
+      return currentPath === '/';
+    }
+    return currentPath === href || currentPath.startsWith(`${href}/`);
+  };
 
   useEffect(() => {
     const updateCount = () => {
@@ -39,27 +50,95 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const closeMenu = () => setMobileMenuOpen(false);
+    const handleRouteChange = () => {
+      setCurrentPath(window.location.pathname);
+      setMobileMenuOpen(false);
+    };
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
         setMobileMenuOpen(false);
       }
     };
 
-    window.addEventListener('popstate', closeMenu);
+    window.addEventListener('popstate', handleRouteChange);
     window.addEventListener('resize', handleResize);
     return () => {
-      window.removeEventListener('popstate', closeMenu);
+      window.removeEventListener('popstate', handleRouteChange);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = mobileMenuOpen ? 'hidden' : previousOverflow;
+    if (!mobileMenuOpen) {
+      return;
+    }
 
+    const menuButtonElement = mobileButtonRef.current;
+    lastFocusedElementRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : menuButtonElement;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const getFocusableElements = (): HTMLElement[] => {
+      const container = drawerRef.current;
+      if (!container) return [];
+
+      return Array.from(
+        container.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        )
+      );
+    };
+
+    const focusFirstElement = () => {
+      const focusable = getFocusableElements();
+      (focusable[0] ?? menuButtonElement)?.focus();
+    };
+
+    const focusTimer = window.setTimeout(focusFirstElement, 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setMobileMenuOpen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const focusable = getFocusableElements();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (event.shiftKey) {
+        if (!active || active === first || !drawerRef.current?.contains(active)) {
+          event.preventDefault();
+          last.focus();
+        }
+        return;
+      }
+
+      if (!active || active === last || !drawerRef.current?.contains(active)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = previousOverflow;
+      (lastFocusedElementRef.current ?? menuButtonElement)?.focus();
     };
   }, [mobileMenuOpen]);
 
@@ -72,11 +151,19 @@ export default function Header() {
         </a>
 
         <nav className={styles.nav} aria-label="Hauptnavigation">
-          {navigation.map((item) => (
-            <a key={item.name} href={item.href} className={styles.navLink}>
-              {item.name}
-            </a>
-          ))}
+          {navigation.map((item) => {
+            const isActive = isActivePath(item.href);
+            return (
+              <a
+                key={item.name}
+                href={item.href}
+                className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.name}
+              </a>
+            );
+          })}
         </nav>
 
         <div className={styles.actions}>
@@ -97,12 +184,13 @@ export default function Header() {
         </div>
 
         <button
+          ref={mobileButtonRef}
           type="button"
           onClick={() => setMobileMenuOpen((current) => !current)}
           className={styles.mobileButton}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-navigation"
-          aria-label={mobileMenuOpen ? 'Menue schliessen' : 'Menue oeffnen'}
+          aria-label={mobileMenuOpen ? 'Menü schließen' : 'Menü öffnen'}
         >
           {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -110,13 +198,22 @@ export default function Header() {
 
       {mobileMenuOpen ? (
         <>
-          <button type="button" className={styles.overlay} onClick={() => setMobileMenuOpen(false)} aria-label="Menue schliessen" />
-          <div id="mobile-navigation" className={styles.drawer}>
-            {navigation.map((item) => (
-              <a key={item.name} href={item.href} className={styles.drawerLink} onClick={() => setMobileMenuOpen(false)}>
-                {item.name}
-              </a>
-            ))}
+          <button type="button" className={styles.overlay} onClick={() => setMobileMenuOpen(false)} aria-label="Menü schließen" />
+          <div id="mobile-navigation" ref={drawerRef} className={styles.drawer}>
+            {navigation.map((item) => {
+              const isActive = isActivePath(item.href);
+              return (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className={`${styles.drawerLink} ${isActive ? styles.drawerLinkActive : ''}`}
+                  aria-current={isActive ? 'page' : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </a>
+              );
+            })}
 
             {inquiryCount > 0 ? (
               <Button href="/mietshop/anfrage" variant="secondary" size="md" fullWidth onClick={() => setMobileMenuOpen(false)}>

@@ -487,28 +487,31 @@ export default function InquiryPage() {
     }
   };
 
+  const fieldClassName = 'field-control focus-ring';
+  const fieldErrorClassName = 'field-control field-control--error focus-ring';
+
   if (submitted) {
     return (
       <div className="bg-app-bg text-white min-h-screen flex items-center justify-center p-4">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-10 h-10 text-green-400" />
+        <div className="content-container">
+          <div className="glass-panel card mx-auto max-w-2xl px-6 py-10 text-center md:px-10">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10">
+              <CheckCircle2 className="icon-std icon-std--lg text-green-400" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold mb-4">Vielen Dank für Ihre Anfrage!</h1>
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
               Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von zwei Stunden mit den nächsten Schritten.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+            <div className="mb-4 flex flex-col justify-center gap-3 sm:flex-row">
               <a
                 href="/mietshop"
-                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium"
+                className="btn-primary focus-ring tap-target interactive"
               >
                 Zurück zum Shop
               </a>
               <a
                 href="/"
-                className="px-6 py-3 bg-card-hover text-white rounded-lg hover:bg-gray-700 transition-all font-medium"
+                className="btn-secondary focus-ring tap-target interactive"
               >
                 Zur Startseite
               </a>
@@ -519,9 +522,9 @@ export default function InquiryPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleWhatsAppClick}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-all font-medium"
+                className="focus-ring tap-target interactive inline-flex items-center justify-center gap-2 rounded-lg border border-emerald-400/70 bg-emerald-500 px-6 py-3 font-medium text-white hover:bg-emerald-600"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="icon-std" />
                 <span>Rückfrage per WhatsApp</span>
               </a>
             )}
@@ -532,61 +535,61 @@ export default function InquiryPage() {
   }
 
   return (
-    <div className="bg-app-bg text-white min-h-screen py-14 md:py-20">
-      <div className="container mx-auto px-4">
-        <BackButton href="/mietshop" label="Zurück zum Shop" className="mb-8" />
+    <div className="section-shell bg-app-bg text-white min-h-screen">
+      <div className="content-container">
+        <BackButton href="/mietshop" label="Zurück zum Shop" className="mb-6 md:mb-8" />
 
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Angebotsanfrage</h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 md:mb-12">
+        <div className="mx-auto max-w-4xl">
+          <h1 className="section-title mb-4 font-bold">Angebotsanfrage</h1>
+          <p className="section-copy mb-8 text-gray-200 md:mb-12">
             Fünf Felder reichen für den Start. Wir melden uns schnell mit einer passenden Lösung für Ihr Event.
           </p>
 
           {prefilledProduct && (
-            <div className="bg-card-bg border border-blue-500/30 rounded-xl p-4 md:p-5 mb-6">
+            <div className="glass-panel card border-blue-500/30 p-4 md:p-5 mb-6">
               <p className="text-sm text-blue-300 mb-3">Du fragst an für:</p>
               <div className="flex items-center gap-4">
                 <img
                   src={resolveImageUrl(prefilledProduct.image_url, 'product', prefilledProduct.slug ?? prefilledProduct.name)}
                   alt={prefilledProduct.name}
-                  className="w-20 h-20 rounded-lg object-cover border border-gray-700"
+                  className="card-inner border-subtle h-20 w-20 object-cover"
                   loading="lazy"
                 />
                 <div>
                   <p className="text-lg font-semibold">{prefilledProduct.name}</p>
-                  <p className="text-sm text-gray-400">{prefilledProduct.categoryName || 'Mietshop Produkt'}</p>
+                  <p className="text-sm text-gray-300">{prefilledProduct.categoryName || 'Mietshop Produkt'}</p>
                 </div>
               </div>
             </div>
           )}
 
           {(queryContext.category || queryContext.tags.length > 0) && (
-            <div className="bg-card-bg border border-gray-800 rounded-xl p-4 mb-6 text-sm text-gray-300">
+            <div className="glass-panel--soft card-inner p-4 mb-6 text-sm text-gray-200">
               {queryContext.category && <p>Kategorie-Kontext: {queryContext.category}</p>}
               {queryContext.tags.length > 0 && <p>Tags-Kontext: {queryContext.tags.join(', ')}</p>}
             </div>
           )}
 
           {products.length > 0 && (
-            <div className="bg-card-bg border border-gray-800 rounded-xl p-6 mb-8">
+            <div className="glass-panel card p-5 md:p-6 mb-8">
               <h2 className="text-xl font-bold mb-4">Ausgewählte Produkte ({products.length})</h2>
               <div className="space-y-3">
                 {products.map((product) => (
                   <div
                     key={product.id}
-                    className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-card-hover rounded-lg p-4"
+                    className="glass-panel--soft card-inner flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
                       <div className="font-medium">{product.name}</div>
-                      <div className="text-sm text-gray-400">{product.categoryName || 'Mietshop Produkt'}</div>
+                      <div className="text-sm text-gray-300">{product.categoryName || 'Mietshop Produkt'}</div>
                     </div>
                     <button
                       type="button"
                       onClick={() => removeProduct(product.id)}
-                      className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                      className="focus-ring tap-target interactive inline-flex items-center justify-center rounded-lg text-gray-300 hover:text-red-300"
                       aria-label="Produkt entfernen"
                     >
-                      <X className="w-5 h-5" />
+                      <X className="icon-std" />
                     </button>
                   </div>
                 ))}
@@ -594,135 +597,167 @@ export default function InquiryPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} onFocusCapture={markStartQuote} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} onFocusCapture={markStartQuote} className="glass-panel card p-5 space-y-6 md:p-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Name *</label>
+                <label htmlFor="inquiry-name" className="mb-2 block text-sm font-medium">Name *</label>
                 <input
+                  id="inquiry-name"
                   type="text"
+                  name="name"
+                  autoComplete="name"
                   value={formData.name}
                   onChange={(event) => updateField('name', event.target.value)}
                   onBlur={() => handleBlur('name')}
-                  className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className={touchedFields.name && validationErrors.name ? fieldErrorClassName : fieldClassName}
+                  aria-invalid={touchedFields.name && Boolean(validationErrors.name)}
+                  aria-describedby={touchedFields.name && validationErrors.name ? 'inquiry-name-error' : undefined}
                 />
                 {touchedFields.name && validationErrors.name && (
-                  <p className="text-sm text-red-300 mt-2">{validationErrors.name}</p>
+                  <p id="inquiry-name-error" className="mt-2 text-sm text-red-300">{validationErrors.name}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">E-Mail</label>
+                <label htmlFor="inquiry-email" className="mb-2 block text-sm font-medium">E-Mail</label>
                 <input
+                  id="inquiry-email"
                   type="email"
+                  name="email"
+                  autoComplete="email"
+                  inputMode="email"
                   value={formData.email}
                   onChange={(event) => updateField('email', event.target.value)}
                   onBlur={() => handleBlur('email')}
-                  className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className={touchedFields.email && validationErrors.email ? fieldErrorClassName : fieldClassName}
+                  aria-invalid={touchedFields.email && Boolean(validationErrors.email)}
+                  aria-describedby={touchedFields.email && validationErrors.email ? 'inquiry-email-error' : undefined}
                 />
                 {touchedFields.email && validationErrors.email && (
-                  <p className="text-sm text-red-300 mt-2">{validationErrors.email}</p>
+                  <p id="inquiry-email-error" className="mt-2 text-sm text-red-300">{validationErrors.email}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Telefon</label>
+                <label htmlFor="inquiry-phone" className="mb-2 block text-sm font-medium">Telefon</label>
                 <input
+                  id="inquiry-phone"
                   type="tel"
+                  name="tel"
+                  autoComplete="tel"
+                  inputMode="tel"
                   value={formData.phone}
                   onChange={(event) => updateField('phone', event.target.value)}
                   onBlur={() => handleBlur('phone')}
-                  className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className={fieldClassName}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Datum (optional)</label>
+                <label htmlFor="inquiry-date" className="mb-2 block text-sm font-medium">Datum (optional)</label>
                 <input
+                  id="inquiry-date"
                   type="date"
+                  name="event-date"
+                  autoComplete="off"
                   value={formData.eventDate}
                   onChange={(event) => updateField('eventDate', event.target.value)}
                   onBlur={() => handleBlur('eventDate')}
-                  className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className={fieldClassName}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Ort (optional)</label>
+                <label htmlFor="inquiry-location" className="mb-2 block text-sm font-medium">Ort (optional)</label>
                 <input
+                  id="inquiry-location"
                   type="text"
+                  name="address-level2"
+                  autoComplete="address-level2"
                   value={formData.eventLocation}
                   onChange={(event) => updateField('eventLocation', event.target.value)}
                   onBlur={() => handleBlur('eventLocation')}
-                  className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className={fieldClassName}
                   placeholder="z. B. Berlin, Halle 3"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Eventtyp (optional)</label>
+                <label htmlFor="inquiry-eventtype" className="mb-2 block text-sm font-medium">Eventtyp (optional)</label>
                 <input
+                  id="inquiry-eventtype"
                   type="text"
+                  name="event-type"
+                  autoComplete="off"
                   value={formData.eventType}
                   onChange={(event) => updateField('eventType', event.target.value)}
                   onBlur={() => handleBlur('eventType')}
-                  className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className={fieldClassName}
                   placeholder="z. B. Firmenfeier, Hochzeit"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2">Budget (optional)</label>
+                <label htmlFor="inquiry-budget" className="mb-2 block text-sm font-medium">Budget (optional)</label>
                 <input
+                  id="inquiry-budget"
                   type="text"
+                  name="budget"
+                  autoComplete="off"
                   value={formData.budget}
                   onChange={(event) => updateField('budget', event.target.value)}
                   onBlur={() => handleBlur('budget')}
-                  className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className={fieldClassName}
                   placeholder="z. B. 2.000 - 3.000 EUR"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2">Nachricht *</label>
+                <label htmlFor="inquiry-message" className="mb-2 block text-sm font-medium">Nachricht *</label>
                 <textarea
+                  id="inquiry-message"
+                  name="message"
+                  autoComplete="off"
                   value={formData.message}
                   onChange={(event) => updateField('message', event.target.value)}
                   onBlur={() => handleBlur('message')}
                   rows={6}
                   placeholder="Was wird benötigt, wie viele Personen, welche Besonderheiten?"
-                  className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                  className={`${touchedFields.message && validationErrors.message ? fieldErrorClassName : fieldClassName} resize-none`}
+                  aria-invalid={touchedFields.message && Boolean(validationErrors.message)}
+                  aria-describedby={touchedFields.message && validationErrors.message ? 'inquiry-message-error' : undefined}
                 />
                 {touchedFields.message && validationErrors.message && (
-                  <p className="text-sm text-red-300 mt-2">{validationErrors.message}</p>
+                  <p id="inquiry-message-error" className="mt-2 text-sm text-red-300">{validationErrors.message}</p>
                 )}
               </div>
             </div>
 
             {(touchedFields.contact || touchedFields.email || touchedFields.phone) && validationErrors.contact && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+              <div className="card-inner rounded-lg border border-red-500/40 bg-red-500/10 p-4" role="alert" aria-live="polite">
                 <p className="text-sm text-red-300">{validationErrors.contact}</p>
               </div>
             )}
 
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+            <div className="glass-panel--soft card-inner border-blue-400/25 p-4">
               <p className="text-sm text-gray-300">
                 Unverbindlich und schnell: Wir antworten in der Regel innerhalb von 2 Stunden.
               </p>
             </div>
 
             {submitError && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4" role="alert" aria-live="polite">
+              <div className="card-inner rounded-lg border border-red-500/30 bg-red-500/10 p-4" role="alert" aria-live="polite">
                 <p className="text-sm text-red-300">{submitError}</p>
               </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-6 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 text-base disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Send className="w-5 h-5" />
+                <Send className="icon-std" />
                 <span>{loading ? 'Wird gesendet...' : 'Angebot anfragen (Antwort i.d.R. in 2h)'}</span>
               </button>
 
@@ -732,18 +767,18 @@ export default function InquiryPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleWhatsAppClick}
-                  className="w-full px-6 py-4 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-all font-semibold text-base flex items-center justify-center gap-2"
+                  className="focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-400/70 bg-emerald-500 px-6 py-4 text-base font-semibold text-white hover:bg-emerald-600"
                 >
-                  <MessageCircle className="w-5 h-5" />
+                  <MessageCircle className="icon-std" />
                   <span>Schnell per WhatsApp</span>
-                  <ExternalLink className="w-4 h-4" />
+                  <ExternalLink className="icon-std icon-std--sm" />
                 </a>
               ) : (
                 <a
                   href={COMPANY_INFO.contact.phoneLink}
-                  className="w-full px-6 py-4 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-all font-semibold text-base flex items-center justify-center gap-2"
+                  className="focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-400/70 bg-emerald-500 px-6 py-4 text-base font-semibold text-white hover:bg-emerald-600"
                 >
-                  <MessageCircle className="w-5 h-5" />
+                  <MessageCircle className="icon-std" />
                   <span>Schnell per WhatsApp</span>
                 </a>
               )}

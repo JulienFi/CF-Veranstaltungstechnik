@@ -9,12 +9,15 @@ export default function PriceModeToggle({ className }: PriceModeToggleProps) {
 
   return (
     <div className={className}>
-      <div className="inline-flex flex-wrap items-center justify-center rounded-lg border border-gray-700 bg-card-bg/80 p-1 gap-1">
+      <div className="glass-panel--soft card-inner border-subtle inline-flex flex-wrap items-center justify-center gap-1 p-1">
         <button
           type="button"
           onClick={() => setPriceMode('gross')}
-          className={`px-3 py-2 text-sm rounded-md transition-colors ${
-            priceMode === 'gross' ? 'bg-primary-500 text-white' : 'text-gray-300 hover:bg-card-hover'
+          aria-pressed={priceMode === 'gross'}
+          className={`focus-ring tap-target interactive rounded-md px-3 py-2 text-sm font-medium ${
+            priceMode === 'gross'
+              ? 'bg-primary-500 text-white shadow-md shadow-blue-900/30'
+              : 'text-gray-300 hover:bg-card-hover/90 hover:text-white'
           }`}
         >
           Privat (Brutto)
@@ -22,8 +25,11 @@ export default function PriceModeToggle({ className }: PriceModeToggleProps) {
         <button
           type="button"
           onClick={() => setPriceMode('net')}
-          className={`px-3 py-2 text-sm rounded-md transition-colors ${
-            priceMode === 'net' ? 'bg-primary-500 text-white' : 'text-gray-300 hover:bg-card-hover'
+          aria-pressed={priceMode === 'net'}
+          className={`focus-ring tap-target interactive rounded-md px-3 py-2 text-sm font-medium ${
+            priceMode === 'net'
+              ? 'bg-primary-500 text-white shadow-md shadow-blue-900/30'
+              : 'text-gray-300 hover:bg-card-hover/90 hover:text-white'
           }`}
         >
           Business (Netto)

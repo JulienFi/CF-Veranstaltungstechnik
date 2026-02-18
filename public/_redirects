@@ -1,2 +1,6 @@
+# Canonical host redirects
+https://cf-veranstaltungstechnik.berlin/* https://www.cf-veranstaltungstechnik.berlin/:splat 301!
+http://cf-veranstaltungstechnik.berlin/* https://www.cf-veranstaltungstechnik.berlin/:splat 301!
+
 # SPA fallback
 /* /index.html 200

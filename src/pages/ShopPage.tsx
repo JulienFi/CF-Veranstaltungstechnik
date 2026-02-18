@@ -1,5 +1,5 @@
-﻿import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, ShoppingBag, Eye } from 'lucide-react';
+﻿import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ArrowRight, ShoppingBag, Eye, AlertTriangle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Category, ProductWithCategory } from '../types/shop.types';
 import { ProductCardSkeleton } from '../components/SkeletonLoader';
@@ -21,6 +21,7 @@ import { parseQuery, updateQuery } from '../utils/queryState';
 import { listActiveProductsForShop } from '../repositories/productRepository';
 
 const PRODUCTS_PER_BATCH = 24;
+type FetchStatus = 'idle' | 'loading' | 'success' | 'error';
 
 type CategoryRow = Database['public']['Tables']['categories']['Row'];
 type ProductRowWithCategory = Database['public']['Tables']['products']['Row'] & {
@@ -101,7 +102,8 @@ export default function ShopPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<ProductWithCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>(initialQuery.cat ?? 'all');
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<FetchStatus>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState(initialQuery.q ?? '');
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     tags: initialQuery.tags ?? [],
@@ -113,11 +115,10 @@ export default function ShopPage() {
   const { inquiryList, addToInquiry, removeFromInquiry, isInInquiry } = useInquiryList();
   const { priceMode } = usePriceMode();
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const loadData = useCallback(async () => {
+    setStatus('loading');
+    setErrorMessage(undefined);
 
-  const loadData = async () => {
     try {
       const [categoriesRes, productsRes] = await Promise.all([
         supabase.from('categories').select('*').order('display_order'),
@@ -125,25 +126,33 @@ export default function ShopPage() {
       ]);
 
       if (categoriesRes.error) {
-        throw categoriesRes.error;
-      }
-
-      if (productsRes.error) {
-        throw productsRes.error;
+        console.error('Error loading categories:', categoriesRes.error);
       }
 
       if (categoriesRes.data) {
         setCategories((categoriesRes.data as CategoryRow[]).map(mapCategoryRow));
       }
+
+      if (productsRes.error) {
+        setStatus('error');
+        setErrorMessage('Produkte konnten nicht geladen werden. Bitte prüfe deine Verbindung und versuche es erneut.');
+        return;
+      }
+
       if (productsRes.data) {
         setProducts((productsRes.data as ProductRowWithCategory[]).map(mapProductRow));
       }
+      setStatus('success');
     } catch (error) {
       console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
+      setStatus('error');
+      setErrorMessage('Konnte Daten nicht laden. Bitte prüfe deine Verbindung und versuche es erneut.');
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void loadData();
+  }, [loadData]);
 
   const normalizeSearchText = (value: string): string =>
     value.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -267,27 +276,6 @@ export default function ShopPage() {
     showToast('info', 'Produkt von der Anfrageliste entfernt');
   };
 
-  if (loading) {
-    return (
-      <div className="bg-app-bg text-white min-h-screen">
-        <section className="section-shell section-shell--hero bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
-          <div className="content-container">
-            <div className="mx-auto max-w-3xl text-center">
-              <h1 className="section-title mb-6 font-bold">Mietshop für Eventtechnik</h1>
-            </div>
-          </div>
-        </section>
-        <section className="section-shell">
-          <div className="content-container">
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
-              {[1, 2, 3, 4, 5, 6].map(i => <ProductCardSkeleton key={i} />)}
-            </div>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-app-bg text-white min-h-screen pb-24 md:pb-0">
       <section className="section-shell section-shell--hero bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
@@ -306,15 +294,16 @@ export default function ShopPage() {
         </div>
       </section>
 
-      <section className="section-shell--tight sticky top-[4.8rem] z-40 border-b border-gray-700/85 bg-card-bg/92 py-8 backdrop-blur-sm md:top-20 md:py-10">
+      <section className="section-shell--tight sticky top-[4.7rem] z-40 border-subtle-bottom bg-card-bg/92 py-8 backdrop-blur-sm sm:top-[5rem] md:py-10">
         <div className="content-container">
           <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-3">
             <button
               onClick={() => setSelectedCategory('all')}
-              className={`focus-ring tap-target rounded-lg border px-5 py-2.5 text-sm font-medium transition-all ${
+              aria-pressed={selectedCategory === 'all'}
+              className={`focus-ring tap-target interactive rounded-lg px-5 py-2.5 text-sm font-medium ${
                 selectedCategory === 'all'
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25 border-blue-400/70'
-                  : 'bg-card-hover/80 text-gray-200 border-gray-700/70 hover:bg-card-hover hover:text-white'
+                  ? 'border border-blue-400/70 bg-blue-500 text-white shadow-lg shadow-blue-500/25'
+                  : 'glass-panel--soft border-subtle text-gray-200 hover:text-white'
               }`}
             >
               Alle Kategorien
@@ -323,10 +312,11 @@ export default function ShopPage() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`focus-ring tap-target rounded-lg border px-5 py-2.5 text-sm font-medium transition-all ${
+                aria-pressed={selectedCategory === cat.id}
+                className={`focus-ring tap-target interactive rounded-lg px-5 py-2.5 text-sm font-medium ${
                   selectedCategory === cat.id
-                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25 border-blue-400/70'
-                    : 'bg-card-hover/80 text-gray-200 border-gray-700/70 hover:bg-card-hover hover:text-white'
+                    ? 'border border-blue-400/70 bg-blue-500 text-white shadow-lg shadow-blue-500/25'
+                    : 'glass-panel--soft border-subtle text-gray-200 hover:text-white'
                 }`}
               >
                 {cat.name}
@@ -338,11 +328,11 @@ export default function ShopPage() {
             <div className="mt-6 flex justify-center">
               <a
                 href="/mietshop/anfrage"
-                className="btn-primary focus-ring tap-target inline-flex items-center gap-2 group"
+                className="btn-primary focus-ring tap-target interactive inline-flex items-center justify-center gap-2 group text-center"
               >
-                <ShoppingBag className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                <ShoppingBag className="icon-std group-hover:rotate-12 transition-transform" />
                 <span>Anfrage für {inquiryList.length} Produkt{inquiryList.length !== 1 ? 'e' : ''} senden</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="icon-std icon-std--sm group-hover:translate-x-1 transition-transform" />
               </a>
             </div>
           )}
@@ -367,8 +357,34 @@ export default function ShopPage() {
             </div>
           )}
 
-          {filteredProducts.length === 0 ? (
-            <div className="glass-panel--soft py-16 text-center">
+          {status === 'loading' ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+              {[1, 2, 3, 4, 5, 6].map(i => <ProductCardSkeleton key={i} />)}
+            </div>
+          ) : status === 'error' ? (
+            <div className="glass-panel--soft card px-6 py-10 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10">
+                <AlertTriangle className="icon-std icon-std--lg text-red-300" />
+              </div>
+              <h2 className="mb-2 text-2xl font-semibold text-white">Konnte Daten nicht laden</h2>
+              <p className="mx-auto mb-6 max-w-[48ch] text-gray-300">
+                {errorMessage ?? 'Beim Laden der Produkte ist ein Fehler aufgetreten. Bitte prüfe deine Verbindung.'}
+              </p>
+              <div className="flex flex-col justify-center gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => void loadData()}
+                  className="btn-primary focus-ring tap-target interactive"
+                >
+                  Erneut versuchen
+                </button>
+                <a href="/" className="btn-secondary focus-ring tap-target interactive">
+                  Zur Startseite
+                </a>
+              </div>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="glass-panel--soft card py-16 text-center">
               <p className="text-lg text-gray-300 md:text-xl">Keine Produkte in dieser Kategorie gefunden.</p>
             </div>
           ) : (
@@ -380,11 +396,11 @@ export default function ShopPage() {
                 {visibleProducts.map(product => (
                   <div
                     key={product.id}
-                    className="glass-panel interactive-card group overflow-hidden rounded-xl"
+                    className="glass-panel card interactive-card group overflow-hidden"
                   >
                     <a
                       href={`/mietshop/${product.slug}`}
-                      className="focus-ring block aspect-video cursor-pointer overflow-hidden bg-gradient-to-br from-card-hover to-card-bg"
+                      className="focus-ring interactive card-inner block aspect-video cursor-pointer overflow-hidden bg-gradient-to-br from-card-hover to-card-bg"
                     >
                       <img
                         src={resolveImageUrl(product.image_url, 'product', product.slug)}
@@ -395,11 +411,11 @@ export default function ShopPage() {
                     </a>
                     <div className="p-5 md:p-6">
                       <div className="mb-3 flex flex-wrap gap-2">
-                        <span className="rounded-md bg-blue-500/14 px-2.5 py-1 text-xs font-medium text-blue-300">
+                        <span className="card-inner rounded-md bg-blue-500/14 px-2.5 py-1 text-xs font-medium text-blue-300">
                           {product.categories.name}
                         </span>
                         {product.tags.map(tag => (
-                          <span key={tag} className="rounded-md bg-card-hover/80 px-2.5 py-1 text-xs text-gray-200">
+                          <span key={tag} className="glass-panel--soft card-inner px-2.5 py-1 text-xs text-gray-200">
                             {tag}
                           </span>
                         ))}
@@ -420,21 +436,21 @@ export default function ShopPage() {
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => setQuickViewProduct(product)}
-                          className="focus-ring tap-target flex items-center gap-2 rounded-lg border border-gray-700/70 bg-card-hover/80 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-card-hover"
-                          aria-label="Schnellansicht"
+                          className="btn-secondary focus-ring tap-target interactive !min-h-0 px-4 py-2.5 text-sm"
+                          aria-label={`Schnellansicht ${product.name}`}
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className="icon-std icon-std--sm" />
                         </button>
                         <a
                           href={`/mietshop/${product.slug}`}
-                          className="focus-ring tap-target flex-1 rounded-lg border border-gray-700/70 bg-card-hover/80 px-4 py-2.5 text-center text-sm font-medium text-white transition-all hover:bg-card-hover"
+                          className="btn-secondary focus-ring tap-target interactive !min-h-0 flex-1 px-4 py-2.5 text-center text-sm"
                         >
                           Details
                         </a>
                         {isInInquiry(product.id) ? (
                           <button
                             onClick={() => handleRemoveFromInquiry(product.id)}
-                            className="btn-primary focus-ring tap-target px-4 py-2.5 text-sm"
+                            className="btn-primary focus-ring tap-target interactive !min-h-0 px-4 py-2.5 text-sm"
                             aria-label="Von Anfrageliste entfernen"
                           >
                             ✓
@@ -442,7 +458,7 @@ export default function ShopPage() {
                         ) : (
                           <button
                             onClick={() => handleAddToInquiry(product.id)}
-                            className="focus-ring tap-target rounded-lg border border-gray-700/70 bg-card-hover/80 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-card-hover"
+                            className="btn-secondary focus-ring tap-target interactive !min-h-0 px-4 py-2.5 text-sm"
                             aria-label="Zur Anfrageliste hinzufuegen"
                           >
                             +
@@ -458,7 +474,7 @@ export default function ShopPage() {
                   <button
                     type="button"
                     onClick={() => setVisibleProductCount((current) => current + PRODUCTS_PER_BATCH)}
-                    className="btn-secondary focus-ring tap-target"
+                    className="btn-secondary focus-ring tap-target interactive"
                   >
                     Mehr laden ({Math.min(PRODUCTS_PER_BATCH, filteredProducts.length - visibleProductCount)} weitere)
                   </button>
@@ -478,10 +494,10 @@ export default function ShopPage() {
             </p>
             <a
               href="/kontakt"
-              className="btn-primary focus-ring tap-target inline-flex w-full items-center justify-center gap-2 sm:w-auto"
+              className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 sm:w-auto"
             >
               <span>Unverbindliches Angebot anfragen</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="icon-std" />
             </a>
           </div>
         </div>

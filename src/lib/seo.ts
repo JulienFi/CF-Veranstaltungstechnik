@@ -106,6 +106,18 @@ export const PAGE_META: Record<string, PageMeta> = {
     description: 'Datenschutzerklärung von CF Veranstaltungstechnik. Informationen zur Datenverarbeitung gemäß DSGVO.',
     noindex: true,
   },
+
+  admin: {
+    title: 'Admin-Bereich | CF Veranstaltungstechnik',
+    description: 'Geschützter Verwaltungsbereich.',
+    noindex: true,
+  },
+
+  notfound: {
+    title: 'Seite nicht gefunden | CF Veranstaltungstechnik',
+    description: 'Die angeforderte Seite konnte nicht gefunden werden.',
+    noindex: true,
+  },
 };
 
 /**

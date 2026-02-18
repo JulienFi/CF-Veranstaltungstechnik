@@ -160,7 +160,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDU5LCAxMzAsIDI0NiwgMC4wNSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
 
         <div className="content-container relative z-10">
-          <div className="mx-auto max-w-5xl text-center">
+          <div className="mx-auto max-w-4xl text-center">
             <h1 className="hero-title text-glow mb-6 font-bold fade-in">
               Wir übernehmen die <span className="text-primary-400">Technik</span>. Sie konzentrieren sich auf Ihr Event.
             </h1>
@@ -170,14 +170,14 @@ export default function HomePage() {
             <div className="slide-up flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center" style={{ animationDelay: '0.4s' }}>
               <a
                 href="/kontakt"
-                className="btn-primary focus-ring tap-target group w-full text-base sm:w-auto"
+                className="btn-primary focus-ring tap-target interactive group w-full text-base sm:w-auto"
               >
                 <span>Unverbindliches Angebot anfragen</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="icon-std group-hover:translate-x-1 transition-transform" />
               </a>
               <a
                 href="/mietshop"
-                className="btn-secondary focus-ring tap-target w-full text-base sm:w-auto"
+                className="btn-secondary focus-ring tap-target interactive w-full text-base sm:w-auto"
               >
                 Mietshop entdecken
               </a>
@@ -197,27 +197,27 @@ export default function HomePage() {
             {services.map((service, index) => (
               <div
                 key={index}
-                className="glass-panel interactive-card group rounded-xl p-6 md:p-8"
+                className="glass-panel card interactive-card group p-6 md:p-8"
               >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-lg bg-blue-500/12 transition-all duration-300 group-hover:scale-105 group-hover:bg-blue-500/22">
-                  <service.icon className="w-8 h-8 text-blue-400 group-hover:rotate-12 transition-transform duration-300" />
+                <div className="card-inner border-subtle mb-6 flex h-14 w-14 items-center justify-center bg-blue-500/12 transition-all duration-300 group-hover:scale-105 group-hover:bg-blue-500/22">
+                  <service.icon className="icon-std icon-std--lg text-blue-400 group-hover:rotate-12 transition-transform duration-300" />
                 </div>
                 <h3 className="mb-3 text-2xl font-bold leading-tight">{service.title}</h3>
                 <p className="mb-6 text-gray-300 leading-relaxed">{service.description}</p>
                 <ul className="mb-6 space-y-2.5">
                   {service.highlights.map((highlight, i) => (
                     <li key={i} className="flex items-center gap-2 text-sm text-gray-200">
-                      <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                      <CheckCircle2 className="icon-std icon-std--sm text-blue-400" />
                       <span>{highlight}</span>
                     </li>
                   ))}
                 </ul>
                 <a
                   href={service.link}
-                  className="interactive-link focus-ring inline-flex items-center gap-2 rounded-md px-1 py-1 text-blue-300 font-medium group-hover:translate-x-1 transition-transform"
+                  className="interactive-link focus-ring interactive inline-flex items-center gap-2 rounded-md px-1 py-1 text-blue-300 font-medium group-hover:translate-x-1 transition-transform"
                 >
                   <span>Mehr erfahren</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="icon-std icon-std--sm" />
                 </a>
               </div>
             ))}
@@ -234,7 +234,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
             {eventTypes.map((event, index) => (
-              <div key={index} className="glass-panel--soft interactive-card rounded-lg p-5 md:p-6">
+              <div key={index} className="glass-panel--soft card-inner interactive-card p-5 md:p-6">
                 <h3 className="text-xl font-bold mb-2">{event.title}</h3>
                 <p className="text-sm text-gray-300 leading-relaxed">{event.description}</p>
               </div>
@@ -244,10 +244,10 @@ export default function HomePage() {
           <div className="mt-10 text-center md:mt-12">
             <a
               href="/projekte"
-              className="btn-secondary focus-ring tap-target inline-flex items-center gap-2"
+              className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2"
             >
               <span>Referenzen ansehen</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="icon-std icon-std--sm" />
             </a>
           </div>
         </div>
@@ -263,9 +263,9 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
               {features.map((feature, index) => (
-                <div key={index} className="glass-panel--soft flex items-start gap-3 rounded-xl p-4 md:p-5">
+                <div key={index} className="glass-panel--soft card-inner flex items-start gap-3 p-4 md:p-5">
                   <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-500">
-                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <CheckCircle2 className="icon-std icon-std--sm text-white" />
                   </div>
                   <p className="text-gray-200 leading-relaxed">{feature}</p>
                 </div>
@@ -286,11 +286,11 @@ export default function HomePage() {
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
               {processSteps.map((step, index) => (
                 <div key={index} className="relative">
-                  <div className="glass-panel interactive-card h-full rounded-xl p-6">
+                  <div className="glass-panel card interactive-card h-full p-6">
                     <div className="mb-4 flex items-start gap-4">
                       <div className="flex-shrink-0">
                         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500/10">
-                          <step.icon className="w-6 h-6 text-blue-400" />
+                          <step.icon className="icon-std icon-std--lg text-blue-400" />
                         </div>
                       </div>
                       <div className="flex-1">
@@ -302,7 +302,7 @@ export default function HomePage() {
                   </div>
                   {index < processSteps.length - 1 && (
                     <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                      <ArrowRight className="w-8 h-8 text-blue-500/30" />
+                      <ArrowRight className="icon-std icon-std--lg text-blue-500/30" />
                     </div>
                   )}
                 </div>
@@ -313,10 +313,10 @@ export default function HomePage() {
           <div className="mt-10 text-center md:mt-12">
             <a
               href="/kontakt"
-              className="btn-primary focus-ring tap-target inline-flex items-center gap-2"
+              className="btn-primary focus-ring tap-target interactive inline-flex items-center gap-2"
             >
               <span>Unverbindliches Angebot anfragen</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="icon-std" />
             </a>
           </div>
         </div>
@@ -327,7 +327,7 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto">
             <div className="section-head mb-10 md:mb-12">
               <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10">
-                <HelpCircle className="w-8 h-8 text-blue-400" />
+                <HelpCircle className="icon-std icon-std--lg text-blue-400" />
               </div>
               <h2 className="section-title font-bold">Häufige Fragen</h2>
               <p className="section-copy">Kompakte Antworten rund um Ablauf, Region und Preise</p>
@@ -337,21 +337,23 @@ export default function HomePage() {
               {faqs.map((faq, index) => (
                 <div
                   key={index}
-                  className="glass-panel--soft interactive-card overflow-hidden rounded-xl"
+                  className="glass-panel--soft card-inner interactive-card overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
-                    className="focus-ring tap-target flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-card-hover/45 md:px-6 md:py-5"
+                    aria-expanded={openFaqIndex === index}
+                    aria-controls={`faq-answer-${index}`}
+                    className="focus-ring tap-target interactive flex w-full items-center justify-between px-5 py-4 text-left hover:bg-card-hover/45 md:px-6 md:py-5"
                   >
                     <span className="text-lg font-semibold text-white pr-4">{faq.question}</span>
                     <ChevronDown
-                      className={`w-5 h-5 text-blue-400 flex-shrink-0 transition-transform ${
+                      className={`icon-std text-blue-400 transition-transform ${
                         openFaqIndex === index ? 'rotate-180' : ''
                       }`}
                     />
                   </button>
                   {openFaqIndex === index && (
-                    <div className="border-t border-gray-700/80 px-5 pb-5 text-gray-300 leading-relaxed md:px-6">
+                    <div id={`faq-answer-${index}`} className="border-subtle-top px-5 pb-5 text-gray-300 leading-relaxed md:px-6">
                       <p className="pt-4">{faq.answer}</p>
                     </div>
                   )}
@@ -359,21 +361,21 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="glass-panel mt-10 rounded-xl p-6 text-center md:mt-12 md:p-8">
+            <div className="glass-panel card mt-10 p-6 text-center md:mt-12 md:p-8">
               <h3 className="mb-3 text-2xl font-bold leading-tight">Sie haben eine konkrete Anforderung?</h3>
               <p className="mx-auto mb-6 max-w-[60ch] text-gray-300">Sprechen Sie mit uns. Wir erstellen Ihnen kurzfristig ein passendes Angebot.</p>
               <div className="flex flex-col justify-center gap-3 sm:flex-row">
                 <a
                   href="/kontakt"
-                  className="btn-primary focus-ring tap-target"
+                  className="btn-primary focus-ring tap-target interactive"
                 >
                   Kontakt aufnehmen
                 </a>
                 <a
                   href={COMPANY_INFO.contact.phoneLink}
-                  className="btn-secondary focus-ring tap-target inline-flex items-center justify-center gap-2"
+                  className="btn-secondary focus-ring tap-target interactive inline-flex items-center justify-center gap-2"
                 >
-                  <Phone className="w-4 h-4" />
+                  <Phone className="icon-std icon-std--sm" />
                   <span>{COMPANY_INFO.contact.phone}</span>
                 </a>
               </div>
@@ -392,13 +394,13 @@ export default function HomePage() {
             <div className="flex flex-col justify-center gap-3 sm:flex-row">
               <a
                 href="/kontakt"
-                className="btn-primary focus-ring tap-target"
+                className="btn-primary focus-ring tap-target interactive"
               >
                 Unverbindliches Angebot anfragen
               </a>
               <a
                 href={COMPANY_INFO.contact.phoneLink}
-                className="btn-secondary focus-ring tap-target"
+                className="btn-secondary focus-ring tap-target interactive"
               >
                 {COMPANY_INFO.contact.phone}
               </a>

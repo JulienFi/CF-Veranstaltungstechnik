@@ -17,6 +17,7 @@ body,
 
 html {
   color-scheme: dark;
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -78,17 +79,6 @@ a {
   text-decoration: none;
 }
 
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 1px rgb(var(--accent) / 0.95),
-    0 0 0 4px rgb(var(--accent) / 0.3);
-}
-
 img,
 svg,
 video,
@@ -113,10 +103,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
-:focus-visible {
+:focus-visible:not(.focus-ring) {
   outline: 2px solid rgb(var(--accent) / 0.95);
   outline-offset: 2px;
-  box-shadow: var(--shadow-focus);
+  box-shadow: none;
 }
 
 ::selection {

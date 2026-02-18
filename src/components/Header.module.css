@@ -88,6 +88,13 @@
   text-decoration-color: rgb(var(--accent) / 0.6);
 }
 
+.navLinkActive {
+  color: var(--text-main);
+  background: rgb(var(--card-strong) / 0.78);
+  text-decoration: underline;
+  text-decoration-color: rgb(var(--accent) / 0.74);
+}
+
 .navLink:focus-visible {
   outline: none;
   color: var(--text-main);
@@ -190,6 +197,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.48rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   box-shadow: -18px 0 36px rgb(4 8 14 / 0.48);
 }
 
@@ -206,6 +215,12 @@
 .drawerLink:hover {
   border-color: rgb(var(--accent) / 0.36);
   background: rgb(var(--card-strong) / 0.74);
+}
+
+.drawerLinkActive {
+  border-color: rgb(var(--accent) / 0.56);
+  background: rgb(var(--card-strong) / 0.84);
+  color: var(--text-main);
 }
 
 .drawerLink:focus-visible {

@@ -123,31 +123,31 @@ export default function ServicesPage() {
 
   return (
     <div className="bg-app-bg text-white min-h-screen">
-      <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
-        <div className="container mx-auto px-4">
+      <section className="section-shell section-shell--hero bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="content-container">
           <BackButton href="/" label="Zurück zur Startseite" className="mb-8" />
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Dienstleistungen für reibungslose Events</h1>
-            <p className="text-xl text-gray-300 leading-relaxed">
+            <h1 className="section-title text-4xl md:text-6xl font-bold mb-6">Dienstleistungen für reibungslose Events</h1>
+            <p className="section-copy text-xl text-gray-300 leading-relaxed">
               Wir übernehmen die technische Umsetzung Ihrer Veranstaltung in Berlin und Brandenburg - von der Planung bis zur Betreuung vor Ort. Sie konzentrieren sich auf Gäste und Inhalte.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="py-16">
-        <div className="container mx-auto px-4">
+      <section className="section-shell">
+        <div className="content-container">
           <div className="space-y-20">
             {services.map((service, index) => (
-              <div key={index} className="max-w-5xl mx-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div key={index} className="mx-auto max-w-5xl">
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                   <div className="lg:col-span-1">
-                    <div className="w-16 h-16 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
-                      <service.icon className="w-8 h-8 text-blue-400" />
+                    <div className="glass-panel--soft card-inner border-subtle mb-6 flex h-16 w-16 items-center justify-center">
+                      <service.icon className="icon-std icon-std--lg text-blue-400" />
                     </div>
                     <h2 className="text-3xl font-bold mb-4">{service.title}</h2>
                     <p className="text-gray-300 leading-relaxed mb-6">{service.description}</p>
-                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                    <div className="glass-panel--soft card-inner border-blue-500/25 p-4">
                       <p className="text-sm text-gray-300">{service.useCases}</p>
                     </div>
                   </div>
@@ -155,10 +155,10 @@ export default function ServicesPage() {
                   <div className="lg:col-span-2 space-y-8">
                     <div>
                       <h3 className="text-xl font-bold mb-4 flex items-center space-x-2">
-                        <CheckCircle2 className="w-5 h-5 text-blue-400" />
+                        <CheckCircle2 className="icon-std text-blue-400" />
                         <span>Leistungsumfang</span>
                       </h3>
-                      <div className="bg-card-bg border border-gray-800 rounded-xl p-6">
+                      <div className="glass-panel card p-6">
                         <ul className="space-y-3">
                           {service.details.map((detail, i) => (
                             <li key={i} className="flex items-start space-x-3">
@@ -174,8 +174,8 @@ export default function ServicesPage() {
                       <h3 className="text-xl font-bold mb-4">Ablauf</h3>
                       <div className="space-y-3">
                         {service.process.map((step, i) => (
-                          <div key={i} className="flex items-start space-x-4 bg-card-bg border border-gray-800 rounded-lg p-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
+                          <div key={i} className="glass-panel--soft card-inner flex items-start space-x-4 p-4">
+                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/10">
                               <span className="text-blue-400 font-bold text-sm">{i + 1}</span>
                             </div>
                             <p className="text-gray-300 leading-relaxed pt-1">{step}</p>
@@ -186,20 +186,20 @@ export default function ServicesPage() {
                   </div>
                 </div>
 
-                {index < services.length - 1 && <div className="border-b border-gray-800 mt-20"></div>}
+                {index < services.length - 1 && <div className="border-subtle-bottom mt-20"></div>}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-card-bg/50">
-        <div className="container mx-auto px-4">
+      <section className="section-shell bg-card-bg/50">
+        <div className="content-container">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold mb-12 text-center">Häufige Fragen</h2>
+            <h2 className="section-title font-bold mb-12 text-center">Häufige Fragen</h2>
             <div className="space-y-6">
               {faq.map((item, index) => (
-                <div key={index} className="bg-card-bg border border-gray-800 rounded-xl p-6">
+                <div key={index} className="glass-panel--soft card-inner p-6">
                   <h3 className="text-xl font-bold mb-3">{item.question}</h3>
                   <p className="text-gray-300 leading-relaxed">{item.answer}</p>
                 </div>
@@ -209,19 +209,19 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
-        <div className="container mx-auto px-4">
+      <section className="section-shell bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="content-container">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Planen Sie Ihr Event mit technischer Sicherheit</h2>
-            <p className="text-xl text-gray-300 mb-8">
+            <h2 className="section-title text-4xl md:text-5xl font-bold mb-6">Planen Sie Ihr Event mit technischer Sicherheit</h2>
+            <p className="section-copy text-xl text-gray-300 mb-8">
               Fordern Sie ein unverbindliches Angebot an. Wir stimmen Technik, Ablauf und Budget exakt auf Ihre Veranstaltung ab.
             </p>
             <a
               href="/kontakt"
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg shadow-lg"
+              className="btn-primary focus-ring tap-target interactive inline-flex items-center gap-2 px-8 py-4 text-lg"
             >
               <span>Unverbindliches Angebot anfragen</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="icon-std" />
             </a>
           </div>
         </div>

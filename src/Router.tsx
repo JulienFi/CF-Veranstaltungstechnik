@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import AdminGuard from './components/AdminGuard';
 import SEOHead from './components/SEOHead';
 import Header from './components/Header';
@@ -7,23 +7,36 @@ import SpotlightRig from './components/SpotlightRig';
 import { SEOProvider } from './contexts/SEOContext';
 import { useSEO } from './contexts/seo-state';
 import { generateLocalBusinessSchema } from './lib/seo';
+import { getBaseUrl } from './lib/site';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import InquiryPage from './pages/InquiryPage';
-import ServicesPage from './pages/ServicesPage';
-import WorkshopPage from './pages/WorkshopPage';
-import ProjectsPage from './pages/ProjectsPage';
-import TeamPage from './pages/TeamPage';
-import ContactPage from './pages/ContactPage';
-import ImpressumPage from './pages/ImpressumPage';
-import DatenschutzPage from './pages/DatenschutzPage';
-import LoginPage from './pages/admin/LoginPage';
-import DashboardPage from './pages/admin/DashboardPage';
-import ProductsPage from './pages/admin/ProductsPage';
-import AdminProjectsPage from './pages/admin/AdminProjectsPage';
-import AdminTeamPage from './pages/admin/AdminTeamPage';
-import AdminInquiriesPage from './pages/admin/AdminInquiriesPage';
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const WorkshopPage = lazy(() => import('./pages/WorkshopPage'));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
+const TeamPage = lazy(() => import('./pages/TeamPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const ImpressumPage = lazy(() => import('./pages/ImpressumPage'));
+const DatenschutzPage = lazy(() => import('./pages/DatenschutzPage'));
+const LoginPage = lazy(() => import('./pages/admin/LoginPage'));
+const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
+const ProductsPage = lazy(() => import('./pages/admin/ProductsPage'));
+const AdminProjectsPage = lazy(() => import('./pages/admin/AdminProjectsPage'));
+const AdminTeamPage = lazy(() => import('./pages/admin/AdminTeamPage'));
+const AdminInquiriesPage = lazy(() => import('./pages/admin/AdminInquiriesPage'));
+
+function RouteFallback() {
+  return (
+    <div className="section-shell bg-app-bg text-white">
+      <div className="content-container">
+        <div className="glass-panel--soft rounded-xl px-6 py-8 text-center text-gray-300">
+          Inhalte werden geladen...
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function RouterContent() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -38,13 +51,20 @@ function RouterContent() {
     window.addEventListener('popstate', handleLocationChange);
 
     const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
     window.history.pushState = function(...args) {
       originalPushState.apply(window.history, args);
+      handleLocationChange();
+    };
+    window.history.replaceState = function(...args) {
+      originalReplaceState.apply(window.history, args);
       handleLocationChange();
     };
 
     return () => {
       window.removeEventListener('popstate', handleLocationChange);
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
     };
   }, []);
 
@@ -60,32 +80,38 @@ function RouterContent() {
   const isAdminRoute = adminPaths.some(path => currentPath === path || currentPath.startsWith(path + '/'));
 
   if (isAdminRoute) {
+    let adminContent;
+
     if (currentPath === '/admin/login') {
-      return <LoginPage />;
+      adminContent = <LoginPage />;
+    } else if (currentPath === '/admin') {
+      adminContent = <AdminGuard><DashboardPage /></AdminGuard>;
+    } else if (currentPath === '/admin/products') {
+      adminContent = <AdminGuard><ProductsPage /></AdminGuard>;
+    } else if (currentPath === '/admin/projects') {
+      adminContent = <AdminGuard><AdminProjectsPage /></AdminGuard>;
+    } else if (currentPath === '/admin/team') {
+      adminContent = <AdminGuard><AdminTeamPage /></AdminGuard>;
+    } else if (currentPath === '/admin/inquiries') {
+      adminContent = <AdminGuard><AdminInquiriesPage /></AdminGuard>;
+    } else {
+      adminContent = <AdminGuard><DashboardPage /></AdminGuard>;
     }
 
-    if (currentPath === '/admin') {
-      return <AdminGuard><DashboardPage /></AdminGuard>;
-    }
-    if (currentPath === '/admin/products') {
-      return <AdminGuard><ProductsPage /></AdminGuard>;
-    }
-    if (currentPath === '/admin/projects') {
-      return <AdminGuard><AdminProjectsPage /></AdminGuard>;
-    }
-    if (currentPath === '/admin/team') {
-      return <AdminGuard><AdminTeamPage /></AdminGuard>;
-    }
-    if (currentPath === '/admin/inquiries') {
-      return <AdminGuard><AdminInquiriesPage /></AdminGuard>;
-    }
-
-    return <AdminGuard><DashboardPage /></AdminGuard>;
+    return (
+      <>
+        <SEOHead pageKey="admin" />
+        <Suspense fallback={<RouteFallback />}>
+          {adminContent}
+        </Suspense>
+      </>
+    );
   }
 
-  let content;
+  let content: JSX.Element;
   let seoPageKey = 'home';
   let schemaData: object | undefined;
+  let isNotFound = false;
 
   if (currentPath === '/') {
     content = <HomePage />;
@@ -94,6 +120,12 @@ function RouterContent() {
   } else if (currentPath === '/mietshop') {
     content = <ShopPage />;
     seoPageKey = 'mietshop';
+    schemaData = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Mietshop für Veranstaltungstechnik',
+      url: `${getBaseUrl()}/mietshop`,
+    };
   } else if (currentPath.startsWith('/mietshop/') && currentPath !== '/mietshop/anfrage') {
     const slug = currentPath.replace('/mietshop/', '');
     content = <ProductDetailPage slug={slug} />;
@@ -123,6 +155,8 @@ function RouterContent() {
     content = <DatenschutzPage />;
     seoPageKey = 'datenschutz';
   } else {
+    seoPageKey = 'notfound';
+    isNotFound = true;
     content = (
       <div className="bg-app-bg text-white min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -146,8 +180,14 @@ function RouterContent() {
           Direkt zum Inhalt springen
         </a>
         <Header />
-        <main id="main-content" className="app-main">
-          {content}
+        <main
+          id="main-content"
+          className="app-main"
+          aria-label={isNotFound ? 'Fehlerseite' : undefined}
+        >
+          <Suspense fallback={<RouteFallback />}>
+            {content}
+          </Suspense>
         </main>
         <Footer />
       </div>

@@ -108,8 +108,6 @@ async function generateSitemap() {
     '/projekte',
     '/team',
     '/kontakt',
-    '/impressum',
-    '/datenschutz',
   ];
 
   const dynamicRoutes = await collectDynamicRoutes();
