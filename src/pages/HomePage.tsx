@@ -22,15 +22,15 @@ export default function HomePage() {
       icon: Lightbulb,
       title: 'Mietshop',
       description:
-        'Mieten Sie professionelle Licht-, Ton- und Buehnentechnik fuer Veranstaltungen in Berlin und Brandenburg.',
+        'Mieten Sie professionelle Licht-, Ton- und Bühnentechnik für Veranstaltungen in Berlin und Brandenburg.',
       link: '/mietshop',
-      highlights: ['Lichttechnik', 'Tontechnik', 'DJ-Equipment', 'Buehnentechnik'],
+      highlights: ['Lichttechnik', 'Tontechnik', 'DJ-Equipment', 'Bühnentechnik'],
     },
     {
       icon: Music,
       title: 'Dienstleistungen',
       description:
-        'Wir uebernehmen Planung, Aufbau und Betreuung, damit Sie sich auf Ihre Gaeste und Inhalte konzentrieren koennen.',
+        'Wir übernehmen Planung, Aufbau und Betreuung, damit Sie sich auf Ihre Gäste und Inhalte konzentrieren können.',
       link: '/dienstleistungen',
       highlights: ['Technische Planung', 'Aufbau & Installation', 'Event-Betreuung', 'Festinstallationen'],
     },
@@ -38,29 +38,29 @@ export default function HomePage() {
       icon: Wrench,
       title: 'Werkstatt-Services',
       description:
-        'Halten Sie Ihr Equipment einsatzbereit: Reparatur, Wartung und Sicherheitspruefung durch erfahrene Techniker.',
+        'Halten Sie Ihr Equipment einsatzbereit: Reparatur, Wartung und Sicherheitsprüfung durch erfahrene Techniker.',
       link: '/werkstatt',
-      highlights: ['Reparaturen', 'Wartung & Reinigung', 'Modifikationen', 'Sicherheitspruefungen'],
+      highlights: ['Reparaturen', 'Wartung & Reinigung', 'Modifikationen', 'Sicherheitsprüfungen'],
     },
   ];
 
   const features = [
-    'Persoenliche Beratung und klare Ansprechpartner',
-    'Professionelles Equipment fuer kleine und grosse Events',
-    'Zuverlaessige Umsetzung in Berlin und Brandenburg',
-    'Flexible Pakete fuer Privat- und Geschaeftskunden',
+    'Persönliche Beratung und klare Ansprechpartner',
+    'Professionelles Equipment für kleine und grosse Events',
+    'Zuverlässige Umsetzung in Berlin und Brandenburg',
+    'Flexible Pakete für Privat- und Geschäftskunden',
     'Transparente Angebote ohne versteckte Kosten',
-    'Technischer Support waehrend Ihrer Veranstaltung',
+    'Technischer Support während Ihrer Veranstaltung',
   ];
 
   const eventTypes = [
     {
       title: 'Hochzeiten & Privatfeiern',
-      description: 'Atmosphaere, Sound und Licht aus einem abgestimmten Technikpaket.',
+      description: 'Atmosphäre, Sound und Licht aus einem abgestimmten Technikpaket.',
     },
     {
       title: 'Firmenevents & Konferenzen',
-      description: 'Professionelle Technik fuer Vortraege, Praesentationen und Live-Programm.',
+      description: 'Professionelle Technik für Vorträge, Präsentationen und Live-Programm.',
     },
     {
       title: 'Messen & Ausstellungen',
@@ -68,15 +68,15 @@ export default function HomePage() {
     },
     {
       title: 'Stadtfeste & Festivals',
-      description: 'Skalierbare Technikloesungen fuer grosse Flaechen und hohe Reichweiten.',
+      description: 'Skalierbare Techniklösungen für grosse Flächen und hohe Reichweiten.',
     },
     {
       title: 'Club-Events & Partys',
-      description: 'Dynamische Lichtbilder und druckvoller Sound fuer starke Stimmung.',
+      description: 'Dynamische Lichtbilder und druckvoller Sound für starke Stimmung.',
     },
     {
       title: 'Theater & Kulturevents',
-      description: 'Zuverlaessige Technik fuer Inszenierung, Timing und klare Verstaendlichkeit.',
+      description: 'Zuverlässige Technik für Inszenierung, Timing und klare Verständlichkeit.',
     },
   ];
 
@@ -93,7 +93,7 @@ export default function HomePage() {
       number: '02',
       title: 'Technikkonzept',
       description:
-        'Wir erstellen ein klares, nachvollziehbares Konzept fuer Ihre Location, Ihren Ablauf und Ihr Budget.',
+        'Wir erstellen ein klares, nachvollziehbares Konzept für Ihre Location, Ihren Ablauf und Ihr Budget.',
     },
     {
       icon: CheckCircle2,
@@ -107,7 +107,7 @@ export default function HomePage() {
       number: '04',
       title: 'Lieferung & Aufbau',
       description:
-        'Wir liefern puenktlich, bauen fachgerecht auf und pruefen alle Systeme vor Veranstaltungsstart.',
+        'Wir liefern pünktlich, bauen fachgerecht auf und prüfen alle Systeme vor Veranstaltungsstart.',
     },
     {
       icon: Settings,
@@ -121,7 +121,7 @@ export default function HomePage() {
       number: '06',
       title: 'Abbau & Abschluss',
       description:
-        'Nach dem Event uebernehmen wir den Rueckbau. Sie koennen sich voll auf Ihre Gaeste konzentrieren.',
+        'Nach dem Event übernehmen wir den Rückbau. Sie können sich voll auf Ihre Gäste konzentrieren.',
     },
   ];
 
@@ -129,22 +129,22 @@ export default function HomePage() {
     {
       question: 'Wie viel Vorlaufzeit sollten wir einplanen?',
       answer:
-        'Fuer Events mit Full-Service empfehlen wir 3 bis 6 Wochen Vorlauf. Kurzfristige Anfragen sind moeglich, sofern Technik und Team verfuegbar sind.',
+        'Für Events mit Full-Service empfehlen wir 3 bis 6 Wochen Vorlauf. Kurzfristige Anfragen sind möglich, sofern Technik und Team verfügbar sind.',
     },
     {
-      question: 'Uebernehmen Sie Aufbau und Abbau?',
+      question: 'Übernehmen Sie Aufbau und Abbau?',
       answer:
-        'Ja. Auf Wunsch uebernehmen wir Lieferung, Aufbau, technischen Betrieb waehrend der Veranstaltung und den kompletten Abbau.',
+        'Ja. Auf Wunsch übernehmen wir Lieferung, Aufbau, technischen Betrieb während der Veranstaltung und den kompletten Abbau.',
     },
     {
       question: 'In welchem Einsatzgebiet sind Sie unterwegs?',
       answer:
-        'Unser Schwerpunkt liegt auf Berlin und Brandenburg. Einsaetze ausserhalb der Region pruefen wir gerne individuell.',
+        'Unser Schwerpunkt liegt auf Berlin und Brandenburg. Einsätze ausserhalb der Region prüfen wir gerne individuell.',
     },
     {
-      question: 'Arbeiten Sie fuer Privatkunden und Geschaeftskunden?',
+      question: 'Arbeiten Sie für Privatkunden und Geschäftskunden?',
       answer:
-        'Ja, wir betreuen beide Zielgruppen. Von der privaten Feier bis zum Corporate Event erhalten Sie eine passende Loesung.',
+        'Ja, wir betreuen beide Zielgruppen. Von der privaten Feier bis zum Corporate Event erhalten Sie eine passende Lösung.',
     },
     {
       question: 'Wie funktioniert die Preisgestaltung?',
@@ -155,29 +155,29 @@ export default function HomePage() {
 
   return (
     <div className="bg-app-bg text-white">
-      <section className="relative min-h-[72vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden py-10 md:py-16">
+      <section className="section-shell section-shell--hero relative flex min-h-[72vh] items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg"></div>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDU5LCAxMzAsIDI0NiwgMC4wNSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight fade-in">
-              Wir uebernehmen die <span className="text-primary-400">Technik</span>. Sie konzentrieren sich auf Ihr Event.
+        <div className="content-container relative z-10">
+          <div className="mx-auto max-w-5xl text-center">
+            <h1 className="hero-title text-glow mb-6 font-bold fade-in">
+              Wir übernehmen die <span className="text-primary-400">Technik</span>. Sie konzentrieren sich auf Ihr Event.
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed slide-up" style={{ animationDelay: '0.2s' }}>
-              CF Veranstaltungstechnik ist Ihr Partner fuer Events in Berlin und Brandenburg: von der Technikmiete bis zur vollstaendigen Betreuung vor Ort.
+            <p className="hero-copy mx-auto mb-8 text-gray-300 slide-up" style={{ animationDelay: '0.2s' }}>
+              CF Veranstaltungstechnik ist Ihr Partner für Events in Berlin und Brandenburg: von der Technikmiete bis zur vollständigen Betreuung vor Ort.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center slide-up" style={{ animationDelay: '0.4s' }}>
+            <div className="slide-up flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center" style={{ animationDelay: '0.4s' }}>
               <a
                 href="/kontakt"
-                className="w-full sm:w-auto px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg flex items-center justify-center space-x-2 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105 group"
+                className="btn-primary focus-ring tap-target group w-full text-base sm:w-auto"
               >
                 <span>Unverbindliches Angebot anfragen</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
               <a
                 href="/mietshop"
-                className="w-full sm:w-auto px-8 py-4 bg-card-hover text-white rounded-lg hover:bg-gray-700 transition-all font-semibold text-lg border border-gray-700 hover:scale-105"
+                className="btn-secondary focus-ring tap-target w-full text-base sm:w-auto"
               >
                 Mietshop entdecken
               </a>
@@ -186,27 +186,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-card-bg/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Unsere Leistungen fuer Ihr Event</h2>
-            <p className="text-xl text-gray-400">Technik, Service und Beratung aus einer Hand</p>
+      <section className="section-shell bg-card-bg/50">
+        <div className="content-container">
+          <div className="section-head mb-12 md:mb-16">
+            <h2 className="section-title font-bold">Unsere Leistungen für Ihr Event</h2>
+            <p className="section-copy">Technik, Service und Beratung aus einer Hand</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-7">
             {services.map((service, index) => (
               <div
                 key={index}
-                className="bg-card-bg border border-gray-800 rounded-xl p-8 hover:border-blue-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-2 group"
+                className="glass-panel interactive-card group rounded-xl p-6 md:p-8"
               >
-                <div className="w-16 h-16 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-500/20 transition-all duration-300 group-hover:scale-110">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-lg bg-blue-500/12 transition-all duration-300 group-hover:scale-105 group-hover:bg-blue-500/22">
                   <service.icon className="w-8 h-8 text-blue-400 group-hover:rotate-12 transition-transform duration-300" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
-                <p className="text-gray-400 mb-6 leading-relaxed">{service.description}</p>
-                <ul className="space-y-2 mb-6">
+                <h3 className="mb-3 text-2xl font-bold leading-tight">{service.title}</h3>
+                <p className="mb-6 text-gray-300 leading-relaxed">{service.description}</p>
+                <ul className="mb-6 space-y-2.5">
                   {service.highlights.map((highlight, i) => (
-                    <li key={i} className="flex items-center space-x-2 text-sm text-gray-300">
+                    <li key={i} className="flex items-center gap-2 text-sm text-gray-200">
                       <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
                       <span>{highlight}</span>
                     </li>
@@ -214,7 +214,7 @@ export default function HomePage() {
                 </ul>
                 <a
                   href={service.link}
-                  className="inline-flex items-center space-x-2 text-blue-400 hover:text-blue-300 font-medium group-hover:translate-x-1 transition-transform"
+                  className="interactive-link focus-ring inline-flex items-center gap-2 rounded-md px-1 py-1 text-blue-300 font-medium group-hover:translate-x-1 transition-transform"
                 >
                   <span>Mehr erfahren</span>
                   <ArrowRight className="w-4 h-4" />
@@ -225,26 +225,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-app-bg">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Fuer welche Events wir arbeiten</h2>
-            <p className="text-xl text-gray-400">Passende Technik fuer private und berufliche Anlaesse</p>
+      <section className="section-shell bg-app-bg">
+        <div className="content-container">
+          <div className="section-head mb-12 md:mb-16">
+            <h2 className="section-title font-bold">Für welche Events wir arbeiten</h2>
+            <p className="section-copy">Passende Technik für private und berufliche Anlässe</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
             {eventTypes.map((event, index) => (
-              <div key={index} className="bg-card-bg border border-gray-800 rounded-lg p-6 hover:border-blue-500/50 transition-all">
+              <div key={index} className="glass-panel--soft interactive-card rounded-lg p-5 md:p-6">
                 <h3 className="text-xl font-bold mb-2">{event.title}</h3>
-                <p className="text-gray-400 text-sm">{event.description}</p>
+                <p className="text-sm text-gray-300 leading-relaxed">{event.description}</p>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="mt-10 text-center md:mt-12">
             <a
               href="/projekte"
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-card-hover text-white rounded-lg hover:bg-gray-700 transition-all font-medium"
+              className="btn-secondary focus-ring tap-target inline-flex items-center gap-2"
             >
               <span>Referenzen ansehen</span>
               <ArrowRight className="w-4 h-4" />
@@ -253,21 +253,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-card-bg/50">
-        <div className="container mx-auto px-4">
+      <section className="section-shell bg-card-bg/50">
+        <div className="content-container">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">Warum Kunden mit uns arbeiten</h2>
-              <p className="text-xl text-gray-400">Verlaesslichkeit, klare Kommunikation und saubere Umsetzung</p>
+            <div className="section-head mb-10 md:mb-12">
+              <h2 className="section-title font-bold">Warum Kunden mit uns arbeiten</h2>
+              <p className="section-copy">Verlässlichkeit, klare Kommunikation und saubere Umsetzung</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
               {features.map((feature, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
+                <div key={index} className="glass-panel--soft flex items-start gap-3 rounded-xl p-4 md:p-5">
+                  <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-500">
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </div>
-                  <p className="text-gray-300 leading-relaxed">{feature}</p>
+                  <p className="text-gray-200 leading-relaxed">{feature}</p>
                 </div>
               ))}
             </div>
@@ -275,21 +275,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-app-bg">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">So arbeiten wir mit Ihnen zusammen</h2>
-            <p className="text-xl text-gray-400">Von der Anfrage bis zum Abbau in sechs klaren Schritten</p>
+      <section className="section-shell bg-app-bg">
+        <div className="content-container">
+          <div className="section-head mb-12 md:mb-16">
+            <h2 className="section-title font-bold">So arbeiten wir mit Ihnen zusammen</h2>
+            <p className="section-copy">Von der Anfrage bis zum Abbau in sechs klaren Schritten</p>
           </div>
 
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
               {processSteps.map((step, index) => (
                 <div key={index} className="relative">
-                  <div className="bg-card-bg border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all h-full">
-                    <div className="flex items-start space-x-4 mb-4">
+                  <div className="glass-panel interactive-card h-full rounded-xl p-6">
+                    <div className="mb-4 flex items-start gap-4">
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500/10">
                           <step.icon className="w-6 h-6 text-blue-400" />
                         </div>
                       </div>
@@ -298,7 +298,7 @@ export default function HomePage() {
                         <h3 className="text-xl font-bold text-white">{step.title}</h3>
                       </div>
                     </div>
-                    <p className="text-gray-400 leading-relaxed">{step.description}</p>
+                    <p className="text-gray-300 leading-relaxed">{step.description}</p>
                   </div>
                   {index < processSteps.length - 1 && (
                     <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
@@ -310,10 +310,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="text-center mt-12">
+          <div className="mt-10 text-center md:mt-12">
             <a
               href="/kontakt"
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg shadow-lg shadow-blue-500/20"
+              className="btn-primary focus-ring tap-target inline-flex items-center gap-2"
             >
               <span>Unverbindliches Angebot anfragen</span>
               <ArrowRight className="w-5 h-5" />
@@ -322,26 +322,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-card-bg/50">
-        <div className="container mx-auto px-4">
+      <section className="section-shell bg-card-bg/50">
+        <div className="content-container">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500/10 rounded-full mb-4">
+            <div className="section-head mb-10 md:mb-12">
+              <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10">
                 <HelpCircle className="w-8 h-8 text-blue-400" />
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">Haeufige Fragen</h2>
-              <p className="text-xl text-gray-400">Kompakte Antworten rund um Ablauf, Region und Preise</p>
+              <h2 className="section-title font-bold">Häufige Fragen</h2>
+              <p className="section-copy">Kompakte Antworten rund um Ablauf, Region und Preise</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {faqs.map((faq, index) => (
                 <div
                   key={index}
-                  className="bg-card-bg border border-gray-800 rounded-lg overflow-hidden hover:border-blue-500/30 transition-all"
+                  className="glass-panel--soft interactive-card overflow-hidden rounded-xl"
                 >
                   <button
                     onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
-                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-card-hover/50 transition-colors"
+                    className="focus-ring tap-target flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-card-hover/45 md:px-6 md:py-5"
                   >
                     <span className="text-lg font-semibold text-white pr-4">{faq.question}</span>
                     <ChevronDown
@@ -351,7 +351,7 @@ export default function HomePage() {
                     />
                   </button>
                   {openFaqIndex === index && (
-                    <div className="px-6 pb-5 text-gray-400 leading-relaxed border-t border-gray-800">
+                    <div className="border-t border-gray-700/80 px-5 pb-5 text-gray-300 leading-relaxed md:px-6">
                       <p className="pt-4">{faq.answer}</p>
                     </div>
                   )}
@@ -359,19 +359,19 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-12 bg-gradient-to-r from-blue-900/20 to-card-bg border border-gray-800 rounded-xl p-8 text-center">
-              <h3 className="text-2xl font-bold mb-3">Sie haben eine konkrete Anforderung?</h3>
-              <p className="text-gray-400 mb-6">Sprechen Sie mit uns. Wir erstellen Ihnen kurzfristig ein passendes Angebot.</p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="glass-panel mt-10 rounded-xl p-6 text-center md:mt-12 md:p-8">
+              <h3 className="mb-3 text-2xl font-bold leading-tight">Sie haben eine konkrete Anforderung?</h3>
+              <p className="mx-auto mb-6 max-w-[60ch] text-gray-300">Sprechen Sie mit uns. Wir erstellen Ihnen kurzfristig ein passendes Angebot.</p>
+              <div className="flex flex-col justify-center gap-3 sm:flex-row">
                 <a
                   href="/kontakt"
-                  className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold"
+                  className="btn-primary focus-ring tap-target"
                 >
                   Kontakt aufnehmen
                 </a>
                 <a
                   href={COMPANY_INFO.contact.phoneLink}
-                  className="px-6 py-3 bg-card-hover text-white rounded-lg hover:bg-gray-700 transition-all font-semibold flex items-center justify-center space-x-2"
+                  className="btn-secondary focus-ring tap-target inline-flex items-center justify-center gap-2"
                 >
                   <Phone className="w-4 h-4" />
                   <span>{COMPANY_INFO.contact.phone}</span>
@@ -382,23 +382,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Planen Sie Ihr Event mit technischer Sicherheit</h2>
-            <p className="text-xl text-gray-300 mb-8">
-              Wir unterstuetzen Sie von der ersten Idee bis zur letzten Minute auf der Veranstaltung - in Berlin und Brandenburg.
+      <section className="section-shell bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="content-container">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="section-title mb-6 font-bold">Planen Sie Ihr Event mit technischer Sicherheit</h2>
+            <p className="section-copy mb-8 text-gray-200">
+              Wir unterstützen Sie von der ersten Idee bis zur letzten Minute auf der Veranstaltung - in Berlin und Brandenburg.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
               <a
                 href="/kontakt"
-                className="px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg shadow-lg shadow-blue-500/20"
+                className="btn-primary focus-ring tap-target"
               >
                 Unverbindliches Angebot anfragen
               </a>
               <a
                 href={COMPANY_INFO.contact.phoneLink}
-                className="px-8 py-4 bg-card-hover text-white rounded-lg hover:bg-gray-700 transition-all font-semibold text-lg border border-gray-700"
+                className="btn-secondary focus-ring tap-target"
               >
                 {COMPANY_INFO.contact.phone}
               </a>

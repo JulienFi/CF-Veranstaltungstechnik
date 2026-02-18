@@ -48,12 +48,12 @@ export default function AdminProjectsPage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Bitte wÃ¤hle eine Bilddatei aus');
+      alert('Bitte wähle eine Bilddatei aus');
       return;
     }
 
     if (file.size > 5242880) {
-      alert('Bild ist zu groÃŸ. Maximale GrÃ¶ÃŸe: 5 MB');
+      alert('Bild ist zu groß. Maximale Größe: 5 MB');
       return;
     }
 
@@ -116,7 +116,7 @@ export default function AdminProjectsPage() {
   };
 
   const deleteProject = async (id: string) => {
-    if (!confirm('Projekt wirklich lÃ¶schen?')) return;
+    if (!confirm('Projekt wirklich löschen?')) return;
 
     try {
       await projectRepository.delete(id);
@@ -177,7 +177,7 @@ export default function AdminProjectsPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
-              <span>ZurÃ¼ck zum Dashboard</span>
+              <span>Zurück zum Dashboard</span>
             </a>
             {!showForm && (
               <button
@@ -317,7 +317,7 @@ export default function AdminProjectsPage() {
                     type="text"
                     value={formData.date || ''}
                     onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    placeholder="z.B. MÃ¤rz 2024"
+                    placeholder="z.B. März 2024"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
                   />
                 </div>
@@ -350,7 +350,7 @@ export default function AdminProjectsPage() {
                   disabled={uploading}
                   className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {uploading ? 'Wird gespeichert...' : (editingProject ? 'Ã„nderungen speichern' : 'Projekt erstellen')}
+                  {uploading ? 'Wird gespeichert...' : (editingProject ? 'Änderungen speichern' : 'Projekt erstellen')}
                 </button>
                 <button
                   type="button"

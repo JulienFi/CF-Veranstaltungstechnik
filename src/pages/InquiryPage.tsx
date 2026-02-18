@@ -142,7 +142,7 @@ function validateInquiryForm(formData: InquiryFormData): InquiryValidationErrors
   }
 
   if (email && !isValidEmail(email)) {
-    errors.email = 'Bitte geben Sie eine gueltige E-Mail-Adresse ein.';
+    errors.email = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
   }
 
   if (!message) {
@@ -189,7 +189,7 @@ function buildWhatsAppMessage(
 ): string {
   const lines: string[] = [
     'Hallo CF Veranstaltungstechnik,',
-    'ich moechte ein Angebot anfragen.',
+    'ich möchte ein Angebot anfragen.',
   ];
 
   if (primaryProduct) {
@@ -272,7 +272,7 @@ export default function InquiryPage() {
     setSEO({
       title: 'Anfrage | CF Veranstaltungstechnik',
       description:
-        'Senden Sie Ihre unverbindliche Anfrage fuer Veranstaltungstechnik. Wir erstellen ein passendes Angebot fuer Ihr Event.',
+        'Senden Sie Ihre unverbindliche Anfrage für Veranstaltungstechnik. Wir erstellen ein passendes Angebot für Ihr Event.',
       canonical,
       ogImage: '/images/og-cf-veranstaltungstechnik.jpg',
       schemaData: {
@@ -280,7 +280,7 @@ export default function InquiryPage() {
         '@type': 'ContactPage',
         name: 'Anfrage',
         description:
-          'Anfrageformular fuer Mietshop-Produkte und Veranstaltungstechnik in Berlin und Brandenburg.',
+          'Anfrageformular für Mietshop-Produkte und Veranstaltungstechnik in Berlin und Brandenburg.',
         url: canonical,
       },
     });
@@ -481,7 +481,7 @@ export default function InquiryPage() {
       setSubmitted(true);
     } catch (error) {
       console.error('Error submitting inquiry:', error);
-      setSubmitError('Die Anfrage konnte nicht gesendet werden. Bitte pruefen Sie Ihre Angaben und versuchen Sie es erneut.');
+      setSubmitError('Die Anfrage konnte nicht gesendet werden. Bitte prüfen Sie Ihre Angaben und versuchen Sie es erneut.');
     } finally {
       setLoading(false);
     }
@@ -495,16 +495,16 @@ export default function InquiryPage() {
             <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-green-400" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4">Vielen Dank fuer Ihre Anfrage!</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4">Vielen Dank für Ihre Anfrage!</h1>
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von zwei Stunden mit den naechsten Schritten.
+              Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von zwei Stunden mit den nächsten Schritten.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
               <a
                 href="/mietshop"
                 className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium"
               >
-                Zurueck zum Shop
+                Zurück zum Shop
               </a>
               <a
                 href="/"
@@ -522,7 +522,7 @@ export default function InquiryPage() {
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-all font-medium"
               >
                 <MessageCircle className="w-5 h-5" />
-                <span>Rueckfrage per WhatsApp</span>
+                <span>Rückfrage per WhatsApp</span>
               </a>
             )}
           </div>
@@ -534,17 +534,17 @@ export default function InquiryPage() {
   return (
     <div className="bg-app-bg text-white min-h-screen py-14 md:py-20">
       <div className="container mx-auto px-4">
-        <BackButton href="/mietshop" label="Zurueck zum Shop" className="mb-8" />
+        <BackButton href="/mietshop" label="Zurück zum Shop" className="mb-8" />
 
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Angebotsanfrage</h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 md:mb-12">
-            Fuenf Felder reichen fuer den Start. Wir melden uns schnell mit einer passenden Loesung fuer Ihr Event.
+            Fünf Felder reichen für den Start. Wir melden uns schnell mit einer passenden Lösung für Ihr Event.
           </p>
 
           {prefilledProduct && (
             <div className="bg-card-bg border border-blue-500/30 rounded-xl p-4 md:p-5 mb-6">
-              <p className="text-sm text-blue-300 mb-3">Du fragst an fuer:</p>
+              <p className="text-sm text-blue-300 mb-3">Du fragst an für:</p>
               <div className="flex items-center gap-4">
                 <img
                   src={resolveImageUrl(prefilledProduct.image_url, 'product', prefilledProduct.slug ?? prefilledProduct.name)}
@@ -569,7 +569,7 @@ export default function InquiryPage() {
 
           {products.length > 0 && (
             <div className="bg-card-bg border border-gray-800 rounded-xl p-6 mb-8">
-              <h2 className="text-xl font-bold mb-4">Ausgewaehlte Produkte ({products.length})</h2>
+              <h2 className="text-xl font-bold mb-4">Ausgewählte Produkte ({products.length})</h2>
               <div className="space-y-3">
                 {products.map((product) => (
                   <div
@@ -689,7 +689,7 @@ export default function InquiryPage() {
                   onChange={(event) => updateField('message', event.target.value)}
                   onBlur={() => handleBlur('message')}
                   rows={6}
-                  placeholder="Was wird benoetigt, wie viele Personen, welche Besonderheiten?"
+                  placeholder="Was wird benötigt, wie viele Personen, welche Besonderheiten?"
                   className="w-full px-4 py-3 bg-card-bg border border-gray-800 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-none"
                 />
                 {touchedFields.message && validationErrors.message && (

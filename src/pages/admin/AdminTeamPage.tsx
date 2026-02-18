@@ -48,12 +48,12 @@ export default function AdminTeamPage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Bitte wÃ¤hle eine Bilddatei aus');
+      alert('Bitte wähle eine Bilddatei aus');
       return;
     }
 
     if (file.size > 5242880) {
-      alert('Bild ist zu groÃŸ. Maximale GrÃ¶ÃŸe: 5 MB');
+      alert('Bild ist zu groß. Maximale Größe: 5 MB');
       return;
     }
 
@@ -116,7 +116,7 @@ export default function AdminTeamPage() {
   };
 
   const deleteMember = async (id: string) => {
-    if (!confirm('Teammitglied wirklich lÃ¶schen?')) return;
+    if (!confirm('Teammitglied wirklich löschen?')) return;
 
     try {
       await teamRepository.delete(id);
@@ -176,7 +176,7 @@ export default function AdminTeamPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
-              <span>ZurÃ¼ck zum Dashboard</span>
+              <span>Zurück zum Dashboard</span>
             </a>
             {!showForm && (
               <button
@@ -347,7 +347,7 @@ export default function AdminTeamPage() {
                   disabled={uploading}
                   className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {uploading ? 'Wird gespeichert...' : (editingMember ? 'Ã„nderungen speichern' : 'Teammitglied erstellen')}
+                  {uploading ? 'Wird gespeichert...' : (editingMember ? 'Änderungen speichern' : 'Teammitglied erstellen')}
                 </button>
                 <button
                   type="button"

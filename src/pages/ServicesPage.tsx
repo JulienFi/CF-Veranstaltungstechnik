@@ -7,55 +7,55 @@ export default function ServicesPage() {
       icon: Lightbulb,
       title: 'Technische Planung',
       description:
-        'Wir planen Ihr Event technisch bis ins Detail, damit am Veranstaltungstag alles stabil und planbar laeuft.',
+        'Wir planen Ihr Event technisch bis ins Detail, damit am Veranstaltungstag alles stabil und planbar läuft.',
       details: [
         'Analyse von Anlass, Location und Ablauf',
-        'Konzept fuer Licht-, Ton- und Buehnentechnik',
+        'Konzept für Licht-, Ton- und Bühnentechnik',
         'Abstimmung mit Location und weiteren Gewerken',
         'Budgetorientierte Varianten und klare Empfehlungen',
-        'Transparente Angebotsbasis ohne Ueberraschungen',
+        'Transparente Angebotsbasis ohne Überraschungen',
       ],
       process: [
-        'Briefing und Zielklaerung',
-        'Technische Einschraetzung und Konzeptvorschlag',
+        'Briefing und Zielklärung',
+        'Technische Einschätzung und Konzeptvorschlag',
         'Feinabstimmung nach Budget und Ablauf',
         'Finales Setup inkl. Zeit- und Aufbauplan',
-        'Uebergabe an Umsetzungsteam',
+        'Übergabe an Umsetzungsteam',
       ],
       useCases:
-        'Ideal fuer Firmenveranstaltungen, Konferenzen, Galas, Messen und private Feiern mit hohem Qualitaetsanspruch.',
+        'Ideal für Firmenveranstaltungen, Konferenzen, Galas, Messen und private Feiern mit hohem Qualitätsanspruch.',
     },
     {
       icon: Wrench,
       title: 'Aufbau & Installation',
       description:
-        'Wir uebernehmen Lieferung, Aufbau und technische Inbetriebnahme, damit Sie keinen Koordinationsaufwand haben.',
+        'Wir übernehmen Lieferung, Aufbau und technische Inbetriebnahme, damit Sie keinen Koordinationsaufwand haben.',
       details: [
-        'Puenktliche Anlieferung der Technik',
+        'Pünktliche Anlieferung der Technik',
         'Fachgerechter Aufbau nach abgestimmtem Plan',
         'Sichere Verkabelung und Systemtests',
         'Soundcheck und finale Lichtabstimmung',
-        'Geordneter Rueckbau nach Veranstaltungsende',
+        'Geordneter Rückbau nach Veranstaltungsende',
       ],
       process: [
-        'Zeitplan fuer Anlieferung und Aufbau',
+        'Zeitplan für Anlieferung und Aufbau',
         'Montage vor Ort',
         'Systemtest und Abnahme mit Ihnen',
-        'Eventbetrieb gemaess Ablauf',
-        'Abbau und Ruecktransport',
+        'Eventbetrieb gemäss Ablauf',
+        'Abbau und Rücktransport',
       ],
       useCases:
-        'Ideal, wenn Sie die Technik nicht selbst aufbauen moechten und einen verlaesslichen Full-Service benoetigen.',
+        'Ideal, wenn Sie die Technik nicht selbst aufbauen möchten und einen verlässlichen Full-Service benötigen.',
     },
     {
       icon: Users,
       title: 'Technische Betreuung',
       description:
-        'Unsere Techniker begleiten Ihr Event vor Ort und sorgen fuer einen stoerungsfreien Ablauf.',
+        'Unsere Techniker begleiten Ihr Event vor Ort und sorgen für einen störungsfreien Ablauf.',
       details: [
-        'Technische Betreuung waehrend der Veranstaltung',
+        'Technische Betreuung während der Veranstaltung',
         'Bedienung von Licht- und Tonsystemen',
-        'Schnelle Reaktion auf kurzfristige Aenderungen',
+        'Schnelle Reaktion auf kurzfristige Änderungen',
         'Fehlerbehebung ohne Umwege',
         'Klare Kommunikation mit Regie, Moderation oder DJ',
       ],
@@ -64,16 +64,16 @@ export default function ServicesPage() {
         'Finaler Technikcheck',
         'Laufender Betrieb und Monitoring',
         'Situative Anpassungen in Echtzeit',
-        'Abschluss und geordnete Uebergabe',
+        'Abschluss und geordnete Übergabe',
       ],
       useCases:
-        'Ideal fuer Events mit Liveslots, mehreren Programmpunkten oder wechselnden Sprecher- und Showelementen.',
+        'Ideal für Events mit Liveslots, mehreren Programmpunkten oder wechselnden Sprecher- und Showelementen.',
     },
     {
       icon: Building2,
       title: 'Festinstallationen',
       description:
-        'Wir planen und installieren dauerhafte Technikloesungen fuer Locations in Berlin und Brandenburg.',
+        'Wir planen und installieren dauerhafte Techniklösungen für Locations in Berlin und Brandenburg.',
       details: [
         'Konzeption passender Festinstallationen',
         'Integration in bestehende Infrastruktur',
@@ -89,7 +89,7 @@ export default function ServicesPage() {
         'Schulung und Support-Setup',
       ],
       useCases:
-        'Ideal fuer Clubs, Bars, Saele, Konferenzflaechen und Eventlocations mit regelmaessigem Betrieb.',
+        'Ideal für Clubs, Bars, Säle, Konferenzflächen und Eventlocations mit regelmässigem Betrieb.',
     },
   ];
 
@@ -97,20 +97,20 @@ export default function ServicesPage() {
     {
       question: 'Wie viel Vorlaufzeit ist sinnvoll?',
       answer:
-        'Fuer groessere Produktionen empfehlen wir 3 bis 6 Wochen Vorlauf. Kurzfristige Einsaetze sind moeglich, wenn Material und Team verfuegbar sind.',
+        'Für grössere Produktionen empfehlen wir 3 bis 6 Wochen Vorlauf. Kurzfristige Einsätze sind möglich, wenn Material und Team verfügbar sind.',
     },
     {
-      question: 'Uebernehmen Sie Aufbau und Abbau komplett?',
+      question: 'Übernehmen Sie Aufbau und Abbau komplett?',
       answer:
-        'Ja. Wir koennen Lieferung, Aufbau, Betreuung und Abbau vollstaendig uebernehmen. Sie entscheiden den gewuenschten Serviceumfang.',
+        'Ja. Wir können Lieferung, Aufbau, Betreuung und Abbau vollständig übernehmen. Sie entscheiden den gewünschten Serviceumfang.',
     },
     {
       question: 'In welchem Gebiet bieten Sie den Service an?',
       answer:
-        'Unser Kerngebiet ist Berlin und Brandenburg. Einsaetze ausserhalb der Region kalkulieren wir transparent als individuelles Angebot.',
+        'Unser Kerngebiet ist Berlin und Brandenburg. Einsätze ausserhalb der Region kalkulieren wir transparent als individuelles Angebot.',
     },
     {
-      question: 'Arbeiten Sie mit Privat- und Geschaeftskunden?',
+      question: 'Arbeiten Sie mit Privat- und Geschäftskunden?',
       answer:
         'Ja. Wir betreuen private Feiern, Vereine, Agenturen und Unternehmen mit jeweils passender technischer und organisatorischer Tiefe.',
     },
@@ -125,11 +125,11 @@ export default function ServicesPage() {
     <div className="bg-app-bg text-white min-h-screen">
       <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
         <div className="container mx-auto px-4">
-          <BackButton href="/" label="Zurueck zur Startseite" className="mb-8" />
+          <BackButton href="/" label="Zurück zur Startseite" className="mb-8" />
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Dienstleistungen fuer reibungslose Events</h1>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">Dienstleistungen für reibungslose Events</h1>
             <p className="text-xl text-gray-300 leading-relaxed">
-              Wir uebernehmen die technische Umsetzung Ihrer Veranstaltung in Berlin und Brandenburg - von der Planung bis zur Betreuung vor Ort. Sie konzentrieren sich auf Gaeste und Inhalte.
+              Wir übernehmen die technische Umsetzung Ihrer Veranstaltung in Berlin und Brandenburg - von der Planung bis zur Betreuung vor Ort. Sie konzentrieren sich auf Gäste und Inhalte.
             </p>
           </div>
         </div>
@@ -196,7 +196,7 @@ export default function ServicesPage() {
       <section className="py-20 bg-card-bg/50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold mb-12 text-center">Haeufige Fragen</h2>
+            <h2 className="text-4xl font-bold mb-12 text-center">Häufige Fragen</h2>
             <div className="space-y-6">
               {faq.map((item, index) => (
                 <div key={index} className="bg-card-bg border border-gray-800 rounded-xl p-6">

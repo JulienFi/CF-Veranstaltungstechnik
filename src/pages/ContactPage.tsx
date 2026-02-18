@@ -21,20 +21,20 @@ export default function ContactPage() {
     {
       question: 'Wie viel Vorlaufzeit ist sinnvoll?',
       answer:
-        'Fuer kleinere Events reicht oft ein kurzer Vorlauf. Bei groesseren Veranstaltungen empfehlen wir 3 bis 6 Wochen, damit Technik und Ablauf sauber geplant werden koennen.',
+        'Für kleinere Events reicht oft ein kurzer Vorlauf. Bei grösseren Veranstaltungen empfehlen wir 3 bis 6 Wochen, damit Technik und Ablauf sauber geplant werden können.',
     },
     {
-      question: 'Uebernehmen Sie Aufbau und Abbau?',
+      question: 'Übernehmen Sie Aufbau und Abbau?',
       answer:
-        'Ja. Wir uebernehmen auf Wunsch Lieferung, Aufbau, technische Betreuung waehrend des Events und den kompletten Abbau.',
+        'Ja. Wir übernehmen auf Wunsch Lieferung, Aufbau, technische Betreuung während des Events und den kompletten Abbau.',
     },
     {
       question: 'In welchem Gebiet sind Sie aktiv?',
       answer:
-        'Unser Schwerpunkt liegt auf Berlin und Brandenburg. Einsaetze ausserhalb der Region pruefen wir gerne individuell.',
+        'Unser Schwerpunkt liegt auf Berlin und Brandenburg. Einsätze ausserhalb der Region prüfen wir gerne individuell.',
     },
     {
-      question: 'Arbeiten Sie fuer Privat- und Geschaeftskunden?',
+      question: 'Arbeiten Sie für Privat- und Geschäftskunden?',
       answer:
         'Ja. Wir betreuen private Feiern, Vereine und Unternehmen mit passendem Technik- und Serviceumfang.',
     },
@@ -78,7 +78,7 @@ export default function ContactPage() {
       setSubmitted(true);
     } catch (error) {
       console.error('Error submitting inquiry:', error);
-      setSubmitError('Die Anfrage konnte nicht gesendet werden. Bitte pruefen Sie Ihre Angaben und versuchen Sie es erneut.');
+      setSubmitError('Die Anfrage konnte nicht gesendet werden. Bitte prüfen Sie Ihre Angaben und versuchen Sie es erneut.');
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ export default function ContactPage() {
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold mb-4">Ihre Anfrage ist bei uns eingegangen</h1>
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Vielen Dank fuer Ihr Vertrauen. Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von 24 Stunden bei Ihnen.
+              Vielen Dank für Ihr Vertrauen. Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von 24 Stunden bei Ihnen.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="/" className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium">
@@ -117,11 +117,11 @@ export default function ContactPage() {
     <div className="bg-app-bg text-white min-h-screen">
       <section className="py-14 md:py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
         <div className="container mx-auto px-4">
-          <BackButton href="/" label="Zurueck zur Startseite" className="mb-8" />
+          <BackButton href="/" label="Zurück zur Startseite" className="mb-8" />
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6">Kontakt & Angebot</h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed">
-              Sie planen ein Event in Berlin oder Brandenburg? Senden Sie uns kurz Ihre Anforderungen. Wir uebernehmen die Technik und erstellen ein klares, unverbindliches Angebot.
+              Sie planen ein Event in Berlin oder Brandenburg? Senden Sie uns kurz Ihre Anforderungen. Wir übernehmen die Technik und erstellen ein klares, unverbindliches Angebot.
             </p>
           </div>
         </div>
@@ -223,7 +223,7 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-2">Ich interessiere mich fuer *</label>
+                      <label className="block text-sm font-medium mb-2">Ich interessiere mich für *</label>
                       <select
                         required
                         value={formData.subject}
@@ -281,7 +281,7 @@ export default function ContactPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Haeufige Fragen</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Häufige Fragen</h2>
               <p className="text-gray-400">Kompakte Antworten rund um Ablauf, Region und Preislogik</p>
             </div>
             <div className="space-y-4">
@@ -299,9 +299,9 @@ export default function ContactPage() {
       <section className="py-14 md:py-20 bg-card-bg/50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Sie bevorzugen ein Telefongespraech?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Sie bevorzugen ein Telefongespräch?</h2>
             <p className="text-gray-300 text-lg mb-8">
-              Rufen Sie uns direkt an. Wir klaeren mit Ihnen schnell den passenden Technikrahmen fuer Ihr Event.
+              Rufen Sie uns direkt an. Wir klären mit Ihnen schnell den passenden Technikrahmen für Ihr Event.
             </p>
             <a
               href={COMPANY_INFO.contact.phoneLink}

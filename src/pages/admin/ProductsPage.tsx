@@ -182,12 +182,12 @@ export default function ProductsPage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Bitte wÃ¤hle eine Bilddatei aus');
+      alert('Bitte wähle eine Bilddatei aus');
       return;
     }
 
     if (file.size > 5242880) {
-      alert('Bild ist zu groÃŸ. Maximale GrÃ¶ÃŸe: 5 MB');
+      alert('Bild ist zu groß. Maximale Größe: 5 MB');
       return;
     }
 
@@ -291,7 +291,7 @@ export default function ProductsPage() {
   };
 
   const deleteProduct = async (id: string) => {
-    if (!confirm('Produkt wirklich lÃ¶schen?')) return;
+    if (!confirm('Produkt wirklich löschen?')) return;
 
     try {
       await supabase.from('products').delete().eq('id', id);
@@ -402,11 +402,11 @@ export default function ProductsPage() {
     });
 
     if (productsInCategory.length > 0) {
-      alert(`Diese Kategorie kann nicht gelÃ¶scht werden, da sie ${productsInCategory.length} Produkt(e) enthÃ¤lt.`);
+      alert(`Diese Kategorie kann nicht gelöscht werden, da sie ${productsInCategory.length} Produkt(e) enthält.`);
       return;
     }
 
-    if (!confirm('Kategorie wirklich lÃ¶schen?')) return;
+    if (!confirm('Kategorie wirklich löschen?')) return;
 
     try {
       await supabase.from('categories').delete().eq('id', id);
@@ -436,7 +436,7 @@ export default function ProductsPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
-              <span>ZurÃ¼ck zum Dashboard</span>
+              <span>Zurück zum Dashboard</span>
             </a>
             {!showForm && !showCategoryManager && (
               <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-3">
@@ -462,7 +462,7 @@ export default function ProductsPage() {
                 className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-all"
               >
                 <ArrowLeft className="w-5 h-5" />
-                <span>ZurÃ¼ck zu Produkten</span>
+                <span>Zurück zu Produkten</span>
               </button>
             )}
           </div>
@@ -583,7 +583,7 @@ export default function ProductsPage() {
                       type="submit"
                       className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20"
                     >
-                      {editingCategory ? 'Ã„nderungen speichern' : 'Kategorie erstellen'}
+                      {editingCategory ? 'Änderungen speichern' : 'Kategorie erstellen'}
                     </button>
                     <button
                       type="button"
@@ -702,7 +702,7 @@ export default function ProductsPage() {
                     onChange={(e) => setFormData({...formData, category_id: e.target.value})}
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
                   >
-                    <option value="">Bitte wÃ¤hlen</option>
+                    <option value="">Bitte wählen</option>
                     {categories.map(cat => (
                       <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
@@ -828,7 +828,7 @@ export default function ProductsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">AusfÃ¼hrliche Beschreibung</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Ausführliche Beschreibung</label>
                   <textarea
                     value={formData.full_description}
                     onChange={(e) => setFormData({...formData, full_description: e.target.value})}
@@ -851,7 +851,7 @@ export default function ProductsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Geeignet fÃ¼r</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Geeignet für</label>
                   <textarea
                     value={formData.suitable_for}
                     onChange={(e) => setFormData({...formData, suitable_for: e.target.value})}
@@ -889,7 +889,7 @@ export default function ProductsPage() {
                   disabled={uploading}
                   className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {uploading ? 'Wird gespeichert...' : (editingProduct ? 'Ã„nderungen speichern' : 'Produkt erstellen')}
+                  {uploading ? 'Wird gespeichert...' : (editingProduct ? 'Änderungen speichern' : 'Produkt erstellen')}
                 </button>
                 <button
                   type="button"

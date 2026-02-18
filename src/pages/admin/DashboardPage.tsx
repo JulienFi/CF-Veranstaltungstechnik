@@ -86,7 +86,7 @@ export default function DashboardPage() {
 
       <main className="container mx-auto px-4 py-8 md:py-12">
         <div className="mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Willkommen zurueck!</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Willkommen zurück!</h2>
           <p className="text-gray-400">Verwalten Sie hier Ihre Website-Inhalte</p>
         </div>
 
@@ -167,7 +167,7 @@ export default function DashboardPage() {
               Projekte verwalten
             </h3>
             <p className="text-gray-400 text-sm">
-              Verwalten Sie Ihre Referenzprojekte und fuegen Sie neue hinzu
+              Verwalten Sie Ihre Referenzprojekte und fügen Sie neue hinzu
             </p>
           </a>
 
@@ -182,7 +182,7 @@ export default function DashboardPage() {
               Team verwalten
             </h3>
             <p className="text-gray-400 text-sm">
-              Fuegen Sie Team-Mitglieder hinzu oder bearbeiten Sie Profile
+              Fügen Sie Team-Mitglieder hinzu oder bearbeiten Sie Profile
             </p>
           </a>
 

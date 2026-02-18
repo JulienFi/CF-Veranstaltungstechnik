@@ -10,7 +10,7 @@ export default function Footer() {
         <div className={styles.top}>
           <img src="/images/logo-cf.png" alt="CF Veranstaltungstechnik Logo" className={styles.logo} />
           <p className={styles.lead}>
-            Ihr professioneller Partner fuer Veranstaltungstechnik - von der Planung bis zur Durchfuehrung.
+            Ihr professioneller Partner für Veranstaltungstechnik - von der Planung bis zur Durchführung.
           </p>
         </div>
 

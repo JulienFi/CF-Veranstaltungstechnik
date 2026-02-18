@@ -7,9 +7,10 @@
   border-radius: var(--radius-sm);
   font-weight: 600;
   letter-spacing: 0.01em;
+  line-height: 1.2;
   transition: transform 130ms ease, background-color 130ms ease, border-color 130ms ease, color 130ms ease, box-shadow 130ms ease;
-  min-height: 2.75rem;
-  padding: 0.6rem 1.1rem;
+  min-height: 2.85rem;
+  padding: 0.65rem 1.15rem;
   white-space: nowrap;
   background: rgb(var(--card) / 0.8);
   color: var(--text-main);
@@ -17,7 +18,9 @@
 }
 
 .button:disabled {
-  opacity: 0.58;
+  opacity: 0.56;
+  color: rgb(var(--muted) / 0.7);
+  border-color: rgb(var(--border) / 0.12);
   transform: none;
   box-shadow: none;
 }
@@ -25,7 +28,9 @@
 .button:focus-visible {
   outline: none;
   border-color: rgb(var(--accent) / 0.9);
-  box-shadow: 0 0 0 3px rgb(var(--accent) / 0.34);
+  box-shadow:
+    0 0 0 1px rgb(var(--accent) / 0.92),
+    0 0 0 4px rgb(var(--accent) / 0.3);
 }
 
 .button:not(:disabled):hover {
@@ -41,7 +46,7 @@
 .primary {
   background: linear-gradient(118deg, rgb(var(--primary) / 0.96), rgb(var(--accent) / 0.82));
   border-color: rgb(var(--accent) / 0.54);
-  color: rgb(8 14 24);
+  color: rgb(10 16 25);
   box-shadow: 0 12px 26px rgb(6 13 24 / 0.4);
 }
 
@@ -64,7 +69,7 @@
 .ghost {
   background: transparent;
   border-color: rgb(var(--border) / 0.2);
-  color: var(--text-muted);
+  color: rgb(var(--muted) / 0.96);
   box-shadow: none;
 }
 
@@ -75,20 +80,20 @@
 }
 
 .sm {
-  min-height: 2.4rem;
-  padding: 0.45rem 0.85rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.9rem;
   font-size: var(--text-sm);
 }
 
 .md {
-  min-height: 2.75rem;
-  padding: 0.62rem 1.1rem;
+  min-height: 2.85rem;
+  padding: 0.66rem 1.15rem;
   font-size: var(--text-sm);
 }
 
 .lg {
-  min-height: 3.2rem;
-  padding: 0.78rem 1.35rem;
+  min-height: 3.25rem;
+  padding: 0.8rem 1.45rem;
   font-size: var(--text-md);
 }
 

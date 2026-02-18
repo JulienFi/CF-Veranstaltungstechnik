@@ -20,21 +20,21 @@ export default function QuickViewModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4">
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/82 backdrop-blur-sm"
         onClick={onClose}
       ></div>
-      <div className="relative bg-card-bg rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-800 shadow-2xl">
+      <div className="glass-panel no-scrollbar relative w-full max-w-4xl max-h-[min(92vh,860px)] overflow-y-auto rounded-2xl">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 bg-card-hover rounded-lg hover:bg-gray-700 transition-colors z-10"
+          className="focus-ring tap-target absolute right-3 top-3 z-10 rounded-lg border border-gray-700/75 bg-card-hover/90 p-2 transition-colors hover:bg-card-hover md:right-4 md:top-4"
         >
           <X className="w-5 h-5 text-white" />
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
-          <div className="aspect-square bg-gradient-to-br from-card-hover to-card-bg rounded-xl flex items-center justify-center overflow-hidden">
+        <div className="grid grid-cols-1 gap-5 p-5 md:grid-cols-2 md:gap-8 md:p-8">
+          <div className="glass-panel--soft aspect-square overflow-hidden rounded-xl">
             <img
               src={resolveImageUrl(product.image_url, 'product', product.slug)}
               alt={product.name}
@@ -44,54 +44,54 @@ export default function QuickViewModal({
           </div>
 
           <div className="flex flex-col">
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="px-3 py-1.5 bg-blue-500/10 text-blue-400 rounded-lg text-sm font-medium">
+            <div className="mb-4 flex flex-wrap gap-2">
+              <span className="rounded-md bg-blue-500/14 px-3 py-1.5 text-sm font-medium text-blue-300">
                 {product.categories.name}
               </span>
               {product.tags.slice(0, 3).map(tag => (
-                <span key={tag} className="px-3 py-1.5 bg-card-hover text-gray-300 rounded-lg text-sm">
+                <span key={tag} className="rounded-md bg-card-hover/80 px-3 py-1.5 text-sm text-gray-200">
                   {tag}
                 </span>
               ))}
             </div>
 
-            <h2 className="text-3xl font-bold text-white mb-4">{product.name}</h2>
-            <p className="text-gray-300 mb-6 leading-relaxed">{product.short_description}</p>
+            <h2 className="mb-4 text-3xl font-bold text-white">{product.name}</h2>
+            <p className="mb-6 text-gray-200 leading-relaxed">{product.short_description}</p>
 
             {product.suitable_for && (
-              <div className="mb-4">
-                <h3 className="text-sm font-semibold text-gray-400 mb-2 flex items-center gap-2">
+              <div className="glass-panel--soft mb-4 rounded-xl p-4">
+                <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-300">
                   <Target className="w-4 h-4" />
-                  Geeignet fÃƒÂ¼r
+                  Geeignet für
                 </h3>
-                <p className="text-gray-300 text-sm">{product.suitable_for}</p>
+                <p className="text-sm text-gray-200">{product.suitable_for}</p>
               </div>
             )}
 
             {product.scope_of_delivery && (
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-400 mb-2 flex items-center gap-2">
+              <div className="glass-panel--soft mb-6 rounded-xl p-4">
+                <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-300">
                   <Package className="w-4 h-4" />
                   Lieferumfang
                 </h3>
-                <p className="text-gray-300 text-sm">{product.scope_of_delivery}</p>
+                <p className="text-sm text-gray-200">{product.scope_of_delivery}</p>
               </div>
             )}
 
-            <div className="mt-auto flex gap-3">
+            <div className="mt-2 flex flex-col gap-2.5 sm:mt-auto sm:flex-row">
               <a
                 href={`/mietshop/${product.slug}`}
-                className="flex-1 px-6 py-3 bg-card-hover text-white text-center rounded-lg hover:bg-gray-700 transition-all font-medium"
+                className="btn-secondary focus-ring tap-target flex-1 text-center"
               >
                 Alle Details ansehen
               </a>
               {isInInquiry ? (
                 <button
                   disabled
-                  className="px-6 py-3 bg-green-500/20 text-green-400 rounded-lg font-medium flex items-center gap-2"
+                  className="tap-target inline-flex items-center justify-center gap-2 rounded-lg border border-green-500/45 bg-green-500/16 px-5 py-3 font-medium text-green-300"
                 >
                   <CheckCircle2 className="w-5 h-5" />
-                  HinzugefÃƒÂ¼gt
+                  Hinzugefügt
                 </button>
               ) : (
                 <button
@@ -99,7 +99,7 @@ export default function QuickViewModal({
                     onAddToInquiry(product.id);
                     onClose();
                   }}
-                  className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium flex items-center gap-2"
+                  className="btn-primary focus-ring tap-target inline-flex items-center justify-center gap-2"
                 >
                   <Plus className="w-5 h-5" />
                   Anfragen

@@ -231,7 +231,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
   const handleAddToInquiry = (productId: string) => {
     addToInquiry(productId);
-    showToast('success', 'Produkt zur Anfrageliste hinzugefÃƒÂ¼gt');
+    showToast('success', 'Produkt zur Anfrageliste hinzugefügt');
   };
 
   const isProductInInquiry = product ? isInInquiry(product.id) : false;
@@ -242,10 +242,10 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-app-bg flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-white text-2xl mb-4">Produkt nicht gefunden</h1>
-          <a href="/mietshop" className="text-blue-400 hover:text-blue-300">ZurÃƒÂ¼ck zum Shop</a>
+      <div className="min-h-screen bg-app-bg flex items-center justify-center px-4">
+        <div className="glass-panel--soft max-w-xl text-center rounded-xl px-6 py-8">
+          <h1 className="mb-4 text-2xl font-semibold text-white">Produkt nicht gefunden</h1>
+          <a href="/mietshop" className="interactive-link focus-ring rounded px-1 py-1 text-blue-300 hover:text-blue-200">Zurück zum Shop</a>
         </div>
       </div>
     );
@@ -253,9 +253,9 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
   return (
     <div className="bg-app-bg text-white min-h-screen pb-24 md:pb-0">
-      <section className="py-8 md:py-12 bg-card-bg/50">
-        <div className="container mx-auto px-4">
-          <BackButton href="/mietshop" label="ZurÃƒÂ¼ck zum Shop" className="mb-6" />
+      <section className="section-shell section-shell--tight bg-card-bg/50">
+        <div className="content-container">
+          <BackButton href="/mietshop" label="Zurück zum Shop" className="mb-6 md:mb-8" />
           <Breadcrumb
             items={[
               { label: 'Home', href: '/' },
@@ -265,9 +265,9 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
             ]}
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 md:gap-10">
             <div>
-              <div className="aspect-square bg-gradient-to-br from-card-hover to-card-bg rounded-xl flex items-center justify-center border border-gray-800 overflow-hidden">
+              <div className="glass-panel overflow-hidden rounded-xl">
                 <img
                   src={resolveImageUrl(product.image_url, 'product', product.slug)}
                   alt={product.name}
@@ -279,25 +279,25 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
             </div>
 
             <div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <span className="px-3 py-1.5 bg-blue-500/10 text-blue-400 rounded-lg text-sm font-medium">
+              <div className="mb-4 flex flex-wrap gap-2">
+                <span className="rounded-md bg-blue-500/14 px-3 py-1.5 text-sm font-medium text-blue-300">
                   {product.categories.name}
                 </span>
                 {product.tags.map(tag => (
-                  <span key={tag} className="px-3 py-1.5 bg-card-hover text-gray-300 rounded-lg text-sm">
+                  <span key={tag} className="rounded-md bg-card-hover/80 px-3 py-1.5 text-sm text-gray-200">
                     {tag}
                   </span>
                 ))}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">{product.name}</h1>
-              <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">{product.short_description}</p>
-              <div className="mb-8">
+              <h1 className="section-title mb-4 font-bold">{product.name}</h1>
+              <p className="section-copy mb-8 text-gray-200">{product.short_description}</p>
+              <div className="mb-8 md:mb-10">
                 <div className="mb-3">
                   <PriceModeToggle />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400 mb-1">Preis</p>
+                  <p className="mb-1 text-sm text-gray-300">Preis</p>
                   <div className="text-3xl">
                     <PriceDisplay
                       priceNet={product.price_net}
@@ -309,11 +309,11 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <div className="mb-10 flex flex-col gap-3 sm:flex-row md:mb-12">
                 {isProductInInquiry ? (
                   <a
                     href={`/mietshop/anfrage?product=${encodeURIComponent(product.slug || product.id)}`}
-                    className="flex-1 px-8 py-4 bg-blue-500 text-white text-center rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg flex items-center justify-center space-x-2"
+                    className="btn-primary focus-ring tap-target flex-1 text-center text-base md:text-lg"
                   >
                     <CheckCircle2 className="w-5 h-5" />
                     <span>Zur Angebotsanfrage</span>
@@ -321,29 +321,29 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
                 ) : (
                   <button
                     onClick={() => handleAddToInquiry(product.id)}
-                    className="flex-1 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg flex items-center justify-center space-x-2"
+                    className="btn-primary focus-ring tap-target flex-1 text-base md:text-lg"
                   >
                     <Plus className="w-5 h-5" />
-                    <span>Zur Anfrageliste hinzufÃƒÂ¼gen</span>
+                    <span>Zur Anfrageliste hinzufügen</span>
                   </button>
                 )}
               </div>
 
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-7">
                 <div>
-                  <h3 className="text-xl font-bold mb-4 flex items-center space-x-2">
+                  <h3 className="mb-3 flex items-center gap-2 text-xl font-bold">
                     <Target className="w-5 h-5 text-blue-400" />
-                    <span>Geeignet fÃƒÂ¼r</span>
+                    <span>Geeignet für</span>
                   </h3>
-                  <p className="text-gray-300 leading-relaxed">{product.suitable_for}</p>
+                  <p className="text-gray-200 leading-relaxed">{product.suitable_for}</p>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold mb-4 flex items-center space-x-2">
+                  <h3 className="mb-3 flex items-center gap-2 text-xl font-bold">
                     <Package className="w-5 h-5 text-blue-400" />
                     <span>Lieferumfang</span>
                   </h3>
-                  <p className="text-gray-300 leading-relaxed">{product.scope_of_delivery}</p>
+                  <p className="text-gray-200 leading-relaxed">{product.scope_of_delivery}</p>
                 </div>
               </div>
             </div>
@@ -351,22 +351,22 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
         </div>
       </section>
 
-      <section className="py-16 bg-card-bg/50">
-        <div className="container mx-auto px-4">
+      <section className="section-shell bg-card-bg/50">
+        <div className="content-container">
           <div className="max-w-4xl">
-            <h2 className="text-3xl font-bold mb-6">Beschreibung</h2>
-            <p className="text-gray-300 leading-relaxed text-lg mb-12">{product.full_description}</p>
+            <h2 className="section-title mb-6 font-bold">Beschreibung</h2>
+            <p className="mb-10 text-lg leading-relaxed text-gray-200 md:mb-12">{product.full_description}</p>
 
-            <h2 className="text-3xl font-bold mb-6">Technische Spezifikationen</h2>
-            <div className="bg-card-bg border border-gray-800 rounded-xl overflow-hidden">
+            <h2 className="section-title mb-6 font-bold">Technische Spezifikationen</h2>
+            <div className="glass-panel--soft overflow-hidden rounded-xl">
               {product.specs.map((spec, index) => (
                 <div
                   key={index}
-                  className={`grid grid-cols-1 md:grid-cols-2 gap-4 p-6 ${
+                  className={`grid grid-cols-1 gap-3 p-5 md:grid-cols-2 md:gap-4 md:p-6 ${
                     index !== product.specs.length - 1 ? 'border-b border-gray-800' : ''
                   }`}
                 >
-                  <div className="font-medium text-gray-400">{spec.label}</div>
+                  <div className="font-medium text-gray-300">{spec.label}</div>
                   <div className="text-white">{spec.value}</div>
                 </div>
               ))}
@@ -376,17 +376,17 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
       </section>
 
       {relatedProducts.length > 0 && (
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8">Passende ErgÃƒÂ¤nzungen</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="section-shell">
+          <div className="content-container">
+            <h2 className="section-title mb-8 font-bold">Passende Ergänzungen</h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
               {relatedProducts.map(relatedProduct => (
                 <a
                   key={relatedProduct.id}
                   href={`/mietshop/${relatedProduct.slug}`}
-                  className="bg-card-bg border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10 group"
+                  className="glass-panel interactive-card group overflow-hidden rounded-xl"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-card-hover to-card-bg flex items-center justify-center overflow-hidden">
+                  <div className="aspect-video overflow-hidden bg-gradient-to-br from-card-hover to-card-bg">
                     <img
                       src={resolveImageUrl(relatedProduct.image_url, 'product', relatedProduct.slug)}
                       alt={relatedProduct.name}
@@ -394,11 +394,11 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
                       loading="lazy"
                     />
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-bold mb-2 group-hover:text-blue-400 transition-colors">
+                  <div className="p-5 md:p-6">
+                    <h3 className="mb-2 text-lg font-bold transition-colors group-hover:text-blue-300">
                       {relatedProduct.name}
                     </h3>
-                    <p className="text-gray-400 text-sm line-clamp-2">{relatedProduct.short_description}</p>
+                    <p className="line-clamp-2 text-sm leading-relaxed text-gray-300">{relatedProduct.short_description}</p>
                   </div>
                 </a>
               ))}
@@ -407,16 +407,16 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
         </section>
       )}
 
-      <section className="py-20 bg-card-bg/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Noch Fragen?</h2>
-            <p className="text-gray-300 text-lg mb-8">
+      <section className="section-shell bg-card-bg/50">
+        <div className="content-container">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="section-title mb-6 font-bold">Noch Fragen?</h2>
+            <p className="section-copy mb-8 text-gray-200">
               Unsere Experten beraten Sie gerne zu diesem Produkt und erstellen Ihnen ein individuelles Angebot.
             </p>
             <a
               href="/kontakt"
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg"
+              className="btn-primary focus-ring tap-target inline-flex items-center gap-2"
             >
               <span>Jetzt Kontakt aufnehmen</span>
               <ArrowRight className="w-5 h-5" />

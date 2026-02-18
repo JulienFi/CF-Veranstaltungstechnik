@@ -55,11 +55,11 @@ export default function ProjectsPage() {
     <div className="bg-app-bg text-white min-h-screen">
       <section className="py-14 md:py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
         <div className="container mx-auto px-4">
-          <BackButton href="/" label="Zurueck zur Startseite" className="mb-8" />
+          <BackButton href="/" label="Zurück zur Startseite" className="mb-8" />
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6">Unsere Projekte</h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed">
-              Sehen Sie, wie wir Veranstaltungen in Berlin und Brandenburg technisch umgesetzt haben. Von der Planung bis zum Abbau uebernehmen wir die Technik, damit Sie sich auf Ihr Event konzentrieren koennen.
+              Sehen Sie, wie wir Veranstaltungen in Berlin und Brandenburg technisch umgesetzt haben. Von der Planung bis zum Abbau übernehmen wir die Technik, damit Sie sich auf Ihr Event konzentrieren können.
             </p>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function ProjectsPage() {
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Ihr Projekt mit uns?</h2>
             <p className="text-xl text-gray-300 mb-8">
-              Lassen Sie uns Ihr naechstes Event gemeinsam planen. Sie erhalten ein klares, unverbindliches Angebot fuer Technik und Service.
+              Lassen Sie uns Ihr nächstes Event gemeinsam planen. Sie erhalten ein klares, unverbindliches Angebot für Technik und Service.
             </p>
             <a
               href="/kontakt"

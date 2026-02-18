@@ -68,7 +68,7 @@ function buildWhatsAppReplyLink(inquiry: InquiryDTO): string | null {
 
   const message = [
     `Hallo ${inquiry.name},`,
-    'danke fuer Ihre Anfrage bei CF Veranstaltungstechnik.',
+    'danke für Ihre Anfrage bei CF Veranstaltungstechnik.',
     'Wir melden uns kurzfristig mit einem passenden Angebot.',
   ].join('\n');
 
@@ -190,7 +190,7 @@ export default function AdminInquiriesPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
-              <span>Zurueck zum Dashboard</span>
+              <span>Zurück zum Dashboard</span>
             </a>
 
             <div className="flex flex-wrap items-center gap-3 text-sm text-gray-300">
@@ -229,7 +229,7 @@ export default function AdminInquiriesPage() {
           <div className="text-gray-300">Lade Anfragen...</div>
         ) : inquiries.length === 0 ? (
           <div className="bg-card-bg border border-card rounded-xl p-8 text-center text-gray-400">
-            Keine Anfragen fuer den gewaehlten Status.
+            Keine Anfragen für den gewählten Status.
           </div>
         ) : (
           <div className="space-y-4">

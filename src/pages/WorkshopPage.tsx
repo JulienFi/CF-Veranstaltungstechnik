@@ -7,37 +7,37 @@ export default function WorkshopPage() {
       icon: Wrench,
       title: 'Reparaturen',
       description:
-        'Wir reparieren Ihre Veranstaltungsgeraete schnell und fachgerecht, damit Ausfaelle Ihre Projekte nicht bremsen.',
+        'Wir reparieren Ihre Veranstaltungsgeräte schnell und fachgerecht, damit Ausfälle Ihre Projekte nicht bremsen.',
       details: [
         'Fehlerdiagnose und technische Analyse',
-        'Reparatur von Licht-, Ton- und Buehnentechnik',
+        'Reparatur von Licht-, Ton- und Bühnentechnik',
         'Beschaffung und Einbau passender Ersatzteile',
         'Funktions- und Belastungstest nach der Instandsetzung',
-        'Dokumentation der durchgefuehrten Arbeiten',
+        'Dokumentation der durchgeführten Arbeiten',
       ],
       benefits: [
         'Kurze Reaktionszeiten',
         'Transparente Kostenstruktur',
-        'Verlaessliche Ersatzteilstrategie',
-        'Garantie auf ausgefuehrte Arbeiten',
+        'Verlässliche Ersatzteilstrategie',
+        'Garantie auf ausgeführte Arbeiten',
       ],
     },
     {
       icon: Sparkles,
       title: 'Wartung & Reinigung',
       description:
-        'Regelmaessige Wartung verlaengert die Lebensdauer Ihrer Technik und reduziert Stoerungen waehrend des Einsatzes.',
+        'Regelmässige Wartung verlängert die Lebensdauer Ihrer Technik und reduziert Störungen während des Einsatzes.',
       details: [
-        'Professionelle Reinigung von Gehaeusen und Optiken',
-        'Pruefung mechanischer Komponenten',
+        'Professionelle Reinigung von Gehäusen und Optiken',
+        'Prüfung mechanischer Komponenten',
         'Austausch typischer Verschleissteile',
         'Kalibrierung und Softwarepflege',
-        'Funktionspruefung vor Rueckgabe',
+        'Funktionsprüfung vor Rückgabe',
       ],
       benefits: [
         'Hohe Betriebssicherheit',
-        'Planbare Einsatzfaehigkeit',
-        'Weniger Ausfaelle im Eventbetrieb',
+        'Planbare Einsatzfähigkeit',
+        'Weniger Ausfälle im Eventbetrieb',
         'Werterhalt Ihrer Investition',
       ],
     },
@@ -47,36 +47,36 @@ export default function WorkshopPage() {
       description:
         'Wir passen bestehende Systeme an neue Anforderungen an, damit Ihre Technik auch morgen noch wirtschaftlich einsetzbar ist.',
       details: [
-        'Anpassungen fuer spezielle Produktionsanforderungen',
+        'Anpassungen für spezielle Produktionsanforderungen',
         'Technische Upgrades bestehender Systeme',
         'Integration neuer Komponenten',
         'Optimierung von Signalwegen und Steuerung',
-        'Praxistest der geaenderten Konfiguration',
+        'Praxistest der geänderten Konfiguration',
       ],
       benefits: [
-        'Passgenaue Loesungen statt Standardumbau',
-        'Verlaengerte Nutzungsdauer vorhandener Technik',
+        'Passgenaue Lösungen statt Standardumbau',
+        'Verlängerte Nutzungsdauer vorhandener Technik',
         'Nachvollziehbare Umsetzung',
         'Beratung zu sinnvollen Modernisierungsschritten',
       ],
     },
     {
       icon: Shield,
-      title: 'Sicherheitspruefungen',
+      title: 'Sicherheitsprüfungen',
       description:
-        'Wir pruefen Ihre Technik nach relevanten Sicherheitsstandards und dokumentieren Ergebnisse nachvollziehbar.',
+        'Wir prüfen Ihre Technik nach relevanten Sicherheitsstandards und dokumentieren Ergebnisse nachvollziehbar.',
       details: [
-        'Elektrische Sicherheitspruefung',
-        'Pruefung mechanischer und tragender Komponenten',
+        'Elektrische Sicherheitsprüfung',
+        'Prüfung mechanischer und tragender Komponenten',
         'Funktionstest sicherheitsrelevanter Systeme',
-        'Pruefprotokoll und Kennzeichnung',
-        'Empfehlungen fuer notwendige Nachbesserungen',
+        'Prüfprotokoll und Kennzeichnung',
+        'Empfehlungen für notwendige Nachbesserungen',
       ],
       benefits: [
-        'Mehr Sicherheit fuer Team und Publikum',
+        'Mehr Sicherheit für Team und Publikum',
         'Besseres Risikomanagement',
-        'Dokumentierte Nachweise fuer Betreiber',
-        'Verlaessliche Grundlage fuer den naechsten Einsatz',
+        'Dokumentierte Nachweise für Betreiber',
+        'Verlässliche Grundlage für den nächsten Einsatz',
       ],
     },
   ];
@@ -85,12 +85,12 @@ export default function WorkshopPage() {
     {
       step: '1',
       title: 'Anfrage',
-      description: 'Sie schildern Defekt oder Bedarf und senden uns die wichtigsten Geraetedaten.',
+      description: 'Sie schildern Defekt oder Bedarf und senden uns die wichtigsten Gerätedaten.',
     },
     {
       step: '2',
-      title: 'Kosteneinschaetzung',
-      description: 'Nach Sichtung erhalten Sie eine transparente Einschaetzung zu Aufwand, Zeit und Kosten.',
+      title: 'Kosteneinschätzung',
+      description: 'Nach Sichtung erhalten Sie eine transparente Einschätzung zu Aufwand, Zeit und Kosten.',
     },
     {
       step: '3',
@@ -99,29 +99,29 @@ export default function WorkshopPage() {
     },
     {
       step: '4',
-      title: 'Rueckgabe',
-      description: 'Sie erhalten gepruefte, dokumentierte und einsatzbereite Technik zurueck.',
+      title: 'Rückgabe',
+      description: 'Sie erhalten geprüfte, dokumentierte und einsatzbereite Technik zurück.',
     },
   ];
 
   const features = [
     'Erfahrenes Technikteam mit Praxis aus Live-Produktionen',
     'Spezialisierung auf professionelles Veranstaltungsequipment',
-    'Strukturierte Arbeitsprozesse und klare Rueckmeldungen',
+    'Strukturierte Arbeitsprozesse und klare Rückmeldungen',
     'Nachvollziehbare Kosten und verbindliche Aussagen',
-    'Sorgfaeltige Dokumentation der Arbeiten',
-    'Werkstatt-Support fuer Kunden in Berlin und Brandenburg',
+    'Sorgfältige Dokumentation der Arbeiten',
+    'Werkstatt-Support für Kunden in Berlin und Brandenburg',
   ];
 
   return (
     <div className="bg-app-bg text-white min-h-screen">
       <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
         <div className="container mx-auto px-4">
-          <BackButton href="/" label="Zurueck zur Startseite" className="mb-8" />
+          <BackButton href="/" label="Zurück zur Startseite" className="mb-8" />
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Werkstatt-Service fuer verlassliche Technik</h1>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">Werkstatt-Service für verlässliche Technik</h1>
             <p className="text-xl text-gray-300 leading-relaxed">
-              Wir halten Ihr Equipment in Berlin und Brandenburg einsatzbereit - mit Reparatur, Wartung und Sicherheitspruefung. So reduzieren Sie Ausfaelle und sichern Ihre Eventqualitaet.
+              Wir halten Ihr Equipment in Berlin und Brandenburg einsatzbereit - mit Reparatur, Wartung und Sicherheitsprüfung. So reduzieren Sie Ausfälle und sichern Ihre Eventqualität.
             </p>
           </div>
         </div>
@@ -171,8 +171,8 @@ export default function WorkshopPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold mb-4">So laeuft der Werkstattprozess</h2>
-              <p className="text-xl text-gray-400">Von der Anfrage bis zur einsatzbereiten Rueckgabe</p>
+              <h2 className="text-4xl font-bold mb-4">So läuft der Werkstattprozess</h2>
+              <p className="text-xl text-gray-400">Von der Anfrage bis zur einsatzbereiten Rückgabe</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -221,7 +221,7 @@ export default function WorkshopPage() {
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Jetzt Werkstattanfrage stellen</h2>
             <p className="text-xl text-gray-300 mb-8">
-              Schicken Sie uns Ihr Anliegen. Sie erhalten eine transparente Einschaetzung mit Aufwand, Zeitrahmen und naechsten Schritten.
+              Schicken Sie uns Ihr Anliegen. Sie erhalten eine transparente Einschätzung mit Aufwand, Zeitrahmen und nächsten Schritten.
             </p>
             <a
               href="/kontakt"
