@@ -18,6 +18,7 @@ import PriceModeToggle from '../components/PriceModeToggle';
 import MobileStickyCTA from '../components/MobileStickyCTA';
 import { navigate } from '../lib/navigation';
 import { parseQuery, updateQuery } from '../utils/queryState';
+import { listActiveProductsForShop } from '../repositories/productRepository';
 
 const PRODUCTS_PER_BATCH = 24;
 
@@ -120,7 +121,7 @@ export default function ShopPage() {
     try {
       const [categoriesRes, productsRes] = await Promise.all([
         supabase.from('categories').select('*').order('display_order'),
-        supabase.from('products').select('*, categories!products_category_id_fkey(*)').eq('is_active', true),
+        listActiveProductsForShop(supabase),
       ]);
 
       if (categoriesRes.error) {

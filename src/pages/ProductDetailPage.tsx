@@ -18,6 +18,7 @@ import { navigate } from '../lib/navigation';
 import { useSEO } from '../contexts/seo-state';
 import { generateProductSchema } from '../lib/seo';
 import { getBaseUrl } from '../lib/site';
+import { getActiveProductBySlug, listRelatedByCategory } from '../repositories/productRepository';
 
 interface ProductSpec {
   label: string;
@@ -136,13 +137,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
   const loadRelatedProducts = useCallback(async (categoryId: string, currentProductId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*, categories!products_category_id_fkey(*)')
-        .eq('category_id', categoryId)
-        .eq('is_active', true)
-        .neq('id', currentProductId)
-        .limit(3);
+      const { data, error } = await listRelatedByCategory(supabase, categoryId, currentProductId);
 
       if (error) {
         throw error;
@@ -158,12 +153,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
   const loadProduct = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*, categories!products_category_id_fkey(*)')
-        .eq('slug', slug)
-        .eq('is_active', true)
-        .maybeSingle();
+      const { data, error } = await getActiveProductBySlug(supabase, slug);
 
       if (error) throw error;
       if (data) {
