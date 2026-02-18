@@ -1,0 +1,101 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid rgb(var(--border) / 0.22);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: transform 130ms ease, background-color 130ms ease, border-color 130ms ease, color 130ms ease, box-shadow 130ms ease;
+  min-height: 2.75rem;
+  padding: 0.6rem 1.1rem;
+  white-space: nowrap;
+  background: rgb(var(--card) / 0.8);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+.button:disabled {
+  opacity: 0.58;
+  transform: none;
+  box-shadow: none;
+}
+
+.button:focus-visible {
+  outline: none;
+  border-color: rgb(var(--accent) / 0.9);
+  box-shadow: 0 0 0 3px rgb(var(--accent) / 0.34);
+}
+
+.button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.primary {
+  background: linear-gradient(118deg, rgb(var(--primary) / 0.96), rgb(var(--accent) / 0.82));
+  border-color: rgb(var(--accent) / 0.54);
+  color: rgb(8 14 24);
+  box-shadow: 0 12px 26px rgb(6 13 24 / 0.4);
+}
+
+.primary:not(:disabled):hover {
+  border-color: rgb(var(--accent) / 0.72);
+  box-shadow: 0 16px 34px rgb(6 13 24 / 0.48);
+}
+
+.secondary {
+  background: rgb(var(--card-strong) / 0.76);
+  border-color: rgb(var(--border) / 0.24);
+  color: var(--text-main);
+}
+
+.secondary:not(:disabled):hover {
+  border-color: rgb(var(--accent) / 0.48);
+  background: rgb(var(--card-strong) / 0.95);
+}
+
+.ghost {
+  background: transparent;
+  border-color: rgb(var(--border) / 0.2);
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.ghost:not(:disabled):hover {
+  color: var(--text-main);
+  border-color: rgb(var(--accent) / 0.46);
+  background: rgb(var(--card) / 0.42);
+}
+
+.sm {
+  min-height: 2.4rem;
+  padding: 0.45rem 0.85rem;
+  font-size: var(--text-sm);
+}
+
+.md {
+  min-height: 2.75rem;
+  padding: 0.62rem 1.1rem;
+  font-size: var(--text-sm);
+}
+
+.lg {
+  min-height: 3.2rem;
+  padding: 0.78rem 1.35rem;
+  font-size: var(--text-md);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.loading {
+  pointer-events: none;
+}

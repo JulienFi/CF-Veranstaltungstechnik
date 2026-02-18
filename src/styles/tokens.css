@@ -1,0 +1,81 @@
+:root {
+  --brand-primary: #4193cc;
+  --brand-secondary: #27708f;
+  --brand-accent: #91c4df;
+  --brand-ink: #181b1b;
+  --brand-paper: #f5f6f7;
+
+  --primary: 65 147 204;
+  --accent: 145 196 223;
+  --edgeGray: 43 43 43;
+  --bg: 24 27 27;
+  --bg2: 20 22 24;
+  --surface: 255 255 255;
+  --surface2: 255 255 255;
+  --border: 255 255 255;
+  --text: 245 246 247;
+  --muted: 170 180 200;
+
+  --card: 34 36 44;
+  --card-strong: 44 47 58;
+  --accent2: 65 147 204;
+
+  --surface-0: rgb(var(--bg));
+  --surface-1: rgb(var(--bg2));
+  --surface-2: rgb(var(--card) / 0.82);
+  --surface-3: rgb(var(--card-strong) / 0.84);
+  --surface-border: rgb(var(--border) / 0.17);
+
+  --text-main: rgb(var(--text));
+  --text-muted: rgb(var(--muted));
+  --text-soft: rgb(132 145 168);
+
+  --accent-main: rgb(var(--primary));
+  --accent-strong: rgb(var(--accent));
+  --accent-ink: rgb(11 14 18);
+
+  --success: rgb(22 163 74);
+  --warning: rgb(245 158 11);
+  --danger: rgb(239 68 68);
+
+  --radius-xs: 0.5rem;
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.35rem;
+  --radius-xl: 1.8rem;
+  --radius-round: 999px;
+
+  --shadow-sm: 0 10px 24px rgb(5 7 11 / 0.36);
+  --shadow-md: 0 20px 50px rgb(4 6 10 / 0.44);
+  --shadow-lg: 0 32px 74px rgb(3 5 9 / 0.56);
+  --shadow-focus: 0 0 0 3px rgb(var(--accent) / 0.48);
+
+  --z-header: 50;
+  --z-overlay: 60;
+  --z-modal: 70;
+  --z-toast: 80;
+  --z-sticky: 65;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Sora', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --text-xs: clamp(0.74rem, 0.72rem + 0.08vw, 0.8rem);
+  --text-sm: clamp(0.84rem, 0.82rem + 0.12vw, 0.94rem);
+  --text-md: clamp(0.96rem, 0.93rem + 0.16vw, 1.08rem);
+  --text-lg: clamp(1.08rem, 1.02rem + 0.24vw, 1.3rem);
+  --text-xl: clamp(1.3rem, 1.1rem + 0.78vw, 2rem);
+  --text-2xl: clamp(1.76rem, 1.35rem + 1.32vw, 3.15rem);
+  --text-3xl: clamp(2.24rem, 1.52rem + 2.22vw, 4.4rem);
+}

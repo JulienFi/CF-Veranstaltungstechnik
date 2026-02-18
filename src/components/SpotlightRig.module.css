@@ -1,0 +1,204 @@
+.overlay {
+  --beam-length: 1600px;
+  --beam-alpha: 0.18;
+  --beam-haze-alpha: 0.12;
+  --global-haze-alpha: 0.19;
+  --beam-blur: 22px;
+  --beam-haze-blur: 36px;
+  --beam-falloff: 78%;
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.globalHaze {
+  position: absolute;
+  inset: -15% -10% 0;
+  background:
+    radial-gradient(52rem 28rem at 50% 8%, rgb(var(--primary) / 0.16), transparent 74%),
+    radial-gradient(64rem 40rem at 50% 42%, rgb(var(--primary) / 0.05), transparent 82%),
+    radial-gradient(44rem 24rem at 50% 10%, rgb(39 112 143 / 0.14), transparent 76%);
+  mix-blend-mode: screen;
+  opacity: var(--global-haze-alpha);
+}
+
+.beamWrap {
+  --spotlight-angle: 24deg;
+  position: absolute;
+  width: var(--beam-length);
+  height: var(--beam-length);
+  transform-origin: 0% 100%;
+  transform: rotate(var(--spotlight-angle));
+  will-change: transform;
+}
+
+.leftBeamWrap {
+  left: 60px;
+  bottom: 60px;
+}
+
+.rightBeamWrap {
+  left: calc(100vw - 60px);
+  bottom: 60px;
+  --spotlight-angle: -42deg;
+}
+
+.beamCore,
+.beamHaze {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: var(--beam-length);
+  height: var(--beam-length);
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(
+    140% 132% at 0% 100%,
+    rgb(0 0 0 / 0.9) 0%,
+    rgb(0 0 0 / 0.82) 28%,
+    rgb(0 0 0 / 0.58) 54%,
+    transparent var(--beam-falloff)
+  );
+  mask-image: radial-gradient(
+    140% 132% at 0% 100%,
+    rgb(0 0 0 / 0.9) 0%,
+    rgb(0 0 0 / 0.82) 28%,
+    rgb(0 0 0 / 0.58) 54%,
+    transparent var(--beam-falloff)
+  );
+}
+
+.beamCore {
+  clip-path: polygon(0% 100%, 12% 0%, 28% 0%, 0% 100%);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--primary) / 0) 0%,
+    rgb(var(--accent) / 0.18) 34%,
+    rgb(var(--primary) / 0.09) 72%,
+    rgb(var(--primary) / 0) 100%
+  );
+  filter: blur(var(--beam-blur)) brightness(0.9) saturate(0.8);
+  opacity: var(--beam-alpha);
+}
+
+.beamHaze {
+  clip-path: polygon(0% 100%, 18% 0%, 38% 0%, 0% 100%);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--accent) / 0) 0%,
+    rgb(var(--accent) / 0.16) 38%,
+    rgb(var(--primary) / 0.05) 78%,
+    rgb(var(--primary) / 0) 100%
+  );
+  filter: blur(var(--beam-haze-blur)) brightness(0.9) saturate(0.76);
+  opacity: var(--beam-haze-alpha);
+}
+
+.fixture {
+  position: absolute;
+  width: 30px;
+  height: 20px;
+  border-radius: 8px 8px 5px 5px;
+  border: 1px solid rgb(var(--border) / 0.28);
+  background:
+    linear-gradient(180deg, rgb(var(--card-strong) / 0.82), rgb(var(--bg2) / 0.86)),
+    radial-gradient(circle at 50% 18%, rgb(var(--accent) / 0.48), transparent 58%);
+  box-shadow:
+    inset 0 -2px 6px rgb(var(--primary) / 0.24),
+    0 8px 18px rgb(5 8 14 / 0.42);
+  opacity: 0.7;
+}
+
+.fixture::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -7px;
+  width: 11px;
+  height: 7px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  border: 1px solid rgb(var(--border) / 0.24);
+  background: rgb(var(--card-strong) / 0.82);
+}
+
+.fixture::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -16px;
+  width: 20px;
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgb(var(--accent) / 0.5) 0%, rgb(var(--accent) / 0) 65%);
+}
+
+.leftFixture {
+  left: 45px;
+  bottom: 41px;
+}
+
+.rightFixture {
+  right: 45px;
+  bottom: 41px;
+}
+
+.autoSweep .leftBeamWrap {
+  animation: sweepLeft 8.8s ease-in-out infinite alternate;
+}
+
+.autoSweep .rightBeamWrap {
+  animation: sweepRight 8.8s ease-in-out infinite alternate;
+}
+
+.reducedMotion .leftBeamWrap,
+.reducedMotion .rightBeamWrap {
+  animation-duration: 14s !important;
+  animation-iteration-count: infinite !important;
+  animation-timing-function: ease-in-out !important;
+}
+
+.reducedMotion .fixture {
+  opacity: 0.45;
+}
+
+.debugMode {
+  --beam-alpha: 0.28;
+  --beam-haze-alpha: 0.2;
+  --global-haze-alpha: 0.3;
+  --beam-blur: 14px;
+  --beam-haze-blur: 24px;
+  background: linear-gradient(180deg, rgb(var(--primary) / 0.09), rgb(var(--bg) / 0.04));
+}
+
+.debugMode .fixture {
+  opacity: 0.96;
+}
+
+@keyframes sweepLeft {
+  from {
+    transform: rotate(-8deg);
+  }
+
+  to {
+    transform: rotate(62deg);
+  }
+}
+
+@keyframes sweepRight {
+  from {
+    transform: rotate(-82deg);
+  }
+
+  to {
+    transform: rotate(-12deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .fixture {
+    display: none;
+  }
+}

@@ -1,0 +1,86 @@
+.beams {
+  position: absolute;
+  inset: -8% -6% -6%;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.beam {
+  position: absolute;
+  width: 140%;
+  height: 55%;
+  left: -24%;
+  transform-origin: 10% 50%;
+  filter: blur(18px);
+  opacity: 0.44;
+  will-change: transform;
+}
+
+.beamA {
+  top: -2%;
+  transform: rotate(-18deg);
+  background: linear-gradient(96deg, transparent 0%, rgb(65 147 204 / 0.62) 42%, transparent 84%);
+  animation: driftA 7.8s ease-in-out infinite alternate;
+}
+
+.beamB {
+  top: 26%;
+  transform: rotate(-9deg);
+  background: linear-gradient(102deg, transparent 0%, rgb(145 196 223 / 0.58) 46%, transparent 84%);
+  animation: driftB 9.5s ease-in-out infinite alternate;
+}
+
+.beamC {
+  top: 56%;
+  transform: rotate(-3deg);
+  background: linear-gradient(112deg, transparent 0%, rgb(39 112 143 / 0.52) 44%, transparent 82%);
+  animation: driftC 8.6s ease-in-out infinite alternate;
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.14;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(rgb(255 255 255 / 0.24) 0.55px, transparent 0.65px),
+    radial-gradient(rgb(255 255 255 / 0.18) 0.55px, transparent 0.65px);
+  background-size: 19px 19px, 29px 29px;
+  background-position: 0 0, 12px 15px;
+}
+
+@keyframes driftA {
+  from {
+    transform: rotate(-18deg) translateX(-2%);
+  }
+  to {
+    transform: rotate(-14deg) translateX(4%);
+  }
+}
+
+@keyframes driftB {
+  from {
+    transform: rotate(-9deg) translateX(1%);
+  }
+  to {
+    transform: rotate(-6deg) translateX(-5%);
+  }
+}
+
+@keyframes driftC {
+  from {
+    transform: rotate(-3deg) translateX(-4%);
+  }
+  to {
+    transform: rotate(1deg) translateX(3%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beamA,
+  .beamB,
+  .beamC {
+    animation: none;
+  }
+}

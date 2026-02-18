@@ -1,0 +1,77 @@
+.blobs {
+  position: absolute;
+  inset: -14% -10% -8%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(56px);
+  opacity: 0.56;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.blobPrimary {
+  width: 19rem;
+  height: 17rem;
+  left: -8%;
+  top: 2%;
+  background: radial-gradient(circle at 35% 35%, rgb(var(--accent) / 0.58), rgb(var(--accent) / 0.12) 68%, transparent 100%);
+  animation: blobFloatA 12s ease-in-out infinite alternate;
+}
+
+.blobAccent {
+  width: 17rem;
+  height: 15rem;
+  right: 4%;
+  top: 8%;
+  background: radial-gradient(circle at 60% 40%, rgb(var(--accent2) / 0.64), rgb(var(--accent2) / 0.1) 70%, transparent 100%);
+  animation: blobFloatB 14s ease-in-out infinite alternate;
+}
+
+.blobSecondary {
+  width: 14rem;
+  height: 14rem;
+  left: 30%;
+  bottom: -12%;
+  background: radial-gradient(circle at 45% 38%, rgb(39 112 143 / 0.38), rgb(39 112 143 / 0.08) 66%, transparent 100%);
+  animation: blobFloatC 16s ease-in-out infinite alternate;
+}
+
+@keyframes blobFloatA {
+  from {
+    transform: translate3d(-3%, 2%, 0);
+  }
+  to {
+    transform: translate3d(4%, -2%, 0);
+  }
+}
+
+@keyframes blobFloatB {
+  from {
+    transform: translate3d(2%, -2%, 0);
+  }
+  to {
+    transform: translate3d(-4%, 3%, 0);
+  }
+}
+
+@keyframes blobFloatC {
+  from {
+    transform: translate3d(3%, -1%, 0);
+  }
+  to {
+    transform: translate3d(-2%, 2%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blobPrimary,
+  .blobAccent,
+  .blobSecondary {
+    animation: none;
+  }
+}

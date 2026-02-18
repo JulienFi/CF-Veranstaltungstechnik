@@ -1,0 +1,24 @@
+.container {
+  width: min(1200px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.narrow {
+  width: min(860px, calc(100% - 2rem));
+}
+
+.wide {
+  width: min(1320px, calc(100% - 2rem));
+}
+
+.section {
+  padding-block: clamp(2.5rem, 2rem + 2.5vw, 5rem);
+}
+
+.soft {
+  background: linear-gradient(180deg, rgb(var(--primary) / 0.12), rgb(var(--bg2) / 0.12));
+}
+
+.panel {
+  background: linear-gradient(180deg, rgb(var(--card) / 0.28), rgb(var(--bg2) / 0.32));
+}

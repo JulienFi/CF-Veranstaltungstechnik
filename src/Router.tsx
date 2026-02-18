@@ -3,6 +3,7 @@ import AdminGuard from './components/AdminGuard';
 import SEOHead from './components/SEOHead';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import SpotlightRig from './components/SpotlightRig';
 import { SEOProvider } from './contexts/SEOContext';
 import { useSEO } from './contexts/seo-state';
 import { generateLocalBusinessSchema } from './lib/seo';
@@ -138,9 +139,14 @@ function RouterContent() {
   return (
     <>
       <SEOHead pageKey={seoPageKey} schemaData={schemaData} />
-      <div className="min-h-screen bg-app-bg flex flex-col">
+      <div className="global-stage-bg" aria-hidden="true" />
+      <SpotlightRig />
+      <div className="app-shell">
+        <a href="#main-content" className="skip-link">
+          Direkt zum Inhalt springen
+        </a>
         <Header />
-        <main className="flex-grow pt-20">
+        <main id="main-content" className="app-main">
           {content}
         </main>
         <Footer />

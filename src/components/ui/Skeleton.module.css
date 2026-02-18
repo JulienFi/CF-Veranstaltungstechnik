@@ -1,0 +1,42 @@
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: rgb(var(--card-strong) / 0.58);
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.08) 45%,
+    rgb(255 255 255 / 0.16) 52%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s linear infinite;
+}
+
+.spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  border: 2px solid rgb(var(--accent) / 0.32);
+  border-top-color: rgb(var(--accent2) / 0.95);
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
