@@ -1,22 +1,18 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import AdminGuard from './components/AdminGuard';
-import SEOHead from './components/SEOHead';
-import Header from './components/Header';
 import Footer from './components/Footer';
+import Header from './components/Header';
+import SEOHead from './components/SEOHead';
 import SpotlightRig from './components/SpotlightRig';
 import { SEOProvider } from './contexts/SEOContext';
 import { useSEO } from './contexts/seo-state';
 import { generateLocalBusinessSchema } from './lib/seo';
 import { getBaseUrl } from './lib/site';
 import HomePage from './pages/HomePage';
-import ShopPage from './pages/ShopPage';
-import ProductDetailPage from './pages/ProductDetailPage';
 import InquiryPage from './pages/InquiryPage';
-const ServicesPage = lazy(() => import('./pages/ServicesPage'));
-const WorkshopPage = lazy(() => import('./pages/WorkshopPage'));
-const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
-const TeamPage = lazy(() => import('./pages/TeamPage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
+import ProductDetailPage from './pages/ProductDetailPage';
+import ShopPage from './pages/ShopPage';
+
 const ImpressumPage = lazy(() => import('./pages/ImpressumPage'));
 const DatenschutzPage = lazy(() => import('./pages/DatenschutzPage'));
 const LoginPage = lazy(() => import('./pages/admin/LoginPage'));
@@ -25,6 +21,14 @@ const ProductsPage = lazy(() => import('./pages/admin/ProductsPage'));
 const AdminProjectsPage = lazy(() => import('./pages/admin/AdminProjectsPage'));
 const AdminTeamPage = lazy(() => import('./pages/admin/AdminTeamPage'));
 const AdminInquiriesPage = lazy(() => import('./pages/admin/AdminInquiriesPage'));
+
+const LEGACY_ONEPAGER_ROUTE_HASH: Record<string, string> = {
+  '/dienstleistungen': '#leistungen',
+  '/werkstatt': '#leistungen',
+  '/projekte': '#projekte',
+  '/team': '#team',
+  '/kontakt': '#kontakt',
+};
 
 function RouteFallback() {
   return (
@@ -38,46 +42,111 @@ function RouteFallback() {
   );
 }
 
+function decodePathSegment(value: string): string {
+  if (!value) return '';
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function decodeHash(value: string): string {
+  if (!value) return '';
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 function RouterContent() {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [locationState, setLocationState] = useState(() => ({
+    pathname: window.location.pathname,
+    search: window.location.search,
+    hash: window.location.hash,
+  }));
   const { resetSEO } = useSEO();
+
+  const currentPath = locationState.pathname;
+  const currentHash = locationState.hash;
 
   useEffect(() => {
     const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname);
-      window.scrollTo(0, 0);
+      setLocationState({
+        pathname: window.location.pathname,
+        search: window.location.search,
+        hash: window.location.hash,
+      });
     };
 
     window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
 
     const originalPushState = window.history.pushState;
     const originalReplaceState = window.history.replaceState;
-    window.history.pushState = function(...args) {
+
+    window.history.pushState = function (...args) {
       originalPushState.apply(window.history, args);
       handleLocationChange();
     };
-    window.history.replaceState = function(...args) {
+
+    window.history.replaceState = function (...args) {
       originalReplaceState.apply(window.history, args);
       handleLocationChange();
     };
 
     return () => {
       window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
       window.history.pushState = originalPushState;
       window.history.replaceState = originalReplaceState;
     };
   }, []);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentPath]);
-
-  useEffect(() => {
     resetSEO();
   }, [currentPath, resetSEO]);
 
   const adminPaths = ['/admin/login', '/admin', '/admin/products', '/admin/projects', '/admin/team', '/admin/inquiries'];
-  const isAdminRoute = adminPaths.some(path => currentPath === path || currentPath.startsWith(path + '/'));
+  const isAdminRoute = adminPaths.some((path) => currentPath === path || currentPath.startsWith(path + '/'));
+
+  const routeHash = LEGACY_ONEPAGER_ROUTE_HASH[currentPath] ?? '';
+  const onePagerHash = currentPath === '/' ? currentHash : routeHash;
+  const isOnePagerRoute = currentPath === '/' || Boolean(routeHash);
+
+  useEffect(() => {
+    if (isAdminRoute) {
+      return;
+    }
+
+    const scrollToAnchor = (hash: string, attempt = 0) => {
+      const sectionId = decodeHash(hash).replace(/^#/, '');
+      if (!sectionId) {
+        return;
+      }
+
+      const target = document.getElementById(sectionId);
+      if (!target) {
+        if (attempt < 8) {
+          window.setTimeout(() => scrollToAnchor(hash, attempt + 1), 60);
+        }
+        return;
+      }
+
+      const header = document.querySelector<HTMLElement>('[data-sticky-header="true"]');
+      const offset = (header?.getBoundingClientRect().height ?? 0) + 12;
+      const top = window.scrollY + target.getBoundingClientRect().top - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    };
+
+    if (isOnePagerRoute && onePagerHash) {
+      window.requestAnimationFrame(() => scrollToAnchor(onePagerHash));
+      return;
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [currentPath, currentHash, isAdminRoute, isOnePagerRoute, onePagerHash]);
 
   if (isAdminRoute) {
     let adminContent;
@@ -85,25 +154,47 @@ function RouterContent() {
     if (currentPath === '/admin/login') {
       adminContent = <LoginPage />;
     } else if (currentPath === '/admin') {
-      adminContent = <AdminGuard><DashboardPage /></AdminGuard>;
+      adminContent = (
+        <AdminGuard>
+          <DashboardPage />
+        </AdminGuard>
+      );
     } else if (currentPath === '/admin/products') {
-      adminContent = <AdminGuard><ProductsPage /></AdminGuard>;
+      adminContent = (
+        <AdminGuard>
+          <ProductsPage />
+        </AdminGuard>
+      );
     } else if (currentPath === '/admin/projects') {
-      adminContent = <AdminGuard><AdminProjectsPage /></AdminGuard>;
+      adminContent = (
+        <AdminGuard>
+          <AdminProjectsPage />
+        </AdminGuard>
+      );
     } else if (currentPath === '/admin/team') {
-      adminContent = <AdminGuard><AdminTeamPage /></AdminGuard>;
+      adminContent = (
+        <AdminGuard>
+          <AdminTeamPage />
+        </AdminGuard>
+      );
     } else if (currentPath === '/admin/inquiries') {
-      adminContent = <AdminGuard><AdminInquiriesPage /></AdminGuard>;
+      adminContent = (
+        <AdminGuard>
+          <AdminInquiriesPage />
+        </AdminGuard>
+      );
     } else {
-      adminContent = <AdminGuard><DashboardPage /></AdminGuard>;
+      adminContent = (
+        <AdminGuard>
+          <DashboardPage />
+        </AdminGuard>
+      );
     }
 
     return (
       <>
         <SEOHead pageKey="admin" />
-        <Suspense fallback={<RouteFallback />}>
-          {adminContent}
-        </Suspense>
+        <Suspense fallback={<RouteFallback />}>{adminContent}</Suspense>
       </>
     );
   }
@@ -113,41 +204,35 @@ function RouterContent() {
   let schemaData: object | undefined;
   let isNotFound = false;
 
-  if (currentPath === '/') {
+  if (currentPath === '/' || routeHash) {
     content = <HomePage />;
-    seoPageKey = 'home';
-    schemaData = generateLocalBusinessSchema();
+    seoPageKey = currentPath === '/' ? 'home' : currentPath.slice(1);
+    if (currentPath === '/') {
+      schemaData = generateLocalBusinessSchema();
+    }
   } else if (currentPath === '/mietshop') {
     content = <ShopPage />;
     seoPageKey = 'mietshop';
     schemaData = {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
-      name: 'Mietshop für Veranstaltungstechnik',
+      name: 'Mietshop fuer Veranstaltungstechnik',
       url: `${getBaseUrl()}/mietshop`,
     };
   } else if (currentPath.startsWith('/mietshop/') && currentPath !== '/mietshop/anfrage') {
-    const slug = currentPath.replace('/mietshop/', '');
-    content = <ProductDetailPage slug={slug} />;
-    seoPageKey = 'mietshop';
+    const rawSlug = currentPath.slice('/mietshop/'.length).replace(/\/+$/, '');
+
+    if (!rawSlug) {
+      content = <ShopPage />;
+      seoPageKey = 'mietshop';
+    } else {
+      const slug = decodePathSegment(rawSlug);
+      content = <ProductDetailPage slug={slug} />;
+      seoPageKey = 'mietshop';
+    }
   } else if (currentPath === '/mietshop/anfrage') {
     content = <InquiryPage />;
     seoPageKey = 'anfrage';
-  } else if (currentPath === '/dienstleistungen') {
-    content = <ServicesPage />;
-    seoPageKey = 'dienstleistungen';
-  } else if (currentPath === '/werkstatt') {
-    content = <WorkshopPage />;
-    seoPageKey = 'werkstatt';
-  } else if (currentPath === '/projekte') {
-    content = <ProjectsPage />;
-    seoPageKey = 'projekte';
-  } else if (currentPath === '/team') {
-    content = <TeamPage />;
-    seoPageKey = 'team';
-  } else if (currentPath === '/kontakt') {
-    content = <ContactPage />;
-    seoPageKey = 'kontakt';
   } else if (currentPath === '/impressum') {
     content = <ImpressumPage />;
     seoPageKey = 'impressum';
@@ -162,7 +247,7 @@ function RouterContent() {
         <div className="text-center">
           <h1 className="text-6xl font-bold mb-4">404</h1>
           <p className="text-xl text-gray-400 mb-8">Seite nicht gefunden</p>
-          <a href="/" className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all">
+          <a href="/" className="btn-secondary focus-ring tap-target interactive inline-flex">
             Zur Startseite
           </a>
         </div>
@@ -180,14 +265,8 @@ function RouterContent() {
           Direkt zum Inhalt springen
         </a>
         <Header />
-        <main
-          id="main-content"
-          className="app-main"
-          aria-label={isNotFound ? 'Fehlerseite' : undefined}
-        >
-          <Suspense fallback={<RouteFallback />}>
-            {content}
-          </Suspense>
+        <main id="main-content" className="app-main" aria-label={isNotFound ? 'Fehlerseite' : undefined}>
+          <Suspense fallback={<RouteFallback />}>{content}</Suspense>
         </main>
         <Footer />
       </div>

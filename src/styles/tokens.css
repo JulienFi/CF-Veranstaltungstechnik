@@ -7,24 +7,24 @@
 
   --primary: 65 147 204;
   --accent: 145 196 223;
-  --edgeGray: 43 43 43;
-  --bg: 24 27 27;
-  --bg2: 20 22 24;
+  --edgeGray: 12 12 14;
+  --bg: 5 5 5;
+  --bg2: 10 10 12;
   --surface: 255 255 255;
   --surface2: 255 255 255;
   --border: 255 255 255;
   --text: 245 246 247;
   --muted: 170 180 200;
 
-  --card: 34 36 44;
-  --card-strong: 44 47 58;
+  --card: 14 14 18;
+  --card-strong: 20 20 24;
   --accent2: 65 147 204;
 
   --surface-0: rgb(var(--bg));
   --surface-1: rgb(var(--bg2));
-  --surface-2: rgb(var(--card) / 0.82);
-  --surface-3: rgb(var(--card-strong) / 0.84);
-  --surface-border: rgb(var(--border) / 0.17);
+  --surface-2: rgb(var(--card) / 0.84);
+  --surface-3: rgb(var(--card-strong) / 0.86);
+  --surface-border: rgb(var(--border) / 0.14);
 
   --text-main: rgb(var(--text));
   --text-muted: rgb(var(--muted));

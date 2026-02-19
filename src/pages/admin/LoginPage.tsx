@@ -1,5 +1,5 @@
 /**
- * Admin Login Page mit erhÃ¶hter Sicherheit
+ * Admin Login Page mit erhöhter Sicherheit
  *
  * Features:
  * - Rate Limiting (5 Versuche / 15 Min)

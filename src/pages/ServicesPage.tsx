@@ -1,5 +1,6 @@
 import { Lightbulb, Wrench, Users, Building2, ArrowRight, CheckCircle2 } from 'lucide-react';
 import BackButton from '../components/BackButton';
+import { FAQ_ITEMS } from '../content/faq';
 
 export default function ServicesPage() {
   const services = [
@@ -93,34 +94,6 @@ export default function ServicesPage() {
     },
   ];
 
-  const faq = [
-    {
-      question: 'Wie viel Vorlaufzeit ist sinnvoll?',
-      answer:
-        'Für grössere Produktionen empfehlen wir 3 bis 6 Wochen Vorlauf. Kurzfristige Einsätze sind möglich, wenn Material und Team verfügbar sind.',
-    },
-    {
-      question: 'Übernehmen Sie Aufbau und Abbau komplett?',
-      answer:
-        'Ja. Wir können Lieferung, Aufbau, Betreuung und Abbau vollständig übernehmen. Sie entscheiden den gewünschten Serviceumfang.',
-    },
-    {
-      question: 'In welchem Gebiet bieten Sie den Service an?',
-      answer:
-        'Unser Kerngebiet ist Berlin und Brandenburg. Einsätze ausserhalb der Region kalkulieren wir transparent als individuelles Angebot.',
-    },
-    {
-      question: 'Arbeiten Sie mit Privat- und Geschäftskunden?',
-      answer:
-        'Ja. Wir betreuen private Feiern, Vereine, Agenturen und Unternehmen mit jeweils passender technischer und organisatorischer Tiefe.',
-    },
-    {
-      question: 'Wie werden Preise berechnet?',
-      answer:
-        'Preise orientieren sich an Technikumfang, Laufzeit, Transport, Aufbauaufwand und Betreuungslevel. Sie erhalten vorab ein klares, unverbindliches Angebot.',
-    },
-  ];
-
   return (
     <div className="bg-app-bg text-white min-h-screen">
       <section className="section-shell section-shell--hero bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
@@ -198,7 +171,7 @@ export default function ServicesPage() {
           <div className="max-w-3xl mx-auto">
             <h2 className="section-title font-bold mb-12 text-center">Häufige Fragen</h2>
             <div className="space-y-6">
-              {faq.map((item, index) => (
+              {FAQ_ITEMS.map((item, index) => (
                 <div key={index} className="glass-panel--soft card-inner p-6">
                   <h3 className="text-xl font-bold mb-3">{item.question}</h3>
                   <p className="text-gray-300 leading-relaxed">{item.answer}</p>

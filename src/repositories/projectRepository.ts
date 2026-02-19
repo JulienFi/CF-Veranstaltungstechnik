@@ -28,6 +28,56 @@ export interface ProjectWriteDTO {
   order_index?: number | null;
 }
 
+function isMissingOrderIndexError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  const maybeError = error as { code?: string; message?: string };
+  return (
+    maybeError.code === '42703' &&
+    typeof maybeError.message === 'string' &&
+    maybeError.message.includes('order_index')
+  );
+}
+
+function isMissingCreatedAtError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  const maybeError = error as { code?: string; message?: string };
+  return (
+    maybeError.code === '42703' &&
+    typeof maybeError.message === 'string' &&
+    maybeError.message.includes('created_at')
+  );
+}
+
+function sortProjectRows(rows: ProjectRow[]): ProjectRow[] {
+  return [...rows].sort((a, b) => {
+    const aOrderIndex = typeof a.order_index === 'number' ? a.order_index : null;
+    const bOrderIndex = typeof b.order_index === 'number' ? b.order_index : null;
+
+    if (aOrderIndex !== null && bOrderIndex !== null) {
+      if (aOrderIndex !== bOrderIndex) {
+        return aOrderIndex - bOrderIndex;
+      }
+      return 0;
+    }
+
+    if (aOrderIndex !== null) {
+      return -1;
+    }
+
+    if (bOrderIndex !== null) {
+      return 1;
+    }
+
+    return 0;
+  });
+}
+
 function mapProjectRow(row: ProjectRow): ProjectDTO {
   return {
     id: row.id,
@@ -72,13 +122,28 @@ function toProjectUpdate(project: Partial<ProjectWriteDTO>): ProjectUpdate {
 
 export const projectRepository = {
   async getAll(): Promise<ProjectDTO[]> {
-    const { data, error } = await supabase
+    const orderedQuery = await supabase
       .from('projects')
       .select('*')
-      .order('order_index', { ascending: true });
+      .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    return (data ?? []).map(mapProjectRow);
+    if (orderedQuery.error) {
+      if (!isMissingCreatedAtError(orderedQuery.error)) {
+        throw orderedQuery.error;
+      }
+
+      const fallbackQuery = await supabase
+        .from('projects')
+        .select('*');
+
+      if (fallbackQuery.error) {
+        throw fallbackQuery.error;
+      }
+
+      return sortProjectRows(fallbackQuery.data ?? []).map(mapProjectRow);
+    }
+
+    return sortProjectRows(orderedQuery.data ?? []).map(mapProjectRow);
   },
 
   async getById(id: string): Promise<ProjectDTO | null> {
@@ -93,26 +158,53 @@ export const projectRepository = {
   },
 
   async create(project: ProjectWriteDTO): Promise<ProjectDTO> {
-    const { data, error } = await supabase
+    const insertPayload = toProjectInsert(project);
+    let response = await supabase
       .from('projects')
-      .insert(toProjectInsert(project))
+      .insert(insertPayload)
       .select()
       .single();
 
-    if (error) throw error;
-    return mapProjectRow(data);
+    if (response.error && isMissingOrderIndexError(response.error)) {
+      const fallbackInsertPayload = { ...insertPayload };
+      delete fallbackInsertPayload.order_index;
+      response = await supabase
+        .from('projects')
+        .insert(fallbackInsertPayload)
+        .select()
+        .single();
+    }
+
+    if (response.error) throw response.error;
+    return mapProjectRow(response.data);
   },
 
   async update(id: string, project: Partial<ProjectWriteDTO>): Promise<ProjectDTO> {
-    const { data, error } = await supabase
+    const updatePayload = toProjectUpdate(project);
+    let response = await supabase
       .from('projects')
-      .update(toProjectUpdate(project))
+      .update(updatePayload)
       .eq('id', id)
       .select()
       .single();
 
-    if (error) throw error;
-    return mapProjectRow(data);
+    if (
+      response.error &&
+      isMissingOrderIndexError(response.error) &&
+      Object.prototype.hasOwnProperty.call(updatePayload, 'order_index')
+    ) {
+      const fallbackUpdatePayload = { ...updatePayload };
+      delete fallbackUpdatePayload.order_index;
+      response = await supabase
+        .from('projects')
+        .update(fallbackUpdatePayload)
+        .eq('id', id)
+        .select()
+        .single();
+    }
+
+    if (response.error) throw response.error;
+    return mapProjectRow(response.data);
   },
 
   async delete(id: string): Promise<void> {
@@ -130,6 +222,6 @@ export const projectRepository = {
       .update({ order_index: orderIndex })
       .eq('id', id);
 
-    if (error) throw error;
+    if (error && !isMissingOrderIndexError(error)) throw error;
   }
 };

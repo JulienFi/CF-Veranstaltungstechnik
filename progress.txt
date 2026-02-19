@@ -1,0 +1,51 @@
+2026-02-19 - UI/UX redesign progress
+
+Phase 1 - Critical (implemented)
+- Unified core public-page shell layout with section-shell/content-container hierarchy.
+- Reworked Workshop, Projects, Team, Contact pages to use shared visual primitives.
+- Improved legal-page container sizing and removed undefined motion classes on Home.
+- Added responsive mobile-card views for admin lists (Projects, Team, Products).
+
+Phase 2 - Refinement (implemented)
+- Legal pages (Impressum, Datenschutz): aligned typography, panel treatment, and link styles to system classes.
+- Admin Projects/Team/Products: standardized action buttons, form controls, and panel surfaces using:
+  - btn-primary / btn-secondary
+  - field-control + focus-ring
+  - glass-panel / glass-panel--soft
+- Preserved existing behavior and data flow; no feature or logic changes.
+
+Validation
+- Typecheck passed: npm run -s typecheck
+- Dev server available at http://localhost:5173
+
+2026-02-19 - Hotfix Mietshop Produktdetailseiten
+- Fixed slug handling for `/mietshop/:slug` routes:
+  - URL-decoding applied for route segment parsing.
+  - Empty trailing-slash slug now falls back to `/mietshop` list rendering.
+  - Product lookup accepts both raw and URL-decoded slug candidates.
+- Added resilient product-detail empty-content fallbacks for:
+  - short description
+  - full description
+  - suitable-for text
+  - scope-of-delivery text
+  - technical specs (informative placeholder when none exist)
+- Validation:
+  - Typecheck passed: npm run -s typecheck
+  - Verified encoded slug candidate resolves to active product row.
+
+2026-02-19 - Encoding cleanup (visible mojibake)
+- Repaired malformed UTF-8 text fragments in public pages:
+  - `src/pages/ContactPage.tsx`
+  - `src/pages/ProjectsPage.tsx`
+  - `src/pages/TeamPage.tsx`
+  - `src/pages/WorkshopPage.tsx`
+- Repaired malformed UTF-8 text fragments in admin pages/components:
+  - `src/components/AdminGuard.tsx`
+  - `src/pages/admin/LoginPage.tsx`
+  - `src/pages/admin/AdminProjectsPage.tsx`
+  - `src/pages/admin/AdminTeamPage.tsx`
+  - `src/pages/admin/ProductsPage.tsx`
+- Fixed remaining replacement characters (`�`) in affected copy and confirm dialogs.
+- Validation:
+  - No remaining mojibake markers (`Ã`, `Â`, `â`, `�`) found in `src/`.
+  - Typecheck passed: npm run -s typecheck

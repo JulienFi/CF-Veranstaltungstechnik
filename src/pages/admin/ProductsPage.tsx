@@ -1,21 +1,21 @@
 /**
- * Produktverwaltung fÃ¼r den Mietshop
+ * Produktverwaltung für den Mietshop
  *
- * Hier kÃ¶nnen neue Produkte angelegt, bearbeitet und aktiviert/deaktiviert werden.
+ * Hier können neue Produkte angelegt, bearbeitet und aktiviert/deaktiviert werden.
  *
- * Neues Produkt hinzufÃ¼gen:
+ * Neues Produkt hinzufügen:
  * 1. Auf "Neues Produkt" klicken
  * 2. Name: Produktbezeichnung (z.B. "LED Par 64 Set (4x)")
  * 3. Slug: URL-freundlicher Name (z.B. "led-par-64-set")
- * 4. Kategorie auswÃ¤hlen
- * 5. Kurzbeschreibung: 1-2 SÃ¤tze fÃ¼r Produktkarten
- * 6. AusfÃ¼hrliche Beschreibung: Detaillierte Info fÃ¼r Produktseite
+ * 4. Kategorie auswählen
+ * 5. Kurzbeschreibung: 1-2 Sätze für Produktkarten
+ * 6. Ausführliche Beschreibung: Detaillierte Info für Produktseite
  * 7. Technische Spezifikationen als JSON-Array:
  *    [{"label": "Leistung", "value": "150W"}, {"label": "Farben", "value": "RGBW"}]
- * 8. "Geeignet fÃ¼r": AnwendungsfÃ¤lle beschreiben
+ * 8. "Geeignet für": Anwendungsfälle beschreiben
  * 9. "Lieferumfang": Was wird mitgeliefert
  * 10. Tags: Schlagworte wie "Beliebt", "Indoor", "Einsteigerfreundlich"
- * 11. "Produkt ist aktiv" aktivieren fÃ¼r Sichtbarkeit im Shop
+ * 11. "Produkt ist aktiv" aktivieren für Sichtbarkeit im Shop
  */
 
 import { useEffect, useState } from 'react';
@@ -432,7 +432,7 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-app-bg">
       <header className="bg-card-bg border-b border-card">
-        <div className="container mx-auto px-4 py-4">
+        <div className="content-container py-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
@@ -442,14 +442,14 @@ export default function ProductsPage() {
               <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => setShowCategoryManager(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-all"
+                  className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2 px-4 py-2"
                 >
                   <FolderOpen className="w-5 h-5" />
                   <span>Kategorien verwalten</span>
                 </button>
                 <button
                   onClick={() => setShowForm(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/20"
+                  className="btn-primary focus-ring tap-target interactive inline-flex items-center gap-2 px-4 py-2"
                 >
                   <Plus className="w-5 h-5" />
                   <span>Neues Produkt</span>
@@ -459,7 +459,7 @@ export default function ProductsPage() {
             {showCategoryManager && (
               <button
                 onClick={() => setShowCategoryManager(false)}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-all"
+                className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2 px-4 py-2"
               >
                 <ArrowLeft className="w-5 h-5" />
                 <span>Zurück zu Produkten</span>
@@ -469,7 +469,7 @@ export default function ProductsPage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 md:py-12">
+      <main className="content-container py-8 md:py-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">Produkte verwalten</h1>
           <div className="text-gray-400 text-sm">
@@ -478,7 +478,7 @@ export default function ProductsPage() {
         </div>
 
         {!showForm && !showCategoryManager && (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
+          <div className="glass-panel--soft card-inner p-6 mb-6">
             <div className="flex items-center space-x-4">
               <Filter className="w-5 h-5 text-gray-400" />
               <div className="flex-1 flex flex-wrap gap-2">
@@ -520,7 +520,7 @@ export default function ProductsPage() {
               {!showCategoryForm && (
                 <button
                   onClick={() => setShowCategoryForm(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/20"
+                  className="btn-primary focus-ring tap-target interactive inline-flex items-center gap-2 px-4 py-2"
                 >
                   <Plus className="w-5 h-5" />
                   <span>Neue Kategorie</span>
@@ -529,7 +529,7 @@ export default function ProductsPage() {
             </div>
 
             {showCategoryForm ? (
-              <div className="card mb-8">
+              <div className="glass-panel card mb-8">
                 <h3 className="text-xl font-bold text-white mb-6">
                   {editingCategory ? 'Kategorie bearbeiten' : 'Neue Kategorie erstellen'}
                 </h3>
@@ -542,7 +542,7 @@ export default function ProductsPage() {
                         required
                         value={categoryFormData.name}
                         onChange={(e) => setCategoryFormData({...categoryFormData, name: e.target.value})}
-                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                        className="field-control focus-ring"
                       />
                     </div>
 
@@ -553,7 +553,7 @@ export default function ProductsPage() {
                         required
                         value={categoryFormData.slug}
                         onChange={(e) => setCategoryFormData({...categoryFormData, slug: e.target.value})}
-                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                        className="field-control focus-ring"
                       />
                     </div>
 
@@ -563,7 +563,7 @@ export default function ProductsPage() {
                         value={categoryFormData.description}
                         onChange={(e) => setCategoryFormData({...categoryFormData, description: e.target.value})}
                         rows={3}
-                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white resize-none"
+                        className="field-control focus-ring resize-none"
                       ></textarea>
                     </div>
 
@@ -573,7 +573,7 @@ export default function ProductsPage() {
                         type="number"
                         value={categoryFormData.display_order}
                         onChange={(e) => setCategoryFormData({...categoryFormData, display_order: parseInt(e.target.value)})}
-                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                        className="field-control focus-ring"
                       />
                     </div>
                   </div>
@@ -581,14 +581,14 @@ export default function ProductsPage() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20"
+                      className="btn-primary focus-ring tap-target interactive px-6 py-2"
                     >
                       {editingCategory ? 'Änderungen speichern' : 'Kategorie erstellen'}
                     </button>
                     <button
                       type="button"
                       onClick={resetCategoryForm}
-                      className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all font-medium"
+                      className="btn-secondary focus-ring tap-target interactive px-6 py-2"
                     >
                       Abbrechen
                     </button>
@@ -596,7 +596,7 @@ export default function ProductsPage() {
                 </form>
               </div>
             ) : (
-              <div className="card">
+              <div className="glass-panel card">
                 <div className="overflow-x-auto">
                 <table className="w-full min-w-[820px]">
                   <thead className="bg-gray-800">
@@ -651,7 +651,7 @@ export default function ProductsPage() {
             )}
           </div>
         ) : showForm ? (
-          <div className="card mb-8">
+          <div className="glass-panel card mb-8">
             <h2 className="text-2xl font-bold text-white mb-6">
               {editingProduct ? 'Produkt bearbeiten' : 'Neues Produkt erstellen'}
             </h2>
@@ -664,7 +664,7 @@ export default function ProductsPage() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -690,7 +690,7 @@ export default function ProductsPage() {
                           setImagePreview(nextImagePath);
                         }
                       }}
-                      className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                      className="field-control focus-ring"
                     />
                 </div>
 
@@ -700,7 +700,7 @@ export default function ProductsPage() {
                     required
                     value={formData.category_id}
                     onChange={(e) => setFormData({...formData, category_id: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   >
                     <option value="">Bitte wählen</option>
                     {categories.map(cat => (
@@ -716,7 +716,7 @@ export default function ProductsPage() {
                     value={formData.tags}
                     onChange={(e) => setFormData({...formData, tags: e.target.value})}
                     placeholder="Indoor, Outdoor, Bestseller"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -727,7 +727,7 @@ export default function ProductsPage() {
                     value={formData.price_net_input}
                     onChange={(e) => setFormData({ ...formData, price_net_input: e.target.value })}
                     placeholder="z. B. 49,00"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                   <p className="text-xs text-gray-500 mt-2">
                     Erwartet Euro-Betrag, wird als Cent-Integer gespeichert.
@@ -741,7 +741,7 @@ export default function ProductsPage() {
                     value={formData.vat_rate_input}
                     onChange={(e) => setFormData({ ...formData, vat_rate_input: e.target.value })}
                     placeholder="19"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                   <p className="text-xs text-gray-500 mt-2">
                     Speicherung als Prozentwert (z. B. 19).
@@ -773,7 +773,7 @@ export default function ProductsPage() {
                       }
                     }}
                     placeholder="/images/products/mh-110-wash.jpg"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                   <p className="text-xs text-gray-500 mt-2">
                     Empfohlen: Bild als <code>/public/images/products/&lt;slug&gt;.jpg</code> ablegen und <code>image_url</code> leer lassen. Alternativ funktionieren relative Pfade (z. B. <code>/images/products/mh-110-wash.jpg</code>) und absolute URLs.
@@ -823,7 +823,7 @@ export default function ProductsPage() {
                     value={formData.short_description}
                     onChange={(e) => setFormData({...formData, short_description: e.target.value})}
                     rows={2}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white resize-none"
+                    className="field-control focus-ring resize-none"
                   ></textarea>
                 </div>
 
@@ -833,7 +833,7 @@ export default function ProductsPage() {
                     value={formData.full_description}
                     onChange={(e) => setFormData({...formData, full_description: e.target.value})}
                     rows={4}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white resize-none"
+                    className="field-control focus-ring resize-none"
                   ></textarea>
                 </div>
 
@@ -846,7 +846,7 @@ export default function ProductsPage() {
                     onChange={(e) => setFormData({...formData, specs: e.target.value})}
                     rows={4}
                     placeholder='[{"label": "Leistung", "value": "150W"}]'
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white resize-none font-mono text-sm"
+                    className="field-control focus-ring resize-none font-mono text-sm"
                   ></textarea>
                 </div>
 
@@ -856,7 +856,7 @@ export default function ProductsPage() {
                     value={formData.suitable_for}
                     onChange={(e) => setFormData({...formData, suitable_for: e.target.value})}
                     rows={2}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white resize-none"
+                    className="field-control focus-ring resize-none"
                   ></textarea>
                 </div>
 
@@ -866,7 +866,7 @@ export default function ProductsPage() {
                     value={formData.scope_of_delivery}
                     onChange={(e) => setFormData({...formData, scope_of_delivery: e.target.value})}
                     rows={2}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white resize-none"
+                    className="field-control focus-ring resize-none"
                   ></textarea>
                 </div>
 
@@ -887,14 +887,14 @@ export default function ProductsPage() {
                 <button
                   type="submit"
                   disabled={uploading}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary focus-ring tap-target interactive px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploading ? 'Wird gespeichert...' : (editingProduct ? 'Änderungen speichern' : 'Produkt erstellen')}
                 </button>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all font-medium"
+                  className="btn-secondary focus-ring tap-target interactive px-6 py-2"
                 >
                   Abbrechen
                 </button>
@@ -902,8 +902,63 @@ export default function ProductsPage() {
             </form>
           </div>
         ) : (
-          <div className="card">
-            <div className="overflow-x-auto">
+          <div className="glass-panel card">
+            <div className="space-y-4 lg:hidden">
+              {filteredProducts.map(product => (
+                <article key={product.id} className="glass-panel--soft card-inner p-4">
+                  <div className="flex items-start gap-4">
+                    <img
+                      src={resolveImageUrl(product.image_url, 'product', product.slug)}
+                      alt={product.name}
+                      className="h-16 w-16 flex-shrink-0 rounded-md border border-gray-700 object-cover"
+                      loading="lazy"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-base font-semibold text-white">{product.name}</h3>
+                      <p className="text-xs text-gray-400">Kategorie: {product.categories.name}</p>
+                      <p className="mt-1 text-xs text-gray-400">
+                        Tags: {product.tags.length > 0 ? product.tags.slice(0, 3).join(', ') : '-'}
+                      </p>
+                      <span
+                        className={`mt-2 inline-flex rounded px-2 py-1 text-xs font-medium ${
+                          product.is_active
+                            ? 'bg-green-500/10 text-green-400'
+                            : 'bg-gray-700 text-gray-400'
+                        }`}
+                      >
+                        {product.is_active ? 'Aktiv' : 'Inaktiv'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center justify-end space-x-2">
+                    <button
+                      onClick={() => toggleActive(product.id, product.is_active)}
+                      className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
+                      title={product.is_active ? 'Deaktivieren' : 'Aktivieren'}
+                      aria-label={`Produkt ${product.name} ${product.is_active ? 'deaktivieren' : 'aktivieren'}`}
+                    >
+                      {product.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={() => editProduct(product.id)}
+                      className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
+                      aria-label={`Produkt ${product.name} bearbeiten`}
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => deleteProduct(product.id)}
+                      className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                      aria-label={`Produkt ${product.name} löschen`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="hidden overflow-x-auto lg:block">
             <table className="w-full min-w-[980px]">
               <thead className="bg-gray-800">
                 <tr>
@@ -990,3 +1045,4 @@ export default function ProductsPage() {
     </div>
   );
 }
+

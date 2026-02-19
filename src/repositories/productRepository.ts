@@ -18,12 +18,25 @@ export async function listActiveProductsForShop(supabaseClient: AppSupabaseClien
 }
 
 export async function getActiveProductBySlug(supabaseClient: AppSupabaseClient, slug: string) {
-  return supabaseClient
-    .from('products')
-    .select(PRODUCT_DETAIL_SELECT)
-    .eq('slug', slug)
-    .eq('is_active', true)
-    .single();
+  const trimmed = slug.trim();
+  let decoded = trimmed;
+
+  try {
+    decoded = decodeURIComponent(trimmed);
+  } catch {
+    decoded = trimmed;
+  }
+
+  const slugCandidates = Array.from(new Set([trimmed, decoded].filter(Boolean)));
+
+  let query = supabaseClient.from('products').select(PRODUCT_DETAIL_SELECT).eq('is_active', true);
+  if (slugCandidates.length > 1) {
+    query = query.in('slug', slugCandidates);
+  } else {
+    query = query.eq('slug', slugCandidates[0] ?? '');
+  }
+
+  return query.single();
 }
 
 export async function listRelatedByCategory(

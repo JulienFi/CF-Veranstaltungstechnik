@@ -172,7 +172,7 @@ export default function AdminTeamPage() {
   return (
     <div className="min-h-screen bg-app-bg">
       <header className="bg-card-bg border-b border-card">
-        <div className="container mx-auto px-4 py-4">
+        <div className="content-container py-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
@@ -181,7 +181,7 @@ export default function AdminTeamPage() {
             {!showForm && (
               <button
                 onClick={() => setShowForm(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/20"
+                className="btn-primary focus-ring tap-target interactive inline-flex items-center gap-2 px-4 py-2"
               >
                 <Plus className="w-5 h-5" />
                 <span>Neues Teammitglied</span>
@@ -191,7 +191,7 @@ export default function AdminTeamPage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 md:py-12">
+      <main className="content-container py-8 md:py-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">Team verwalten</h1>
           <div className="text-gray-400 text-sm">
@@ -200,7 +200,7 @@ export default function AdminTeamPage() {
         </div>
 
         {showForm ? (
-          <div className="card mb-8">
+          <div className="glass-panel card mb-8">
             <h2 className="text-2xl font-bold text-white mb-6">
               {editingMember ? 'Teammitglied bearbeiten' : 'Neues Teammitglied erstellen'}
             </h2>
@@ -228,7 +228,7 @@ export default function AdminTeamPage() {
                         setImagePreview(nextImagePath);
                       }
                     }}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -239,7 +239,7 @@ export default function AdminTeamPage() {
                     required
                     value={formData.role}
                     onChange={(e) => setFormData({...formData, role: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -256,7 +256,7 @@ export default function AdminTeamPage() {
                       }
                     }}
                     placeholder="/images/team/max-mustermann.jpg"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                   <p className="text-xs text-gray-500 mt-2">
                     Empfohlen: Bild als <code>/public/images/team/&lt;slug&gt;.jpg</code> ablegen und <code>image_url</code> leer lassen. Falls kein separates Slug-Feld vorliegt, wird der Name als Slug-Basis genutzt. Relative Pfade und absolute URLs funktionieren weiterhin.
@@ -306,7 +306,7 @@ export default function AdminTeamPage() {
                     value={formData.bio || ''}
                     onChange={(e) => setFormData({...formData, bio: e.target.value})}
                     rows={3}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white resize-none"
+                    className="field-control focus-ring resize-none"
                   ></textarea>
                 </div>
 
@@ -316,7 +316,7 @@ export default function AdminTeamPage() {
                     type="email"
                     value={formData.email || ''}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -326,7 +326,7 @@ export default function AdminTeamPage() {
                     type="tel"
                     value={formData.phone || ''}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -336,7 +336,7 @@ export default function AdminTeamPage() {
                     type="number"
                     value={formData.order_index || 0}
                     onChange={(e) => setFormData({...formData, order_index: parseInt(e.target.value)})}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
               </div>
@@ -345,14 +345,14 @@ export default function AdminTeamPage() {
                 <button
                   type="submit"
                   disabled={uploading}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary focus-ring tap-target interactive px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploading ? 'Wird gespeichert...' : (editingMember ? 'Änderungen speichern' : 'Teammitglied erstellen')}
                 </button>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all font-medium"
+                  className="btn-secondary focus-ring tap-target interactive px-6 py-2"
                 >
                   Abbrechen
                 </button>
@@ -360,8 +360,45 @@ export default function AdminTeamPage() {
             </form>
           </div>
         ) : (
-          <div className="card">
-            <div className="overflow-x-auto">
+          <div className="glass-panel card">
+            <div className="space-y-4 lg:hidden">
+              {teamMembers.map(member => (
+                <article key={member.id} className="glass-panel--soft card-inner p-4">
+                  <div className="flex items-start gap-4">
+                    <img
+                      src={resolveImageUrl(member.image_url, 'team', member.name)}
+                      alt={member.name}
+                      className="h-14 w-14 flex-shrink-0 rounded-full border border-gray-700 object-cover"
+                      loading="lazy"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-base font-semibold text-white">{member.name}</h3>
+                      <p className="text-xs text-gray-400">{member.role}</p>
+                      <p className="mt-1 text-xs text-gray-400">E-Mail: {member.email || '-'}</p>
+                      <p className="text-xs text-gray-400">Telefon: {member.phone || '-'}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center justify-end space-x-2">
+                    <button
+                      onClick={() => editMember(member)}
+                      className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
+                      aria-label={`Teammitglied ${member.name} bearbeiten`}
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => deleteMember(member.id)}
+                      className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                      aria-label={`Teammitglied ${member.name} löschen`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="hidden overflow-x-auto lg:block">
             <table className="w-full min-w-[900px]">
               <thead className="bg-gray-800">
                 <tr>
@@ -421,3 +458,4 @@ export default function AdminTeamPage() {
     </div>
   );
 }
+

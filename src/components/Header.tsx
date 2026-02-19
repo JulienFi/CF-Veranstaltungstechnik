@@ -1,33 +1,45 @@
 import { useEffect, useRef, useState } from 'react';
-import { Menu, Phone, ShoppingBag, X } from 'lucide-react';
-import { COMPANY_INFO } from '../config/company';
+import { Menu, ShoppingBag, X } from 'lucide-react';
 import { Button, Container } from './ui';
 import styles from './Header.module.css';
 
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Mietshop', href: '/mietshop' },
-  { name: 'Dienstleistungen', href: '/dienstleistungen' },
-  { name: 'Werkstatt', href: '/werkstatt' },
-  { name: 'Projekte', href: '/projekte' },
-  { name: 'Team', href: '/team' },
-  { name: 'Kontakt', href: '/kontakt' },
+const PRIMARY_CTA_LABEL = 'Unverbindliches Angebot anfragen';
+const SECONDARY_CTA_LABEL = 'Mietshop entdecken';
+
+const NAVIGATION_ITEMS = [
+  { name: 'Leistungen', hash: '#leistungen' },
+  { name: 'Mietshop', hash: '#mietshop' },
+  { name: 'Projekte', hash: '#projekte' },
+  { name: 'Team', hash: '#team' },
+  { name: 'FAQ', hash: '#faq' },
+  { name: 'Kontakt', hash: '#kontakt' },
 ];
+
+const LEGACY_ROUTE_HASH: Record<string, string> = {
+  '/dienstleistungen': '#leistungen',
+  '/werkstatt': '#leistungen',
+  '/projekte': '#projekte',
+  '/team': '#team',
+  '/kontakt': '#kontakt',
+};
+
+function resolveActiveHash(pathname: string, hash: string): string {
+  if (pathname === '/') {
+    return hash;
+  }
+  return LEGACY_ROUTE_HASH[pathname] ?? '';
+}
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [inquiryCount, setInquiryCount] = useState(0);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [currentHash, setCurrentHash] = useState(window.location.hash);
   const mobileButtonRef = useRef<HTMLButtonElement | null>(null);
   const drawerRef = useRef<HTMLDivElement | null>(null);
   const lastFocusedElementRef = useRef<HTMLElement | null>(null);
 
-  const isActivePath = (href: string): boolean => {
-    if (href === '/') {
-      return currentPath === '/';
-    }
-    return currentPath === href || currentPath.startsWith(`${href}/`);
-  };
+  const activeHash = resolveActiveHash(currentPath, currentHash);
 
   useEffect(() => {
     const updateCount = () => {
@@ -52,8 +64,10 @@ export default function Header() {
   useEffect(() => {
     const handleRouteChange = () => {
       setCurrentPath(window.location.pathname);
+      setCurrentHash(window.location.hash);
       setMobileMenuOpen(false);
     };
+
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
         setMobileMenuOpen(false);
@@ -61,9 +75,12 @@ export default function Header() {
     };
 
     window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener('hashchange', handleRouteChange);
     window.addEventListener('resize', handleResize);
+
     return () => {
       window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('hashchange', handleRouteChange);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
@@ -143,7 +160,7 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   return (
-    <header className={styles.header}>
+    <header className={styles.header} data-sticky-header="true">
       <Container className={styles.inner} size="wide">
         <a href="/" className={styles.brand}>
           <img src="/images/logo-cf.png" alt="CF Veranstaltungstechnik Logo" className={styles.logo} />
@@ -151,14 +168,16 @@ export default function Header() {
         </a>
 
         <nav className={styles.nav} aria-label="Hauptnavigation">
-          {navigation.map((item) => {
-            const isActive = isActivePath(item.href);
+          {NAVIGATION_ITEMS.map((item) => {
+            const href = `/${item.hash}`;
+            const isActive = activeHash === item.hash;
+
             return (
               <a
                 key={item.name}
-                href={item.href}
+                href={href}
                 className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
-                aria-current={isActive ? 'page' : undefined}
+                aria-current={isActive ? 'location' : undefined}
               >
                 {item.name}
               </a>
@@ -167,10 +186,6 @@ export default function Header() {
         </nav>
 
         <div className={styles.actions}>
-          <a href={COMPANY_INFO.contact.phoneLink} className={styles.phoneLink}>
-            <Phone size={16} />
-            <span>{COMPANY_INFO.contact.phone}</span>
-          </a>
           {inquiryCount > 0 ? (
             <Button href="/mietshop/anfrage" variant="secondary" size="sm">
               <ShoppingBag size={16} />
@@ -178,8 +193,11 @@ export default function Header() {
               <span className={styles.countBadge}>{inquiryCount}</span>
             </Button>
           ) : null}
-          <Button href="/kontakt" variant="primary" size="sm">
-            Unverbindliches Angebot
+          <Button href="/mietshop" variant="secondary" size="sm">
+            {SECONDARY_CTA_LABEL}
+          </Button>
+          <Button href="/#kontakt" variant="primary" size="sm">
+            {PRIMARY_CTA_LABEL}
           </Button>
         </div>
 
@@ -190,7 +208,7 @@ export default function Header() {
           className={styles.mobileButton}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-navigation"
-          aria-label={mobileMenuOpen ? 'Menü schließen' : 'Menü öffnen'}
+          aria-label={mobileMenuOpen ? 'Menue schliessen' : 'Menue oeffnen'}
         >
           {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -198,16 +216,18 @@ export default function Header() {
 
       {mobileMenuOpen ? (
         <>
-          <button type="button" className={styles.overlay} onClick={() => setMobileMenuOpen(false)} aria-label="Menü schließen" />
+          <button type="button" className={styles.overlay} onClick={() => setMobileMenuOpen(false)} aria-label="Menue schliessen" />
           <div id="mobile-navigation" ref={drawerRef} className={styles.drawer}>
-            {navigation.map((item) => {
-              const isActive = isActivePath(item.href);
+            {NAVIGATION_ITEMS.map((item) => {
+              const href = `/${item.hash}`;
+              const isActive = activeHash === item.hash;
+
               return (
                 <a
                   key={item.name}
-                  href={item.href}
+                  href={href}
                   className={`${styles.drawerLink} ${isActive ? styles.drawerLinkActive : ''}`}
-                  aria-current={isActive ? 'page' : undefined}
+                  aria-current={isActive ? 'location' : undefined}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.name}
@@ -226,12 +246,11 @@ export default function Header() {
             ) : null}
 
             <div className={styles.drawerActions}>
-              <Button href={COMPANY_INFO.contact.phoneLink} variant="secondary" size="md" fullWidth onClick={() => setMobileMenuOpen(false)}>
-                <Phone size={16} />
-                <span>{COMPANY_INFO.contact.phone}</span>
+              <Button href="/mietshop" variant="secondary" size="md" fullWidth onClick={() => setMobileMenuOpen(false)}>
+                {SECONDARY_CTA_LABEL}
               </Button>
-              <Button href="/kontakt" variant="primary" size="md" fullWidth onClick={() => setMobileMenuOpen(false)}>
-                Unverbindliches Angebot
+              <Button href="/#kontakt" variant="primary" size="md" fullWidth onClick={() => setMobileMenuOpen(false)}>
+                {PRIMARY_CTA_LABEL}
               </Button>
             </div>
           </div>

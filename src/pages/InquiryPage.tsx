@@ -741,7 +741,7 @@ export default function InquiryPage() {
 
             <div className="glass-panel--soft card-inner border-blue-400/25 p-4">
               <p className="text-sm text-gray-300">
-                Unverbindlich und schnell: Wir antworten in der Regel innerhalb von 2 Stunden.
+                Unverbindlich und klar: Wir antworten in der Regel innerhalb von 24 Stunden.
               </p>
             </div>
 
@@ -758,7 +758,7 @@ export default function InquiryPage() {
                 className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 text-base disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Send className="icon-std" />
-                <span>{loading ? 'Wird gesendet...' : 'Angebot anfragen (Antwort i.d.R. in 2h)'}</span>
+                <span>{loading ? 'Wird gesendet...' : 'Angebot anfragen (Antwort i.d.R. in 24h)'}</span>
               </button>
 
               {whatsappHref ? (

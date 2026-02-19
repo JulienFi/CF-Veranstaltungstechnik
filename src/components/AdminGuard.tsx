@@ -1,8 +1,8 @@
 /**
  * Admin Guard Component
  *
- * SchÃ¼tzt Admin-Routen vor unbefugtem Zugriff.
- * PrÃ¼ft:
+ * Schützt Admin-Routen vor unbefugtem Zugriff.
+ * Prüft:
  * - Ist User authentifiziert?
  * - Ist User Admin? (Email-Matching)
  *

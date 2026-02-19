@@ -115,47 +115,47 @@ export default function WorkshopPage() {
 
   return (
     <div className="bg-app-bg text-white min-h-screen">
-      <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
-        <div className="container mx-auto px-4">
-          <BackButton href="/" label="Zurück zur Startseite" className="mb-8" />
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">Werkstatt-Service für verlässliche Technik</h1>
-            <p className="text-xl text-gray-300 leading-relaxed">
+      <section className="section-shell section-shell--hero bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="content-container">
+          <BackButton href="/" label="Zurück zur Startseite" className="mb-8 md:mb-10" />
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="section-title mb-6 font-bold">Werkstatt-Service für verlässliche Technik</h1>
+            <p className="section-copy text-gray-200">
               Wir halten Ihr Equipment in Berlin und Brandenburg einsatzbereit - mit Reparatur, Wartung und Sicherheitsprüfung. So reduzieren Sie Ausfälle und sichern Ihre Eventqualität.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+      <section className="section-shell">
+        <div className="content-container">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
             {services.map((service, index) => (
-              <div key={index} className="bg-card-bg border border-gray-800 rounded-xl p-8 hover:border-blue-500/50 transition-all">
-                <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
-                  <service.icon className="w-7 h-7 text-blue-400" />
+              <div key={index} className="glass-panel card interactive-card p-6 md:p-8">
+                <div className="card-inner border-subtle mb-6 flex h-14 w-14 items-center justify-center bg-blue-500/12">
+                  <service.icon className="icon-std icon-std--lg text-blue-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-3">{service.title}</h2>
-                <p className="text-gray-300 mb-6 leading-relaxed">{service.description}</p>
+                <h2 className="mb-3 text-2xl font-bold">{service.title}</h2>
+                <p className="mb-6 leading-relaxed text-gray-300">{service.description}</p>
 
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-blue-400 mb-3 uppercase tracking-wide">Leistungsumfang</h3>
+                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-blue-300">Leistungsumfang</h3>
                   <ul className="space-y-2">
                     {service.details.map((detail, i) => (
-                      <li key={i} className="flex items-start space-x-2 text-sm text-gray-300">
-                        <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                      <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                        <CheckCircle2 className="icon-std icon-std--sm mt-0.5 flex-shrink-0 text-blue-400" />
                         <span>{detail}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="border-t border-gray-800 pt-6">
-                  <h3 className="text-sm font-semibold text-blue-400 mb-3 uppercase tracking-wide">Ihr Nutzen</h3>
+                <div className="border-subtle-top pt-6">
+                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-blue-300">Ihr Nutzen</h3>
                   <ul className="space-y-2">
                     {service.benefits.map((benefit, i) => (
-                      <li key={i} className="flex items-start space-x-2 text-sm text-gray-300">
-                        <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                        <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-400" />
                         <span>{benefit}</span>
                       </li>
                     ))}
@@ -167,27 +167,22 @@ export default function WorkshopPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-card-bg/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold mb-4">So läuft der Werkstattprozess</h2>
-              <p className="text-xl text-gray-400">Von der Anfrage bis zur einsatzbereiten Rückgabe</p>
+      <section className="section-shell bg-card-bg/50">
+        <div className="content-container">
+          <div className="mx-auto max-w-5xl">
+            <div className="section-head mb-12">
+              <h2 className="section-title font-bold">So läuft der Werkstattprozess</h2>
+              <p className="section-copy">Von der Anfrage bis zur einsatzbereiten Rückgabe</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {process.map((item, index) => (
-                <div key={index} className="relative">
-                  <div className="bg-card-bg border border-gray-800 rounded-xl p-6 text-center h-full">
-                    <div className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <span className="text-white font-bold text-xl">{item.step}</span>
-                    </div>
-                    <h3 className="text-lg font-bold mb-3">{item.title}</h3>
-                    <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-6">
+              {process.map((item) => (
+                <div key={item.step} className="glass-panel--soft card-inner p-5 text-center">
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/90">
+                    <span className="text-xl font-bold text-white">{item.step}</span>
                   </div>
-                  {index < process.length - 1 && (
-                    <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-card-hover -z-10"></div>
-                  )}
+                  <h3 className="mb-3 text-lg font-bold">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-gray-300">{item.description}</p>
                 </div>
               ))}
             </div>
@@ -195,20 +190,20 @@ export default function WorkshopPage() {
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold mb-4">Warum Kunden unseren Werkstatt-Service nutzen</h2>
+      <section className="section-shell">
+        <div className="content-container">
+          <div className="mx-auto max-w-4xl">
+            <div className="section-head mb-10">
+              <h2 className="section-title font-bold">Warum Kunden unseren Werkstatt-Service nutzen</h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
               {features.map((feature, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
-                    <CheckCircle2 className="w-4 h-4 text-white" />
+                <div key={index} className="glass-panel--soft card-inner flex items-start gap-3 p-4">
+                  <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-500">
+                    <CheckCircle2 className="icon-std icon-std--sm text-white" />
                   </div>
-                  <p className="text-gray-300 leading-relaxed">{feature}</p>
+                  <p className="leading-relaxed text-gray-200">{feature}</p>
                 </div>
               ))}
             </div>
@@ -216,19 +211,19 @@ export default function WorkshopPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Jetzt Werkstattanfrage stellen</h2>
-            <p className="text-xl text-gray-300 mb-8">
+      <section className="section-shell bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="content-container">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="section-title mb-6 font-bold">Jetzt Werkstattanfrage stellen</h2>
+            <p className="section-copy mb-8 text-gray-200">
               Schicken Sie uns Ihr Anliegen. Sie erhalten eine transparente Einschätzung mit Aufwand, Zeitrahmen und nächsten Schritten.
             </p>
             <a
               href="/kontakt"
-              className="inline-flex items-center space-x-2 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg shadow-lg"
+              className="btn-primary focus-ring tap-target interactive inline-flex items-center gap-2 px-8 py-4 text-lg"
             >
               <span>Werkstatt-Termin anfragen</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="icon-std" />
             </a>
           </div>
         </div>

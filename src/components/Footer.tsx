@@ -40,18 +40,19 @@ export default function Footer() {
           <section>
             <h3 className={styles.title}>Leistungen</h3>
             <ul className={styles.list}>
-              <li><a href="/mietshop">Mietshop</a></li>
-              <li><a href="/dienstleistungen">Dienstleistungen</a></li>
-              <li><a href="/werkstatt">Werkstatt-Services</a></li>
-              <li><a href="/projekte">Referenzen</a></li>
+              <li><a href="/#leistungen">Leistungen</a></li>
+              <li><a href="/#mietshop">Mietshop-Preview</a></li>
+              <li><a href="/mietshop">Mietshop entdecken</a></li>
+              <li><a href="/#projekte">Referenzen</a></li>
             </ul>
           </section>
 
           <section>
             <h3 className={styles.title}>Unternehmen</h3>
             <ul className={styles.list}>
-              <li><a href="/team">Team</a></li>
-              <li><a href="/kontakt">Kontakt</a></li>
+              <li><a href="/#team">Team</a></li>
+              <li><a href="/#faq">FAQ</a></li>
+              <li><a href="/#kontakt">Kontakt</a></li>
               <li><a href="/impressum">Impressum</a></li>
               <li><a href="/datenschutz">Datenschutz</a></li>
             </ul>

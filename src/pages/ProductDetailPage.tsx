@@ -261,6 +261,20 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
   };
 
   const isProductInInquiry = product ? isInInquiry(product.id) : false;
+  const categoryLabel = product?.categories?.name?.trim() || 'Produkt';
+  const shortDescription =
+    product?.short_description?.trim() ||
+    'Für dieses Produkt liegt aktuell keine Kurzbeschreibung vor. Wir beraten Sie gerne persönlich.';
+  const fullDescription =
+    product?.full_description?.trim() ||
+    'Für dieses Produkt liegt aktuell keine ausführliche Beschreibung vor. Sprechen Sie uns an, wir helfen bei der Auswahl.';
+  const suitableForDescription =
+    product?.suitable_for?.trim() ||
+    'Wir beraten Sie gern, ob dieses Produkt zu Ihrem Einsatz passt.';
+  const scopeOfDeliveryDescription =
+    product?.scope_of_delivery?.trim() ||
+    'Den genauen Lieferumfang stimmen wir passend zu Ihrem Bedarf mit Ihnen ab.';
+  const hasSpecs = Array.isArray(product?.specs) && product.specs.length > 0;
 
   if (status === 'loading' || status === 'idle') {
     return <ProductDetailSkeleton />;
@@ -314,7 +328,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
             items={[
               { label: 'Home', href: '/' },
               { label: 'Mietshop', href: '/mietshop' },
-              { label: product.categories.name, href: '/mietshop' },
+              { label: categoryLabel, href: '/mietshop' },
               { label: product.name }
             ]}
           />
@@ -327,7 +341,6 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
                   alt={product.name}
                   className="w-full h-full object-cover"
                   loading="eager"
-                  fetchPriority="high"
                 />
               </div>
             </div>
@@ -335,7 +348,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
             <div>
               <div className="mb-4 flex flex-wrap gap-2">
                 <span className="card-inner rounded-md bg-blue-500/14 px-3 py-1.5 text-sm font-medium text-blue-300">
-                  {product.categories.name}
+                  {categoryLabel}
                 </span>
                 {product.tags.map(tag => (
                   <span key={tag} className="glass-panel--soft card-inner px-3 py-1.5 text-sm text-gray-200">
@@ -345,7 +358,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
               </div>
 
               <h1 className="section-title mb-4 font-bold">{product.name}</h1>
-              <p className="section-copy mb-8 text-gray-200">{product.short_description}</p>
+              <p className="section-copy mb-8 text-gray-200">{shortDescription}</p>
               <div className="glass-panel--soft card-inner mb-8 p-4 md:mb-10 md:p-5">
                 <div className="mb-3">
                   <PriceModeToggle />
@@ -389,7 +402,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
                     <Target className="icon-std text-blue-400" />
                     <span>Geeignet für</span>
                   </h3>
-                  <p className="text-gray-200 leading-relaxed">{product.suitable_for}</p>
+                  <p className="text-gray-200 leading-relaxed">{suitableForDescription}</p>
                 </div>
 
                 <div className="glass-panel--soft card-inner p-4">
@@ -397,7 +410,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
                     <Package className="icon-std text-blue-400" />
                     <span>Lieferumfang</span>
                   </h3>
-                  <p className="text-gray-200 leading-relaxed">{product.scope_of_delivery}</p>
+                  <p className="text-gray-200 leading-relaxed">{scopeOfDeliveryDescription}</p>
                 </div>
               </div>
             </div>
@@ -409,21 +422,27 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
         <div className="content-container">
           <div className="max-w-4xl">
             <h2 className="section-title mb-6 font-bold">Beschreibung</h2>
-            <p className="mb-10 text-lg leading-relaxed text-gray-200 md:mb-12">{product.full_description}</p>
+            <p className="mb-10 text-lg leading-relaxed text-gray-200 md:mb-12">{fullDescription}</p>
 
             <h2 className="section-title mb-6 font-bold">Technische Spezifikationen</h2>
             <div className="glass-panel--soft card-inner overflow-hidden">
-              {product.specs.map((spec, index) => (
-                <div
-                  key={index}
-                  className={`grid grid-cols-1 gap-3 p-5 md:grid-cols-2 md:gap-4 md:p-6 ${
-                    index !== product.specs.length - 1 ? 'border-subtle-bottom' : ''
-                  }`}
-                >
-                  <div className="font-medium text-gray-300">{spec.label}</div>
-                  <div className="text-white">{spec.value}</div>
+              {hasSpecs ? (
+                product.specs.map((spec, index) => (
+                  <div
+                    key={index}
+                    className={`grid grid-cols-1 gap-3 p-5 md:grid-cols-2 md:gap-4 md:p-6 ${
+                      index !== product.specs.length - 1 ? 'border-subtle-bottom' : ''
+                    }`}
+                  >
+                    <div className="font-medium text-gray-300">{spec.label}</div>
+                    <div className="text-white">{spec.value}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-5 text-gray-200 md:p-6">
+                  Technische Spezifikationen werden gerade ergänzt. Gern senden wir Ihnen alle Details auf Anfrage.
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>

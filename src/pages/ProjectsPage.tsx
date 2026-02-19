@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapPin, Calendar, ArrowRight } from 'lucide-react';
 import { projectRepository } from '../repositories/projectRepository';
 import BackButton from '../components/BackButton';
@@ -35,30 +35,27 @@ export default function ProjectsPage() {
     }
   };
 
-  const allCategories = Array.from(
-    new Set(projects.map(p => p.category).filter(Boolean))
-  ) as string[];
+  const allCategories = Array.from(new Set(projects.map((project) => project.category).filter(Boolean))) as string[];
 
-  const filteredProjects = selectedCategory === 'all'
-    ? projects
-    : projects.filter(p => p.category === selectedCategory);
+  const filteredProjects =
+    selectedCategory === 'all' ? projects : projects.filter((project) => project.category === selectedCategory);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-app-bg flex items-center justify-center">
-        <div className="text-white text-xl">Laden...</div>
+        <div className="glass-panel--soft card px-8 py-6 text-center text-gray-300">Laden...</div>
       </div>
     );
   }
 
   return (
     <div className="bg-app-bg text-white min-h-screen">
-      <section className="py-14 md:py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
-        <div className="container mx-auto px-4">
-          <BackButton href="/" label="Zurück zur Startseite" className="mb-8" />
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6">Unsere Projekte</h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed">
+      <section className="section-shell section-shell--hero bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="content-container">
+          <BackButton href="/" label="Zurück zur Startseite" className="mb-8 md:mb-10" />
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="section-title mb-6 font-bold">Unsere Projekte</h1>
+            <p className="section-copy text-gray-200">
               Sehen Sie, wie wir Veranstaltungen in Berlin und Brandenburg technisch umgesetzt haben. Von der Planung bis zum Abbau übernehmen wir die Technik, damit Sie sich auf Ihr Event konzentrieren können.
             </p>
           </div>
@@ -66,27 +63,31 @@ export default function ProjectsPage() {
       </section>
 
       {allCategories.length > 0 && (
-        <section className="py-8 bg-card-bg/50 sticky top-20 z-40 border-b border-gray-800">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-wrap gap-3 justify-center">
+        <section className="section-shell--tight sticky top-[4.7rem] z-40 border-subtle-bottom bg-card-bg/92 py-6 backdrop-blur-sm sm:top-[5rem]">
+          <div className="content-container">
+            <div className="flex flex-wrap justify-center gap-2.5 md:gap-3">
               <button
+                type="button"
                 onClick={() => setSelectedCategory('all')}
-                className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
+                aria-pressed={selectedCategory === 'all'}
+                className={`focus-ring tap-target interactive rounded-lg px-5 py-2.5 text-sm font-medium ${
                   selectedCategory === 'all'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-card-hover text-gray-300 hover:bg-gray-700'
+                    ? 'border border-blue-400/70 bg-blue-500 text-white shadow-lg shadow-blue-500/25'
+                    : 'glass-panel--soft border-subtle text-gray-200 hover:text-white'
                 }`}
               >
                 Alle Projekte
               </button>
-              {allCategories.map(category => (
+              {allCategories.map((category) => (
                 <button
                   key={category}
+                  type="button"
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
+                  aria-pressed={selectedCategory === category}
+                  className={`focus-ring tap-target interactive rounded-lg px-5 py-2.5 text-sm font-medium ${
                     selectedCategory === category
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-card-hover text-gray-300 hover:bg-gray-700'
+                      ? 'border border-blue-400/70 bg-blue-500 text-white shadow-lg shadow-blue-500/25'
+                      : 'glass-panel--soft border-subtle text-gray-200 hover:text-white'
                   }`}
                 >
                   {category}
@@ -97,59 +98,52 @@ export default function ProjectsPage() {
         </section>
       )}
 
-      <section className="py-16">
-        <div className="container mx-auto px-4">
+      <section className="section-shell">
+        <div className="content-container">
           {filteredProjects.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-gray-400 text-xl">Keine Projekte mit diesem Filter gefunden.</p>
+            <div className="glass-panel--soft card py-16 text-center">
+              <p className="text-lg text-gray-300 md:text-xl">Keine Projekte mit diesem Filter gefunden.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8">
               {filteredProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="bg-card-bg border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all hover:shadow-xl hover:shadow-blue-500/10 group"
-                >
-                  <div className="aspect-video bg-gradient-to-br from-card-hover to-card-bg overflow-hidden">
+                <div key={project.id} className="glass-panel card interactive-card group overflow-hidden">
+                  <div className="card-inner aspect-video overflow-hidden bg-gradient-to-br from-card-hover to-card-bg">
                     <img
                       src={resolveImageUrl(project.image_url, 'project', project.slug ?? project.title)}
                       alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
                   </div>
 
                   <div className="p-6">
                     {project.category && (
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        <span className="px-2.5 py-1 bg-blue-500/10 text-blue-400 rounded text-xs font-medium">
+                      <div className="mb-3 flex flex-wrap gap-2">
+                        <span className="card-inner rounded-md bg-blue-500/14 px-2.5 py-1 text-xs font-medium text-blue-300">
                           {project.category}
                         </span>
                       </div>
                     )}
 
-                    <h2 className="text-2xl font-bold mb-3 group-hover:text-blue-400 transition-colors">
-                      {project.title}
-                    </h2>
+                    <h2 className="mb-3 text-2xl font-bold transition-colors group-hover:text-blue-300">{project.title}</h2>
 
-                    <div className="space-y-2 mb-4">
+                    <div className="mb-4 space-y-2">
                       {project.location && (
-                        <div className="flex items-center space-x-2 text-sm text-gray-400">
-                          <MapPin className="w-4 h-4" />
+                        <div className="flex items-center gap-2 text-sm text-gray-400">
+                          <MapPin className="icon-std icon-std--sm" />
                           <span>{project.location}</span>
                         </div>
                       )}
                       {project.date && (
-                        <div className="flex items-center space-x-2 text-sm text-gray-400">
-                          <Calendar className="w-4 h-4" />
+                        <div className="flex items-center gap-2 text-sm text-gray-400">
+                          <Calendar className="icon-std icon-std--sm" />
                           <span>{project.date}</span>
                         </div>
                       )}
                     </div>
 
-                    <p className="text-gray-300 leading-relaxed">
-                      {project.description}
-                    </p>
+                    <p className="leading-relaxed text-gray-300">{project.description}</p>
                   </div>
                 </div>
               ))}
@@ -158,19 +152,19 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-      <section className="py-14 md:py-20 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Ihr Projekt mit uns?</h2>
-            <p className="text-xl text-gray-300 mb-8">
+      <section className="section-shell bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+        <div className="content-container">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="section-title mb-6 font-bold">Ihr Projekt mit uns?</h2>
+            <p className="section-copy mb-8 text-gray-200">
               Lassen Sie uns Ihr nächstes Event gemeinsam planen. Sie erhalten ein klares, unverbindliches Angebot für Technik und Service.
             </p>
             <a
               href="/kontakt"
-              className="inline-flex w-full sm:w-auto items-center justify-center space-x-2 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold text-lg shadow-lg"
+              className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 sm:w-auto px-8 py-4 text-lg"
             >
               <span>Unverbindliches Angebot anfragen</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="icon-std" />
             </a>
           </div>
         </div>
@@ -178,4 +172,3 @@ export default function ProjectsPage() {
     </div>
   );
 }
-

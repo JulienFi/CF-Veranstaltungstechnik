@@ -173,7 +173,7 @@ export default function AdminProjectsPage() {
   return (
     <div className="min-h-screen bg-app-bg">
       <header className="bg-card-bg border-b border-card">
-        <div className="container mx-auto px-4 py-4">
+        <div className="content-container py-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="/admin" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
@@ -182,7 +182,7 @@ export default function AdminProjectsPage() {
             {!showForm && (
               <button
                 onClick={() => setShowForm(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/20"
+                className="btn-primary focus-ring tap-target interactive inline-flex items-center gap-2 px-4 py-2"
               >
                 <Plus className="w-5 h-5" />
                 <span>Neues Projekt</span>
@@ -192,7 +192,7 @@ export default function AdminProjectsPage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 md:py-12">
+      <main className="content-container py-8 md:py-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">Projekte verwalten</h1>
           <div className="text-gray-400 text-sm">
@@ -201,7 +201,7 @@ export default function AdminProjectsPage() {
         </div>
 
         {showForm ? (
-          <div className="card mb-8">
+          <div className="glass-panel card mb-8">
             <h2 className="text-2xl font-bold text-white mb-6">
               {editingProject ? 'Projekt bearbeiten' : 'Neues Projekt erstellen'}
             </h2>
@@ -229,7 +229,7 @@ export default function AdminProjectsPage() {
                         setImagePreview(nextImagePath);
                       }
                     }}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -246,7 +246,7 @@ export default function AdminProjectsPage() {
                       }
                     }}
                     placeholder="/images/projects/festival-2025.jpg"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                   <p className="text-xs text-gray-500 mt-2">
                     Empfohlen: Bild als <code>/public/images/projects/&lt;slug&gt;.jpg</code> ablegen und <code>image_url</code> leer lassen. Falls kein separates Slug-Feld vorliegt, wird der Projekttitel als Slug-Basis genutzt. Relative Pfade und absolute URLs funktionieren weiterhin.
@@ -297,7 +297,7 @@ export default function AdminProjectsPage() {
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
                     rows={4}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white resize-none"
+                    className="field-control focus-ring resize-none"
                   ></textarea>
                 </div>
 
@@ -307,7 +307,7 @@ export default function AdminProjectsPage() {
                     type="text"
                     value={formData.location || ''}
                     onChange={(e) => setFormData({...formData, location: e.target.value})}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -318,7 +318,7 @@ export default function AdminProjectsPage() {
                     value={formData.date || ''}
                     onChange={(e) => setFormData({...formData, date: e.target.value})}
                     placeholder="z.B. März 2024"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -329,7 +329,7 @@ export default function AdminProjectsPage() {
                     value={formData.category || ''}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
                     placeholder="z.B. Festival, Konzert, Corporate Event"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
 
@@ -339,7 +339,7 @@ export default function AdminProjectsPage() {
                     type="number"
                     value={formData.order_index || 0}
                     onChange={(e) => setFormData({...formData, order_index: parseInt(e.target.value)})}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    className="field-control focus-ring"
                   />
                 </div>
               </div>
@@ -348,14 +348,14 @@ export default function AdminProjectsPage() {
                 <button
                   type="submit"
                   disabled={uploading}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-medium shadow-lg shadow-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary focus-ring tap-target interactive px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploading ? 'Wird gespeichert...' : (editingProject ? 'Änderungen speichern' : 'Projekt erstellen')}
                 </button>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all font-medium"
+                  className="btn-secondary focus-ring tap-target interactive px-6 py-2"
                 >
                   Abbrechen
                 </button>
@@ -363,8 +363,45 @@ export default function AdminProjectsPage() {
             </form>
           </div>
         ) : (
-          <div className="card">
-            <div className="overflow-x-auto">
+          <div className="glass-panel card">
+            <div className="space-y-4 lg:hidden">
+              {projects.map(project => (
+                <article key={project.id} className="glass-panel--soft card-inner p-4">
+                  <div className="flex items-start gap-4">
+                    <img
+                      src={resolveImageUrl(project.image_url, 'project', project.slug ?? project.title)}
+                      alt={project.title}
+                      className="h-16 w-24 flex-shrink-0 rounded-md border border-gray-700 object-cover"
+                      loading="lazy"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-base font-semibold text-white">{project.title}</h3>
+                      <p className="mt-1 text-xs text-gray-400">Kategorie: {project.category || '-'}</p>
+                      <p className="text-xs text-gray-400">Ort: {project.location || '-'}</p>
+                      <p className="text-xs text-gray-400">Datum: {project.date || '-'}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center justify-end space-x-2">
+                    <button
+                      onClick={() => editProject(project)}
+                      className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
+                      aria-label={`Projekt ${project.title} bearbeiten`}
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => deleteProject(project.id)}
+                      className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                      aria-label={`Projekt ${project.title} löschen`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="hidden overflow-x-auto lg:block">
             <table className="w-full min-w-[900px]">
               <thead className="bg-gray-800">
                 <tr>
@@ -424,3 +461,4 @@ export default function AdminProjectsPage() {
     </div>
   );
 }
+
