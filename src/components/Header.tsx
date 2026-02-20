@@ -6,14 +6,27 @@ import styles from './Header.module.css';
 const PRIMARY_CTA_LABEL = 'Unverbindliches Angebot anfragen';
 const SECONDARY_CTA_LABEL = 'Mietshop entdecken';
 
+type HashNavigationItem = {
+  name: string;
+  hash: string;
+};
+
+type RouteNavigationItem = {
+  name: string;
+  href: string;
+  activePathPrefix: string;
+};
+
+type NavigationItem = HashNavigationItem | RouteNavigationItem;
+
 const NAVIGATION_ITEMS = [
   { name: 'Leistungen', hash: '#leistungen' },
-  { name: 'Mietshop', hash: '#mietshop' },
+  { name: 'Mietshop', href: '/mietshop', activePathPrefix: '/mietshop' },
   { name: 'Projekte', hash: '#projekte' },
   { name: 'Team', hash: '#team' },
   { name: 'FAQ', hash: '#faq' },
   { name: 'Kontakt', hash: '#kontakt' },
-];
+] satisfies NavigationItem[];
 
 const LEGACY_ROUTE_HASH: Record<string, string> = {
   '/dienstleistungen': '#leistungen',
@@ -27,6 +40,24 @@ function resolveActiveHash(pathname: string, hash: string): string {
     return hash;
   }
   return LEGACY_ROUTE_HASH[pathname] ?? '';
+}
+
+function isRouteNavigationItem(item: NavigationItem): item is RouteNavigationItem {
+  return 'href' in item;
+}
+
+function getNavigationHref(item: NavigationItem): string {
+  if (isRouteNavigationItem(item)) {
+    return item.href;
+  }
+  return `/${item.hash}`;
+}
+
+function getNavigationIsActive(item: NavigationItem, currentPath: string, activeHash: string): boolean {
+  if (isRouteNavigationItem(item)) {
+    return currentPath === item.activePathPrefix || currentPath.startsWith(`${item.activePathPrefix}/`);
+  }
+  return activeHash === item.hash;
 }
 
 export default function Header() {
@@ -195,8 +226,8 @@ export default function Header() {
 
         <nav className={styles.nav} aria-label="Hauptnavigation">
           {NAVIGATION_ITEMS.map((item) => {
-            const href = `/${item.hash}`;
-            const isActive = activeHash === item.hash;
+            const href = getNavigationHref(item);
+            const isActive = getNavigationIsActive(item, currentPath, activeHash);
 
             return (
               <a
@@ -245,8 +276,8 @@ export default function Header() {
           <button type="button" className={styles.overlay} onClick={() => setMobileMenuOpen(false)} aria-label="Menü schließen" />
           <div id="mobile-navigation" ref={drawerRef} className={styles.drawer}>
             {NAVIGATION_ITEMS.map((item) => {
-              const href = `/${item.hash}`;
-              const isActive = activeHash === item.hash;
+              const href = getNavigationHref(item);
+              const isActive = getNavigationIsActive(item, currentPath, activeHash);
 
               return (
                 <a
