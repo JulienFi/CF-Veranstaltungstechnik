@@ -92,7 +92,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading || blockedUntil !== null}
-                  className="w-full pl-11 pr-4 py-3 bg-card-hover border border-card rounded-lg focus:border-primary-500 focus:outline-none transition-colors text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="field-control focus-ring pl-11 pr-4 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder={import.meta.env.VITE_ADMIN_EMAIL || 'admin@example.com'}
                   autoComplete="email"
                 />
@@ -109,7 +109,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading || blockedUntil !== null}
-                  className="w-full pl-11 pr-4 py-3 bg-card-hover border border-card rounded-lg focus:border-primary-500 focus:outline-none transition-colors text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="field-control focus-ring pl-11 pr-4 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="••••••••"
                   autoComplete="current-password"
                 />
@@ -117,20 +117,20 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+              <div className="panel panel--error">
                 <div className="flex items-start space-x-3">
-                  <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                  <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="text-sm text-red-400 font-medium">{error}</p>
+                    <p className="text-sm font-medium">{error}</p>
 
                     {remainingAttempts !== null && remainingAttempts > 0 && (
-                      <p className="text-xs text-red-300 mt-2">
+                      <p className="mt-2 text-xs">
                         Noch {remainingAttempts} Versuch{remainingAttempts > 1 ? 'e' : ''} verbleibend
                       </p>
                     )}
 
                     {blockedUntil !== null && blockedUntil > 0 && (
-                      <p className="text-xs text-red-300 mt-2">
+                      <p className="mt-2 text-xs">
                         Gesperrt für {formatBlockedTime(blockedUntil)}
                       </p>
                     )}
@@ -140,31 +140,31 @@ export default function LoginPage() {
             )}
 
             {successMessage && (
-              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4" role="status" aria-live="polite">
-                <p className="text-sm text-green-300 font-medium">{successMessage}</p>
+              <div className="panel panel--success" role="status" aria-live="polite">
+                <p className="text-sm font-medium">{successMessage}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading || blockedUntil !== null}
-              className="w-full px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/20"
+              className="btn-primary focus-ring tap-target interactive w-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Anmeldung läuft...' : blockedUntil ? 'Gesperrt' : 'Anmelden'}
             </button>
           </form>
 
           <div className="mt-6 pt-6 border-t border-card">
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-              <p className="text-xs text-gray-400">
-                <strong className="text-blue-400">Sicherheitshinweis:</strong> Dieser Login ist durch Rate-Limiting geschützt (max. 5 Versuche pro 15 Minuten). Admin-Zugang nur für autorisierte Personen.
+            <div className="panel panel--info p-3">
+              <p className="text-xs">
+                <strong>Sicherheitshinweis:</strong> Dieser Login ist durch Rate-Limiting geschützt (max. 5 Versuche pro 15 Minuten). Admin-Zugang nur für autorisierte Personen.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="text-center mt-6">
-          <a href="/" className="text-sm text-gray-400 hover:text-primary-400 transition-colors">
+        <div className="mt-6 text-center text-[color:var(--text-muted)]">
+          <a href="/" className="interactive-link focus-ring inline-flex rounded px-1 py-0.5 text-sm hover:text-[color:var(--accent-main)]">
             ← Zurück zur Website
           </a>
         </div>
@@ -179,3 +179,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+

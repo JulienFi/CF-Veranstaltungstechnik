@@ -49,3 +49,15 @@ Validation
 - Validation:
   - No remaining mojibake markers (`Ã`, `Â`, `â`, `�`) found in `src/`.
   - Typecheck passed: npm run -s typecheck
+
+2026-02-20 - Phase 1 visual primitives + targeted admin migration
+- Added feedback tokens in `src/styles/tokens.css` for info/success/warning/error (bg/border/text), derived from existing design tokens.
+- Added visual primitives in `src/styles/template.css`:
+  - `badge` + `badge--info|success|warning|error|neutral`
+  - `panel` + `panel--info|success|warning|error|neutral`
+  - `icon-btn`
+- Migrated exactly three files with visual-only class updates:
+  - `src/pages/admin/AdminInquiriesPage.tsx`
+  - `src/pages/admin/LoginPage.tsx`
+  - `src/components/BackButton.tsx`
+- No logic/state/API/routing/data-model changes.

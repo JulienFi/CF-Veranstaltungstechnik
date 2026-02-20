@@ -19,7 +19,7 @@ interface ProductFiltersProps {
 export default function ProductFilters({ availableFilters, activeFilters, onFilterChange }: ProductFiltersProps) {
   const toggleTag = (tag: string) => {
     const newTags = activeFilters.tags.includes(tag)
-      ? activeFilters.tags.filter(t => t !== tag)
+      ? activeFilters.tags.filter((currentTag) => currentTag !== tag)
       : [...activeFilters.tags, tag];
     onFilterChange({ ...activeFilters, tags: newTags });
   };
@@ -46,7 +46,7 @@ export default function ProductFilters({ availableFilters, activeFilters, onFilt
           <div className="hidden h-8 w-px bg-white/10 md:block"></div>
 
           <div className="flex flex-wrap gap-2">
-            {availableFilters.tags.map(tag => (
+            {availableFilters.tags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}

@@ -9,6 +9,21 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          id: string;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       categories: {
         Row: {
           id: string;
@@ -272,12 +287,33 @@ export interface Database {
         };
         Relationships: [];
       };
+      site_content: {
+        Row: {
+          key: string;
+          data: Json;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          data?: Json;
+          updated_at?: string;
+        };
+        Update: {
+          key?: string;
+          data?: Json;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      is_admin: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
     };
     Enums: {
       [_ in never]: never;

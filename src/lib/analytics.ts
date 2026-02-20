@@ -1,14 +1,16 @@
 type AnalyticsPrimitive = string | number | boolean;
 export type AnalyticsEventProps = Record<string, AnalyticsPrimitive | null | undefined>;
 
-const DEFAULT_PLAUSIBLE_DOMAIN = 'analytics-domain.example.com';
 const DEFAULT_PLAUSIBLE_SCRIPT_SRC = 'https://plausible.io/js/script.js';
 const PLAUSIBLE_SCRIPT_ID = 'plausible-script';
 
 export const ANALYTICS_CONFIG = {
-  // In production, set VITE_PLAUSIBLE_DOMAIN in .env (see README section "Web-Analytics").
-  domain: import.meta.env.VITE_PLAUSIBLE_DOMAIN || DEFAULT_PLAUSIBLE_DOMAIN,
-  scriptSrc: import.meta.env.VITE_PLAUSIBLE_SCRIPT_SRC || DEFAULT_PLAUSIBLE_SCRIPT_SRC,
+  // In production, set VITE_PLAUSIBLE_DOMAIN.
+  domain: import.meta.env.VITE_PLAUSIBLE_DOMAIN?.trim() || '',
+  scriptSrc:
+    import.meta.env.VITE_PLAUSIBLE_SCRIPT_URL ||
+    import.meta.env.VITE_PLAUSIBLE_SCRIPT_SRC ||
+    DEFAULT_PLAUSIBLE_SCRIPT_SRC,
 };
 
 function sanitizeProps(props?: AnalyticsEventProps): Record<string, AnalyticsPrimitive> | undefined {
@@ -31,6 +33,7 @@ function sanitizeProps(props?: AnalyticsEventProps): Record<string, AnalyticsPri
 export function setupAnalyticsScript(): void {
   if (!import.meta.env.PROD) return;
   if (typeof document === 'undefined') return;
+  if (!ANALYTICS_CONFIG.domain) return;
 
   const existingScript = document.getElementById(PLAUSIBLE_SCRIPT_ID);
   if (existingScript) return;

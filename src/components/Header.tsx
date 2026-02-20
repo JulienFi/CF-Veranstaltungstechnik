@@ -18,7 +18,6 @@ const NAVIGATION_ITEMS = [
 const LEGACY_ROUTE_HASH: Record<string, string> = {
   '/dienstleistungen': '#leistungen',
   '/werkstatt': '#leistungen',
-  '/projekte': '#projekte',
   '/team': '#team',
   '/kontakt': '#kontakt',
 };
@@ -33,6 +32,7 @@ function resolveActiveHash(pathname: string, hash: string): string {
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [inquiryCount, setInquiryCount] = useState(0);
+  const [heroInView, setHeroInView] = useState(true);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [currentHash, setCurrentHash] = useState(window.location.hash);
   const mobileButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -40,6 +40,30 @@ export default function Header() {
   const lastFocusedElementRef = useRef<HTMLElement | null>(null);
 
   const activeHash = resolveActiveHash(currentPath, currentHash);
+
+  useEffect(() => {
+    const heroElement = document.getElementById('home-hero');
+    if (!heroElement || !('IntersectionObserver' in window)) {
+      setHeroInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHeroInView(entry.isIntersecting);
+      },
+      {
+        root: null,
+        threshold: 0.15,
+        rootMargin: '-80px 0px 0px 0px',
+      }
+    );
+
+    observer.observe(heroElement);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const updateCount = () => {
@@ -159,6 +183,8 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
+  const primaryCtaVariant = heroInView ? 'ghost' : 'primary';
+
   return (
     <header className={styles.header} data-sticky-header="true">
       <Container className={styles.inner} size="wide">
@@ -196,7 +222,7 @@ export default function Header() {
           <Button href="/mietshop" variant="secondary" size="sm">
             {SECONDARY_CTA_LABEL}
           </Button>
-          <Button href="/#kontakt" variant="primary" size="sm">
+          <Button href="/#kontakt" variant={primaryCtaVariant} size="sm">
             {PRIMARY_CTA_LABEL}
           </Button>
         </div>
@@ -208,7 +234,7 @@ export default function Header() {
           className={styles.mobileButton}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-navigation"
-          aria-label={mobileMenuOpen ? 'Menue schliessen' : 'Menue oeffnen'}
+          aria-label={mobileMenuOpen ? 'Menü schließen' : 'Menü öffnen'}
         >
           {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -216,7 +242,7 @@ export default function Header() {
 
       {mobileMenuOpen ? (
         <>
-          <button type="button" className={styles.overlay} onClick={() => setMobileMenuOpen(false)} aria-label="Menue schliessen" />
+          <button type="button" className={styles.overlay} onClick={() => setMobileMenuOpen(false)} aria-label="Menü schließen" />
           <div id="mobile-navigation" ref={drawerRef} className={styles.drawer}>
             {NAVIGATION_ITEMS.map((item) => {
               const href = `/${item.hash}`;

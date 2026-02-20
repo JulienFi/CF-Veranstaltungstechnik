@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { COMPANY_INFO } from '../config/company';
 import BackButton from '../components/BackButton';
 import { trackAnalyticsEvent } from '../lib/analytics';
 import { FAQ_ITEMS } from '../content/faq';
+import { createInquiry } from '../services/inquiryService';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -33,18 +33,16 @@ export default function ContactPage() {
               ? 'workshop'
               : 'contact';
 
-      const { error } = await supabase.from('inquiries').insert({
-        inquiry_type: inquiryType,
+      await createInquiry({
+        source: 'contact',
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        message: `${formData.subject}: ${formData.message}`,
+        subject: formData.subject,
+        message: formData.message,
+        source_url: typeof window !== 'undefined' ? window.location.href : null,
         status: 'new',
       });
-
-      if (error) {
-        throw error;
-      }
 
       trackAnalyticsEvent('Kontaktformular abgesendet', {
         inquiry_type: inquiryType,
@@ -67,9 +65,9 @@ export default function ContactPage() {
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10">
               <CheckCircle2 className="icon-std icon-std--lg text-green-400" />
             </div>
-            <h1 className="mb-4 text-3xl font-bold sm:text-4xl">Ihre Anfrage ist bei uns eingegangen</h1>
+            <h1 className="mb-4 text-3xl font-bold sm:text-4xl">Ihre Anfrage ist eingegangen</h1>
             <p className="mb-8 text-xl leading-relaxed text-gray-300">
-              Vielen Dank für Ihr Vertrauen. Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von 24 Stunden bei Ihnen.
+              Vielen Dank. Wir melden uns in der Regel innerhalb von 24 Stunden mit den nächsten Schritten.
             </p>
             <div className="flex flex-col justify-center gap-3 sm:flex-row">
               <a href="/" className="btn-primary focus-ring tap-target interactive">
@@ -93,7 +91,8 @@ export default function ContactPage() {
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="section-title mb-6 font-bold">Kontakt & Angebot</h1>
             <p className="section-copy text-gray-200">
-              Sie planen ein Event in Berlin oder Brandenburg? Senden Sie uns kurz Ihre Anforderungen. Wir übernehmen die Technik und erstellen ein klares, unverbindliches Angebot.
+              Sie planen ein Event? Ob Miete im Shop oder Full-Service: Wir erstellen ein klares, unverbindliches Angebot
+              – deutschlandweit verfügbar, Schwerpunkt Berlin/Brandenburg.
             </p>
           </div>
         </div>
@@ -125,21 +124,15 @@ export default function ContactPage() {
                 >
                   {COMPANY_INFO.contact.email}
                 </a>
-                <p className="mt-2 text-sm text-gray-400">Antwort in der Regel innerhalb von 24h</p>
+                <p className="mt-2 text-sm text-gray-400">Antwort in der Regel innerhalb von 24 Stunden</p>
               </div>
 
               <div className="glass-panel--soft card-inner p-6">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500/12">
                   <MapPin className="icon-std text-blue-400" />
                 </div>
-                <h3 className="mb-2 text-lg font-bold">Adresse</h3>
-                <p className="text-gray-300">
-                  {COMPANY_INFO.address.street}
-                  <br />
-                  {COMPANY_INFO.address.postalCode} {COMPANY_INFO.address.city}
-                  <br />
-                  {COMPANY_INFO.address.country}
-                </p>
+                <h3 className="mb-2 text-lg font-bold">Einsatzgebiet</h3>
+                <p className="text-gray-300">Deutschlandweit verfügbar, Schwerpunkt Berlin/Brandenburg.</p>
               </div>
 
               <div className="glass-panel--soft card-inner p-6">
@@ -216,7 +209,7 @@ export default function ContactPage() {
                         value={formData.message}
                         onChange={(event) => setFormData({ ...formData, message: event.target.value })}
                         rows={8}
-                        placeholder="Beschreiben Sie kurz Ihr Anliegen, Termin und Location ..."
+                        placeholder="Kurz zu Termin, Ort, Personenzahl und gewünschtem Leistungsumfang."
                         className="field-control focus-ring min-h-[12rem] resize-none"
                       />
                     </div>
@@ -224,7 +217,7 @@ export default function ContactPage() {
 
                   <div className="card-inner rounded-lg border border-blue-500/25 bg-blue-500/10 p-4">
                     <p className="text-sm text-gray-300">
-                      Ihre Anfrage ist unverbindlich. Wir melden uns in der Regel innerhalb von 24 Stunden bei Ihnen.
+                      Ihre Anfrage ist unverbindlich. Wir antworten in der Regel innerhalb von 24 Stunden.
                     </p>
                   </div>
 
@@ -254,7 +247,7 @@ export default function ContactPage() {
           <div className="mx-auto max-w-4xl">
             <div className="section-head mb-10">
               <h2 className="section-title font-bold">Häufige Fragen</h2>
-              <p className="section-copy">Kompakte Antworten rund um Ablauf, Region und Preislogik</p>
+              <p className="section-copy">Kompakte Antworten zu Ablauf, Region, Kapazitäten und Timing.</p>
             </div>
             <div className="space-y-4">
               {FAQ_ITEMS.map((item, index) => (
@@ -273,7 +266,7 @@ export default function ContactPage() {
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="section-title mb-6 font-bold">Sie bevorzugen ein Telefongespräch?</h2>
             <p className="section-copy mb-8 text-gray-200">
-              Rufen Sie uns direkt an. Wir klären mit Ihnen schnell den passenden Technikrahmen für Ihr Event.
+              Rufen Sie uns direkt an. Wir klären schnell den passenden Technikrahmen für Ihr Event.
             </p>
             <a
               href={COMPANY_INFO.contact.phoneLink}

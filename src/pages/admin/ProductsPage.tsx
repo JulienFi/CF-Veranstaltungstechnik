@@ -21,18 +21,29 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Eye, EyeOff, Filter, Upload, X, FolderOpen } from 'lucide-react';
 import { useAuth } from '../../contexts/useAuth';
-import { supabase } from '../../lib/supabase';
 import type { Database, Json } from '../../lib/database.types';
 import { buildSlugImagePath, resolveImageUrl } from '../../utils/image';
 import { normalizeVatRate, parseMoneyToCents } from '../../utils/price';
+import {
+  createAdminCategory,
+  createAdminProduct,
+  deleteAdminCategory,
+  deleteAdminProduct,
+  getAdminCategoryById,
+  getAdminProductById,
+  listAdminCategories,
+  listAdminProductsWithCategory,
+  toggleAdminProductActive,
+  updateAdminCategory,
+  updateAdminProduct,
+  uploadAdminProductImage,
+  type AdminProductListRow,
+} from '../../repositories/adminCatalogRepository';
 
 type CategoryRow = Database['public']['Tables']['categories']['Row'];
 type ProductRow = Database['public']['Tables']['products']['Row'];
 type ProductInsert = Database['public']['Tables']['products']['Insert'];
 type ProductUpdate = Database['public']['Tables']['products']['Update'];
-type ProductRowWithCategory = ProductRow & {
-  categories: Pick<CategoryRow, 'name'> | null;
-};
 
 interface Category {
   id: string;
@@ -86,7 +97,7 @@ const DEFAULT_PRODUCT_FORM_DATA: ProductFormData = {
   vat_rate_input: '19',
 };
 
-function mapProductListRow(row: ProductRowWithCategory): Product {
+function mapProductListRow(row: AdminProductListRow): Product {
   return {
     id: row.id,
     name: row.name ?? '',
@@ -153,22 +164,28 @@ export default function ProductsPage() {
       window.location.href = '/admin/login';
       return;
     }
-    loadData();
+    void loadData();
   }, [user]);
 
   const loadData = async () => {
     try {
       const [productsRes, categoriesRes] = await Promise.all([
-        supabase.from('products').select('*, categories(name)').order('created_at', { ascending: false }),
-        supabase.from('categories').select('*').order('display_order')
+        listAdminProductsWithCategory(),
+        listAdminCategories(),
       ]);
 
-      if (productsRes.data) {
-        const mappedProducts = (productsRes.data as ProductRowWithCategory[]).map(mapProductListRow);
-        setProducts(mappedProducts);
-        setFilteredProducts(mappedProducts);
-      }
-      if (categoriesRes.data) setCategories(categoriesRes.data as Category[]);
+      const mappedProducts = productsRes.map(mapProductListRow);
+      setProducts(mappedProducts);
+      setFilteredProducts(mappedProducts);
+      setCategories(
+        categoriesRes.map((category) => ({
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+          description: category.description,
+          display_order: category.display_order,
+        }))
+      );
     } catch (error) {
       console.error('Error loading data:', error);
     }
@@ -207,24 +224,7 @@ export default function ProductsPage() {
 
   const uploadImage = async (): Promise<string> => {
     if (!imageFile) return formData.image_url;
-
-    const fileExt = imageFile.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `products/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('product-images')
-      .upload(filePath, imageFile);
-
-    if (uploadError) {
-      throw new Error('Fehler beim Hochladen des Bildes');
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('product-images')
-      .getPublicUrl(filePath);
-
-    return publicUrl;
+    return uploadAdminProductImage(imageFile);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -257,18 +257,9 @@ export default function ProductsPage() {
       };
 
       if (editingProduct) {
-        const { error } = await supabase
-          .from('products')
-          .update(productData as ProductUpdate)
-          .eq('id', editingProduct);
-        if (error) {
-          throw error;
-        }
+        await updateAdminProduct(editingProduct, productData as ProductUpdate);
       } else {
-        const { error } = await supabase.from('products').insert(productData);
-        if (error) {
-          throw error;
-        }
+        await createAdminProduct(productData);
       }
 
       resetForm();
@@ -283,8 +274,8 @@ export default function ProductsPage() {
 
   const toggleActive = async (id: string, currentState: boolean) => {
     try {
-      await supabase.from('products').update({ is_active: !currentState }).eq('id', id);
-      loadData();
+      await toggleAdminProductActive(id, !currentState);
+      await loadData();
     } catch (error) {
       console.error('Error toggling product:', error);
     }
@@ -294,8 +285,8 @@ export default function ProductsPage() {
     if (!confirm('Produkt wirklich löschen?')) return;
 
     try {
-      await supabase.from('products').delete().eq('id', id);
-      loadData();
+      await deleteAdminProduct(id);
+      await loadData();
     } catch (error) {
       console.error('Error deleting product:', error);
     }
@@ -305,8 +296,10 @@ export default function ProductsPage() {
     const product = products.find(p => p.id === id);
     if (!product) return;
 
-    const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
-    if (error) {
+    let data: ProductRow | null = null;
+    try {
+      data = await getAdminProductById(id);
+    } catch (error) {
       console.error('Error loading product for edit:', error);
       return;
     }
@@ -368,13 +361,13 @@ export default function ProductsPage() {
       };
 
       if (editingCategory) {
-        await supabase.from('categories').update(categoryData).eq('id', editingCategory);
+        await updateAdminCategory(editingCategory, categoryData);
       } else {
-        await supabase.from('categories').insert(categoryData);
+        await createAdminCategory(categoryData);
       }
 
       resetCategoryForm();
-      loadData();
+      await loadData();
     } catch (error) {
       console.error('Error saving category:', error);
       alert('Fehler beim Speichern der Kategorie: ' + (error as Error).message);
@@ -382,7 +375,14 @@ export default function ProductsPage() {
   };
 
   const editCategory = async (id: string) => {
-    const { data } = await supabase.from('categories').select('*').eq('id', id).single();
+    let data: CategoryRow | null = null;
+    try {
+      data = await getAdminCategoryById(id);
+    } catch (error) {
+      console.error('Error loading category for edit:', error);
+      return;
+    }
+
     if (data) {
       setCategoryFormData({
         name: data.name,
@@ -409,8 +409,8 @@ export default function ProductsPage() {
     if (!confirm('Kategorie wirklich löschen?')) return;
 
     try {
-      await supabase.from('categories').delete().eq('id', id);
-      loadData();
+      await deleteAdminCategory(id);
+      await loadData();
     } catch (error) {
       console.error('Error deleting category:', error);
     }

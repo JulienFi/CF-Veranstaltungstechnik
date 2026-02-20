@@ -15,6 +15,7 @@ export interface ProjectDTO {
   date?: string | null;
   category?: string | null;
   order_index?: number | null;
+  is_published?: boolean | null;
 }
 
 export interface ProjectWriteDTO {
@@ -26,6 +27,7 @@ export interface ProjectWriteDTO {
   date?: string | null;
   category?: string | null;
   order_index?: number | null;
+  is_published?: boolean | null;
 }
 
 function isMissingOrderIndexError(error: unknown): boolean {
@@ -89,6 +91,7 @@ function mapProjectRow(row: ProjectRow): ProjectDTO {
     date: row.date,
     category: row.category,
     order_index: row.order_index,
+    is_published: row.is_published,
   };
 }
 
@@ -102,6 +105,7 @@ function toProjectInsert(project: ProjectWriteDTO): ProjectInsert {
     date: project.date ?? null,
     category: project.category ?? null,
     order_index: project.order_index ?? 0,
+    is_published: project.is_published ?? true,
   };
 }
 
@@ -116,6 +120,7 @@ function toProjectUpdate(project: Partial<ProjectWriteDTO>): ProjectUpdate {
   if (project.date !== undefined) payload.date = project.date;
   if (project.category !== undefined) payload.category = project.category;
   if (project.order_index !== undefined) payload.order_index = project.order_index;
+  if (project.is_published !== undefined) payload.is_published = project.is_published;
 
   return payload;
 }
@@ -151,6 +156,22 @@ export const projectRepository = {
       .from('projects')
       .select('*')
       .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data ? mapProjectRow(data) : null;
+  },
+
+  async getBySlug(slug: string): Promise<ProjectDTO | null> {
+    const normalizedSlug = slug.trim();
+    if (!normalizedSlug) {
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('slug', normalizedSlug)
       .maybeSingle();
 
     if (error) throw error;

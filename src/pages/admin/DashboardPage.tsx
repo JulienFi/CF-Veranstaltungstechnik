@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Package, FolderOpen, Users as UsersIcon, Mail, LogOut, TrendingUp } from 'lucide-react';
+﻿import { useEffect, useState } from 'react';
+import { Package, FolderOpen, Users as UsersIcon, Mail, LogOut, TrendingUp, FileText } from 'lucide-react';
 import { useAuth } from '../../contexts/useAuth';
-import { supabase } from '../../lib/supabase';
+import { loadDashboardStats } from '../../repositories/dashboardRepository';
 
 export default function DashboardPage() {
   const { user, signOut } = useAuth();
@@ -20,19 +20,8 @@ export default function DashboardPage() {
 
     const loadStats = async () => {
       try {
-        const [productsRes, projectsRes, teamRes, inquiriesRes] = await Promise.all([
-          supabase.from('products').select('id', { count: 'exact', head: true }),
-          supabase.from('projects').select('id', { count: 'exact', head: true }),
-          supabase.from('team_members').select('id', { count: 'exact', head: true }),
-          supabase.from('inquiries').select('id', { count: 'exact', head: true }).eq('status', 'new'),
-        ]);
-
-        setStats({
-          products: productsRes.count || 0,
-          projects: projectsRes.count || 0,
-          team: teamRes.count || 0,
-          inquiries: inquiriesRes.count || 0,
-        });
+        const dashboardStats = await loadDashboardStats();
+        setStats(dashboardStats);
       } catch (error) {
         console.error('Error loading stats:', error);
       }
@@ -60,8 +49,8 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">ET</span>
+              <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                <img src="/images/logo-cf.png" alt="CF Veranstaltungstechnik Logo" className="h-8 w-8 object-contain" />
               </div>
               <div>
                 <h1 className="text-white font-bold text-lg">Admin-Bereich</h1>
@@ -140,7 +129,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <a
             href="/admin/products"
             className="bg-card-bg border border-card rounded-xl p-6 sm:p-8 hover:border-blue-500/50 transition-all group"
@@ -200,8 +189,25 @@ export default function DashboardPage() {
               Neue Leads ansehen, priorisieren und Status aktualisieren
             </p>
           </a>
+
+          <a
+            href="/admin/content"
+            className="bg-card-bg border border-card rounded-xl p-6 sm:p-8 hover:border-blue-500/50 transition-all group"
+          >
+            <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-500/20 transition-colors">
+              <FileText className="w-7 h-7 text-blue-400" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+              OnePager Content
+            </h3>
+            <p className="text-gray-400 text-sm">
+              Home-Texte für Hero, Services, Prozess, FAQ und CTA ohne Codeänderung pflegen
+            </p>
+          </a>
         </div>
       </main>
     </div>
   );
 }
+
+

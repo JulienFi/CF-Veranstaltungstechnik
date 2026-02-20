@@ -322,3 +322,45 @@ Dieses Projekt wurde für EventTech Veranstaltungstechnik erstellt.
 
 
 
+
+## Stage 3 Production Notes
+
+### Cloudflare Pages
+
+- Deployment guide: `DEPLOY-CLOUDFLARE-PAGES.md`
+- Build command: `npm ci && npm run build`
+- Output directory: `dist`
+- SPA fallback is handled via `public/_redirects`.
+
+### Production ENV variables
+
+Required:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_SITE_URL`
+- `SITE_URL`
+
+Optional:
+
+- `VITE_ADMIN_EMAIL`
+- `VITE_PLAUSIBLE_DOMAIN`
+- `VITE_PLAUSIBLE_SCRIPT_URL` (preferred)
+- `VITE_PLAUSIBLE_SCRIPT_SRC` (legacy fallback)
+
+### Analytics (Plausible)
+
+- Plausible script loads only in production.
+- If `VITE_PLAUSIBLE_DOMAIN` is not set, no Plausible script is injected.
+- Privacy text is documented in `src/pages/DatenschutzPage.tsx`.
+
+### Legal pages
+
+- Legal page metadata is centralized in `src/config/legal.ts`.
+- Optional fields are rendered conditionally on `/impressum` and `/datenschutz`.
+
+### Inquiry notifications
+
+- Function: `supabase/functions/inquiry-notify/index.ts`
+- Setup guide: `ADMIN-SETUP.md` section "Inquiries notifications".
+- Secrets: `WEBHOOK_SECRET`, `DISCORD_WEBHOOK_URL`, optional `ADMIN_URL`.

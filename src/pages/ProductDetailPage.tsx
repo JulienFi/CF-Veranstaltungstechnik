@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+﻿import { useCallback, useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle2, Package, Target, Plus, AlertTriangle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { ProductDetailSkeleton } from '../components/SkeletonLoader';
@@ -193,7 +193,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
       setProduct(null);
       setRelatedProducts([]);
       setStatus('error');
-      setErrorMessage('Produktdaten konnten nicht geladen werden. Bitte prüfe deine Verbindung und versuche es erneut.');
+      setErrorMessage('Produktdaten konnten nicht geladen werden. Bitte prüfen Sie die Verbindung und versuchen Sie es erneut.');
     }
   }, [addToRecentlyViewed, loadRelatedProducts, slug]);
 
@@ -255,19 +255,19 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
     });
   }, [product, slug, setSEO]);
 
-  const handleAddToInquiry = (productId: string) => {
-    addToInquiry(productId);
+  const handleAddToInquiry = (productId: string, productSlug?: string | null) => {
+    addToInquiry(productId, productSlug);
     showToast('success', 'Produkt zur Anfrageliste hinzugefügt');
   };
 
-  const isProductInInquiry = product ? isInInquiry(product.id) : false;
+  const isProductInInquiry = product ? isInInquiry(product.id, product.slug) : false;
   const categoryLabel = product?.categories?.name?.trim() || 'Produkt';
   const shortDescription =
     product?.short_description?.trim() ||
-    'Für dieses Produkt liegt aktuell keine Kurzbeschreibung vor. Wir beraten Sie gerne persönlich.';
+    'Für dieses Produkt liegt aktuell keine Kurzbeschreibung vor. Wir beraten Sie gern persönlich.';
   const fullDescription =
     product?.full_description?.trim() ||
-    'Für dieses Produkt liegt aktuell keine ausführliche Beschreibung vor. Sprechen Sie uns an, wir helfen bei der Auswahl.';
+    'Für dieses Produkt liegt aktuell keine ausführliche Beschreibung vor. Sprechen Sie uns an, wir unterstützen bei der Auswahl.';
   const suitableForDescription =
     product?.suitable_for?.trim() ||
     'Wir beraten Sie gern, ob dieses Produkt zu Ihrem Einsatz passt.';
@@ -387,7 +387,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
                   </a>
                 ) : (
                   <button
-                    onClick={() => handleAddToInquiry(product.id)}
+                    onClick={() => handleAddToInquiry(product.id, product.slug)}
                     className="btn-primary focus-ring tap-target interactive flex-1 text-base md:text-lg"
                   >
                     <Plus className="icon-std" />
@@ -483,9 +483,9 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
       <section className="section-shell bg-card-bg/50">
         <div className="content-container">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="section-title mb-6 font-bold">Noch Fragen?</h2>
+            <h2 className="section-title mb-6 font-bold">Noch Fragen zur Auswahl?</h2>
             <p className="section-copy mb-8 text-gray-200">
-              Unsere Experten beraten Sie gerne zu diesem Produkt und erstellen Ihnen ein individuelles Angebot.
+              Wir beraten Sie gern zu diesem Produkt und erstellen ein passendes, unverbindliches Angebot.
             </p>
             <a
               href="/kontakt"
@@ -508,4 +508,6 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
     </div>
   );
 }
+
+
 

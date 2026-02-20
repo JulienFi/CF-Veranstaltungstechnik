@@ -10,7 +10,7 @@ export default function Footer() {
         <div className={styles.top}>
           <img src="/images/logo-cf.png" alt="CF Veranstaltungstechnik Logo" className={styles.logo} />
           <p className={styles.lead}>
-            Ihr professioneller Partner für Veranstaltungstechnik - von der Planung bis zur Durchführung.
+            Mietshop und Full-Service für Veranstaltungen: Planung, Aufbau, Betrieb und Abbau aus einer Hand.
           </p>
         </div>
 
@@ -41,7 +41,7 @@ export default function Footer() {
             <h3 className={styles.title}>Leistungen</h3>
             <ul className={styles.list}>
               <li><a href="/#leistungen">Leistungen</a></li>
-              <li><a href="/#mietshop">Mietshop-Preview</a></li>
+              <li><a href="/#mietshop">Mietshop im Überblick</a></li>
               <li><a href="/mietshop">Mietshop entdecken</a></li>
               <li><a href="/#projekte">Referenzen</a></li>
             </ul>

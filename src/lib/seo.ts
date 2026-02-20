@@ -1,7 +1,7 @@
 /**
  * SEO-Konfiguration für CF Veranstaltungstechnik
  *
- * Zentrale Verwaltung aller Meta-Tags, Open Graph, Twitter Cards und Schema.org Daten
+ * Zentrale Verwaltung von Meta-Tags, Open Graph, Twitter Cards und Schema.org.
  */
 
 import { COMPANY_INFO } from '../config/company';
@@ -18,7 +18,7 @@ export interface PageMeta {
 }
 
 /**
- * Standard-OG-Bild (CF Logo)
+ * Standard-OG-Bild
  */
 export const DEFAULT_OG_IMAGE = '/images/og-cf-veranstaltungstechnik.jpg';
 
@@ -32,78 +32,89 @@ export const SITE_URL = getBaseUrl();
  */
 export const PAGE_META: Record<string, PageMeta> = {
   home: {
-    title: 'CF Veranstaltungstechnik – Licht, Ton & Bühne für Events in Berlin & Brandenburg',
-    description: 'CF Veranstaltungstechnik bietet professionelle Veranstaltungstechnik, Mietshop, technische Planung, Aufbau, Betreuung und Werkstattservice für Events in Berlin und Brandenburg.',
-    keywords: 'Veranstaltungstechnik, Berlin, Brandenburg, Mühlenbecker Land, Eventtechnik, Lichttechnik, Tontechnik, DJ Equipment, Bühnentechnik, Mieten',
+    title: 'Eventtechnik, die einfach läuft | CF Veranstaltungstechnik',
+    description:
+      'Miete im Shop oder Full-Service: Planung, Aufbau, Betrieb und Abbau – deutschlandweit verfügbar, Schwerpunkt Berlin/Brandenburg.',
+    keywords:
+      'Eventtechnik, Veranstaltungstechnik, Mietshop, Full-Service, Berlin, Brandenburg, deutschlandweit',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
 
   mietshop: {
-    title: 'Mietshop für Veranstaltungstechnik – Licht, Ton, DJ & Bühne | CF Veranstaltungstechnik',
-    description: 'Mieten Sie professionelle Veranstaltungstechnik bei CF Veranstaltungstechnik. Von Lichttechnik über Tontechnik bis DJ-Equipment – alles für Ihr Event in Berlin & Brandenburg.',
-    keywords: 'Veranstaltungstechnik mieten, Lichttechnik mieten, Tontechnik mieten, DJ Equipment mieten, Bühnentechnik mieten, Berlin, Brandenburg',
+    title: 'Mietshop für Eventtechnik | CF Veranstaltungstechnik',
+    description:
+      'Licht-, Ton- und Bühnentechnik mieten mit klaren Positionen und persönlicher Beratung. Für kleine Formate bis ca. 2.500 Personen.',
+    keywords:
+      'Mietshop Eventtechnik, Veranstaltungstechnik mieten, Lichttechnik, Tontechnik, Bühnentechnik',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
 
   dienstleistungen: {
-    title: 'Technische Planung & Betreuung für Ihr Event | CF Veranstaltungstechnik',
-    description: 'Professionelle Veranstaltungsplanung und technische Betreuung für Events in Berlin & Brandenburg. Von der Konzeption bis zur Durchführung – alles aus einer Hand.',
-    keywords: 'Veranstaltungsplanung, technische Betreuung, Event-Service, Veranstaltungstechnik Service, Berlin, Brandenburg',
+    title: 'Full-Service für Veranstaltungen | CF Veranstaltungstechnik',
+    description:
+      'Technikplanung, Aufbau, Betrieb und Abbau aus einer Hand. Aufbau nach festen Timings – pünktlich zum Einlass.',
+    keywords: 'Full-Service Eventtechnik, Technikplanung, Veranstaltungsservice, Berlin, Brandenburg',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
 
   werkstatt: {
-    title: 'Werkstatt für Veranstaltungstechnik – Reparatur, Wartung & Sicherheit | CF Veranstaltungstechnik',
-    description: 'Professionelle Werkstatt für Veranstaltungstechnik. Reparatur, Wartung, Sicherheitsprüfung und technischer Support in Mühlenbecker Land bei Berlin.',
-    keywords: 'Veranstaltungstechnik Werkstatt, Reparatur, Wartung, Sicherheitsprüfung, technischer Support, Berlin, Brandenburg',
+    title: 'Werkstatt-Service für Eventtechnik | CF Veranstaltungstechnik',
+    description:
+      'Reparatur, Wartung und Sicherheitsprüfungen für verlässliche Veranstaltungstechnik im laufenden Einsatz.',
+    keywords: 'Werkstatt Eventtechnik, Reparatur, Wartung, Sicherheitsprüfung',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
 
   projekte: {
-    title: 'Projekte & Referenzen – CF Veranstaltungstechnik',
-    description: 'Referenzprojekte von CF Veranstaltungstechnik: Hochzeiten, Firmenfeiern, Konzerte und Events in Berlin & Brandenburg. Sehen Sie unsere erfolgreichen Projekte.',
-    keywords: 'Referenzen Veranstaltungstechnik, Event Projekte, Hochzeiten, Firmenfeiern, Konzerte, Berlin, Brandenburg',
+    title: 'Projekte & Referenzen | CF Veranstaltungstechnik',
+    description:
+      'Ausgewählte Referenzen aus realen Produktionen. Seit 2014 im Einsatz, rund 90 Events pro Jahr.',
+    keywords: 'Referenzen Eventtechnik, Projekte Veranstaltungstechnik, Berlin, Brandenburg',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
 
   team: {
-    title: 'Team – CF Veranstaltungstechnik',
-    description: 'Lernen Sie das Team von CF Veranstaltungstechnik kennen. Erfahrene Techniker und Spezialisten für Ihre Veranstaltung in Berlin & Brandenburg.',
-    keywords: 'Team Veranstaltungstechnik, Techniker, Event-Profis, Berlin, Brandenburg',
+    title: 'Team | CF Veranstaltungstechnik',
+    description:
+      'Kernteam mit ca. 6 Personen, je nach Eventgröße skalierbar mit eingespielter Crew.',
+    keywords: 'Team Eventtechnik, Crew Veranstaltungstechnik',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
 
   kontakt: {
-    title: 'Kontakt – CF Veranstaltungstechnik | Beratung & Angebot',
-    description: `Kontaktieren Sie CF Veranstaltungstechnik für ein unverbindliches Angebot. Telefon: ${COMPANY_INFO.contact.phone} | ${COMPANY_INFO.address.full}`,
-    keywords: 'Kontakt Veranstaltungstechnik, Angebot anfordern, Beratung, Berlin, Brandenburg, Mühlenbecker Land',
+    title: 'Kontakt & Angebot | CF Veranstaltungstechnik',
+    description: `Unverbindlich anfragen: In der Regel erhalten Sie innerhalb von 24 Stunden eine Rückmeldung. Telefon: ${COMPANY_INFO.contact.phone}.`,
+    keywords: 'Kontakt Eventtechnik, Angebot anfragen, Berlin, Brandenburg',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
 
   anfrage: {
     title: 'Anfrage | CF Veranstaltungstechnik',
-    description: 'Senden Sie Ihre unverbindliche Mietshop-Anfrage. Wir erstellen ein individuelles Angebot für Ihr Event in Berlin und Brandenburg.',
-    keywords: 'Angebotsanfrage, Veranstaltungstechnik Anfrage, Mietshop Anfrage, Eventtechnik Berlin',
+    description:
+      'Anfrage für Mietshop oder Full-Service. Wir antworten in der Regel innerhalb von 24 Stunden.',
+    keywords: 'Anfrage Eventtechnik, Mietshop Anfrage, Full-Service Anfrage',
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   },
 
   impressum: {
-    title: 'Impressum – CF Veranstaltungstechnik',
-    description: 'Impressum und rechtliche Informationen von CF Veranstaltungstechnik, Mühlenbecker Land bei Berlin.',
+    title: 'Impressum | CF Veranstaltungstechnik',
+    description:
+      'Impressum und rechtliche Informationen von CF Veranstaltungstechnik.',
     noindex: true,
   },
 
   datenschutz: {
-    title: 'Datenschutzerklärung – CF Veranstaltungstechnik',
-    description: 'Datenschutzerklärung von CF Veranstaltungstechnik. Informationen zur Datenverarbeitung gemäß DSGVO.',
+    title: 'Datenschutzerklärung | CF Veranstaltungstechnik',
+    description:
+      'Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO.',
     noindex: true,
   },
 
@@ -176,16 +187,13 @@ export function generateLocalBusinessSchema(): object {
       },
     ],
     sameAs: [
-      // Social Media Links (später hinzufügen)
+      // Social-Media-Links optional ergänzen
       // COMPANY_INFO.social.facebook,
       // COMPANY_INFO.social.instagram,
     ],
   };
 }
 
-/**
- * Generiert Schema.org für Produkt-Seiten (später)
- */
 interface ProductSchemaInput {
   name: string;
   description: string;
@@ -218,9 +226,6 @@ export function generateProductSchema(product: ProductSchemaInput, canonicalUrl?
   return schema;
 }
 
-/**
- * Generiert Schema.org für Events/Projekte (später)
- */
 export function generateEventSchema(event: EventSchemaInput): object {
   return {
     '@context': 'https://schema.org',

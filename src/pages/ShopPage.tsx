@@ -19,6 +19,7 @@ import MobileStickyCTA from '../components/MobileStickyCTA';
 import { navigate } from '../lib/navigation';
 import { parseQuery, updateQuery } from '../utils/queryState';
 import { listActiveProductsForShop } from '../repositories/productRepository';
+import { listCategoriesForShop } from '../repositories/categoryRepository';
 
 const PRODUCTS_PER_BATCH = 24;
 type FetchStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -121,7 +122,7 @@ export default function ShopPage() {
 
     try {
       const [categoriesRes, productsRes] = await Promise.all([
-        supabase.from('categories').select('*').order('display_order'),
+        listCategoriesForShop(supabase),
         listActiveProductsForShop(supabase),
       ]);
 
@@ -266,13 +267,13 @@ export default function ShopPage() {
     );
   }, [selectedCategory, activeTagsKey, activeFilters.tags]);
 
-  const handleAddToInquiry = (productId: string) => {
-    addToInquiry(productId);
+  const handleAddToInquiry = (productId: string, productSlug?: string | null) => {
+    addToInquiry(productId, productSlug);
     showToast('success', 'Produkt zur Anfrageliste hinzugefügt');
   };
 
-  const handleRemoveFromInquiry = (productId: string) => {
-    removeFromInquiry(productId);
+  const handleRemoveFromInquiry = (productId: string, productSlug?: string | null) => {
+    removeFromInquiry(productId, productSlug);
     showToast('info', 'Produkt von der Anfrageliste entfernt');
   };
 
@@ -284,7 +285,7 @@ export default function ShopPage() {
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="section-title mb-6 font-bold">Mietshop für Eventtechnik</h1>
             <p className="section-copy mb-8 text-gray-200">
-              Wählen Sie die passende Technik für Ihr Event in Berlin und Brandenburg. Wir erstellen Ihnen ein unverbindliches Angebot, das Umfang, Laufzeit und Service exakt auf Ihren Bedarf abstimmt.
+              Wählen Sie die passende Technik für Ihr Event. Wir beraten bei Bedarf persönlich und erstellen ein klares, unverbindliches Angebot – in der Regel innerhalb von 24 Stunden.
             </p>
             <div className="mx-auto flex max-w-2xl justify-center">
               <SearchBar onSearch={setSearchQuery} initialQuery={searchQuery} />
@@ -353,7 +354,7 @@ export default function ShopPage() {
 
           {searchQuery && (
             <div className="mb-6 text-sm text-gray-300">
-              Suchergebnisse für &quot;{searchQuery}&quot; ({filteredProducts.length})
+              Suchergebnisse für "{searchQuery}" ({filteredProducts.length})
             </div>
           )}
 
@@ -385,7 +386,7 @@ export default function ShopPage() {
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="glass-panel--soft card py-16 text-center">
-              <p className="text-lg text-gray-300 md:text-xl">Keine Produkte in dieser Kategorie gefunden.</p>
+              <p className="text-lg text-gray-300 md:text-xl">Keine Produkte für diese Auswahl gefunden.</p>
             </div>
           ) : (
             <>
@@ -447,9 +448,9 @@ export default function ShopPage() {
                         >
                           Details
                         </a>
-                        {isInInquiry(product.id) ? (
+                        {isInInquiry(product.id, product.slug) ? (
                           <button
-                            onClick={() => handleRemoveFromInquiry(product.id)}
+                            onClick={() => handleRemoveFromInquiry(product.id, product.slug)}
                             className="btn-primary focus-ring tap-target interactive !min-h-0 px-4 py-2.5 text-sm"
                             aria-label="Von Anfrageliste entfernen"
                           >
@@ -457,9 +458,9 @@ export default function ShopPage() {
                           </button>
                         ) : (
                           <button
-                            onClick={() => handleAddToInquiry(product.id)}
+                            onClick={() => handleAddToInquiry(product.id, product.slug)}
                             className="btn-secondary focus-ring tap-target interactive !min-h-0 px-4 py-2.5 text-sm"
-                            aria-label="Zur Anfrageliste hinzufuegen"
+                            aria-label="Zur Anfrageliste hinzufügen"
                           >
                             +
                           </button>
@@ -488,9 +489,9 @@ export default function ShopPage() {
       <section className="section-shell bg-card-bg/50">
         <div className="content-container">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="section-title mb-6 font-bold">Sie brauchen Unterstützung bei der Auswahl?</h2>
+            <h2 className="section-title mb-6 font-bold">Sie möchten die Auswahl abstimmen?</h2>
             <p className="section-copy mb-8 text-gray-200">
-              Wir übernehmen die technische Planung und beraten Sie persönlich. So können Sie sich auf Ihr Event konzentrieren, während wir die passende Lösung liefern.
+              Wir unterstützen bei Auswahl und Planung – für Miete oder Full-Service, passend zu Format, Ablauf und Budget.
             </p>
             <a
               href="/kontakt"
@@ -511,17 +512,18 @@ export default function ShopPage() {
           isOpen={!!quickViewProduct}
           onClose={() => setQuickViewProduct(null)}
           onAddToInquiry={handleAddToInquiry}
-          isInInquiry={isInInquiry(quickViewProduct.id)}
+          isInInquiry={isInInquiry(quickViewProduct.id, quickViewProduct.slug)}
         />
       )}
 
       <MobileStickyCTA
-        label="Angebot anfragen"
+        label="Unverbindlich anfragen"
         isVisible={showStickyCta}
         onClick={() => navigate('/mietshop/anfrage')}
       />
     </div>
   );
 }
+
 
 

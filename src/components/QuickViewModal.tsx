@@ -16,7 +16,7 @@ export default function QuickViewModal({
   isOpen,
   onClose,
   onAddToInquiry,
-  isInInquiry
+  isInInquiry,
 }: QuickViewModalProps) {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -99,10 +99,7 @@ export default function QuickViewModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-3 pt-6 md:items-center md:p-4">
-      <div
-        className="absolute inset-0 bg-black/82 backdrop-blur-sm"
-        onClick={onClose}
-      ></div>
+      <div className="absolute inset-0 bg-black/82 backdrop-blur-sm" onClick={onClose}></div>
       <div
         ref={modalRef}
         className="glass-panel no-scrollbar card relative z-10 max-h-[min(92vh,860px)] w-full max-w-4xl overflow-y-auto"
@@ -135,7 +132,7 @@ export default function QuickViewModal({
               <span className="card-inner rounded-md bg-blue-500/14 px-3 py-1.5 text-sm font-medium text-blue-300">
                 {product.categories.name}
               </span>
-              {product.tags.slice(0, 3).map(tag => (
+              {product.tags.slice(0, 3).map((tag) => (
                 <span key={tag} className="glass-panel--soft card-inner px-3 py-1.5 text-sm text-gray-200">
                   {tag}
                 </span>
@@ -170,7 +167,7 @@ export default function QuickViewModal({
                 href={`/mietshop/${product.slug}`}
                 className="btn-secondary focus-ring tap-target interactive flex-1 text-center"
               >
-                Alle Details ansehen
+                Alle Details im Mietshop
               </a>
               {isInInquiry ? (
                 <button
@@ -189,7 +186,7 @@ export default function QuickViewModal({
                   className="btn-primary focus-ring tap-target interactive inline-flex items-center justify-center gap-2"
                 >
                   <Plus className="icon-std" />
-                  Anfragen
+                  Zur Anfrageliste
                 </button>
               )}
             </div>

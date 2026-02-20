@@ -24,7 +24,8 @@ function escapeXml(value) {
 }
 
 function getBaseUrl() {
-  const fromEnv = process.env.VITE_SITE_URL || process.env.SITEMAP_SITE_URL;
+  const fromEnv =
+    process.env.SITE_URL || process.env.VITE_SITE_URL || process.env.SITEMAP_SITE_URL;
   if (fromEnv && fromEnv.trim() !== '') {
     return normalizeBaseUrl(fromEnv);
   }
@@ -73,7 +74,7 @@ async function collectDynamicRoutes() {
   try {
     const [productSlugs, projectSlugs] = await Promise.all([
       fetchSlugs(supabaseUrl, serviceKey, 'products', '&is_active=eq.true'),
-      fetchSlugs(supabaseUrl, serviceKey, 'projects'),
+      fetchSlugs(supabaseUrl, serviceKey, 'projects', '&is_published=eq.true'),
     ]);
 
     const productRoutes = productSlugs.map((slug) => `/mietshop/${slug}`);
@@ -103,11 +104,9 @@ async function generateSitemap() {
     '/',
     '/mietshop',
     '/mietshop/anfrage',
-    '/dienstleistungen',
-    '/werkstatt',
     '/projekte',
-    '/team',
-    '/kontakt',
+    '/impressum',
+    '/datenschutz',
   ];
 
   const dynamicRoutes = await collectDynamicRoutes();

@@ -1,8 +1,5 @@
 /**
- * Zentrale Konfiguration für Unternehmensstammdaten
- *
- * Hier können alle Firmendaten zentral verwaltet werden.
- * Änderungen an dieser Datei wirken sich automatisch auf die gesamte Website aus.
+ * Zentrale Konfiguration für Unternehmensstammdaten.
  */
 
 export const COMPANY_INFO = {
@@ -14,42 +11,43 @@ export const COMPANY_INFO = {
     postalCode: '16567',
     city: 'Mühlenbecker Land',
     country: 'Deutschland',
-    full: 'Dorfstraße 1A, 16567 Mühlenbecker Land'
+    full: 'Dorfstraße 1A, 16567 Mühlenbecker Land',
   },
 
   contact: {
     phone: '+49 172 5780502',
     phoneLink: 'tel:+491725780502',
     email: 'info@cf-veranstaltungstechnik.de',
-    emailLink: 'mailto:info@cf-veranstaltungstechnik.de'
+    emailLink: 'mailto:info@cf-veranstaltungstechnik.de',
   },
 
   serviceArea: [
     {
       type: 'City',
-      name: 'Berlin'
+      name: 'Berlin',
     },
     {
       type: 'State',
-      name: 'Brandenburg'
-    }
+      name: 'Brandenburg',
+    },
   ],
 
   businessHours: {
     weekdays: 'Mo–Fr: 9:00–18:00 Uhr',
-    weekend: 'Sa: Nach Vereinbarung',
-    note: 'Termine außerhalb der Geschäftszeiten nach Absprache möglich'
+    weekend: 'Sa: nach Vereinbarung',
+    note: 'Termine außerhalb der Zeiten nach Absprache möglich',
   },
 
   social: {
     facebook: '',
     instagram: '',
-    linkedin: ''
+    linkedin: '',
   },
 
   seo: {
-    defaultTitle: 'CF Veranstaltungstechnik – Professionelle Eventtechnik mieten',
-    defaultDescription: 'CF Veranstaltungstechnik vermietet professionelle Veranstaltungstechnik für Hochzeiten, Firmenfeiern und Events in Mühlenbecker Land und Umgebung. Jetzt Angebot anfordern!',
-    keywords: 'Veranstaltungstechnik mieten, Eventtechnik, Mühlenbecker Land, Hochzeit, Firmenevent'
-  }
+    defaultTitle: 'Eventtechnik, die einfach läuft | CF Veranstaltungstechnik',
+    defaultDescription:
+      'Seit 2014 im Einsatz: Mietshop und Full-Service für Veranstaltungen bis ca. 2.500 Personen – deutschlandweit verfügbar, Schwerpunkt Berlin/Brandenburg.',
+    keywords: 'Eventtechnik mieten, Full-Service, Veranstaltungstechnik, Berlin, Brandenburg',
+  },
 } as const;

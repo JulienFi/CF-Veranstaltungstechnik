@@ -3,114 +3,106 @@ import {
   CheckCircle2,
   ChevronDown,
   ClipboardList,
-  Headphones,
   Layers3,
   Mail,
-  MapPin,
   Phone,
-  ShieldCheck,
   Sparkles,
   Store,
-  Users,
   Wrench,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FAQ_ITEMS } from '../content/faq';
+import {
+  HOME_CTA_FALLBACK,
+  HOME_FAQ_FALLBACK,
+  HOME_HERO_FALLBACK,
+  HOME_PROCESS_FALLBACK,
+  HOME_PROOF_FALLBACK,
+  HOME_SERVICES_FALLBACK,
+  normalizeHomeCtaContent,
+  normalizeHomeFaqContent,
+  normalizeHomeHeroContent,
+  normalizeHomeProcessContent,
+  normalizeHomeProofContent,
+  normalizeHomeServicesContent,
+} from '../content/siteContent';
 import { COMPANY_INFO } from '../config/company';
+import { useSiteContent } from '../hooks/useSiteContent';
 import { trackAnalyticsEvent } from '../lib/analytics';
-import { supabase } from '../lib/supabase';
 import { type ProjectDTO, projectRepository } from '../repositories/projectRepository';
 import { type TeamMemberDTO, teamRepository } from '../repositories/teamRepository';
+import { createInquiry } from '../services/inquiryService';
 import { resolveImageUrl } from '../utils/image';
 
-const PRIMARY_CTA_LABEL = 'Unverbindliches Angebot anfragen';
-const SECONDARY_CTA_LABEL = 'Mietshop entdecken';
-const RESPONSE_PROMISE = 'Antwort in der Regel innerhalb von 24 Stunden.';
-
-const proofItems = [
+const SERVICE_ICONS = [Store, Sparkles, Wrench] as const;
+const HERO_TRUST_STEPS = ['Planung', 'Aufbau', 'Betrieb', 'Abbau'] as const;
+const PROJECT_FALLBACK_CHIPS = ['Seit 2014', '90+ Events/Jahr', 'Bis 2.500 Personen', 'Team 6+ (Crew skalierbar)'] as const;
+const PROJECT_FALLBACK_SETUPS = [
   {
-    icon: MapPin,
-    label: 'Region',
-    value: 'Berlin und Brandenburg',
+    title: 'Firmenevent / Konferenz',
+    chips: ['Ton + Funk', 'Präsentation', 'Licht-Akzente'],
   },
   {
-    icon: ShieldCheck,
-    label: 'Ablauf',
-    value: 'Planung bis Rueckbau',
+    title: 'Konzert / Club',
+    chips: ['Ton (PA & Monitoring)', 'Lichtshow', 'DJ-Setup'],
   },
   {
-    icon: Users,
-    label: 'Einsatz',
-    value: 'Privat, Corporate, Kultur',
+    title: 'Outdoor / Zelt',
+    chips: ['Strom & Verteilung', 'Bühne', 'Wetterschutz'],
+  },
+] as const;
+const PROJECT_FALLBACK_STANDARDS = [
+  'Ein fester Ansprechpartner',
+  'Planung & Dokumentation',
+  'Timing im Blick (pünktlich zum Einlass)',
+  'Rückbau & Übergabe',
+] as const;
+const TEAM_FALLBACK_CARDS = [
+  {
+    title: 'Projektleitung',
+    points: ['Briefing und Ablaufkoordination', 'Abstimmung mit Location und Gewerken'],
   },
   {
-    icon: Headphones,
-    label: 'Rueckmeldung',
-    value: RESPONSE_PROMISE,
-  },
-];
-
-const serviceCards = [
-  {
-    id: 'service-rental',
-    icon: Store,
-    title: 'Mietshop',
-    description:
-      'Licht-, Ton- und Buehnentechnik mieten. Verfuegbare Systeme, klare Preise und direkte Anfrageoptionen.',
-    highlights: ['Licht und Ton', 'Buehne und Rigging', 'DJ- und Event-Equipment'],
-    layoutClass: 'lg:col-span-5',
+    title: 'Aufbau / Rigging',
+    points: ['Strukturierter Aufbau nach Plan', 'Sicheres Rigging & Kabelführung'],
   },
   {
-    id: 'service-live',
-    icon: Sparkles,
-    title: 'Technik-Service',
-    description:
-      'Wir planen, bauen auf und betreuen den Eventbetrieb vor Ort. Ein Team, ein Ablauf, klare Verantwortung.',
-    highlights: ['Technikplanung', 'Aufbau und Betrieb', 'Abstimmung mit Gewerken'],
-    layoutClass: 'lg:col-span-4',
+    title: 'Betrieb vor Ort',
+    points: ['Technische Betreuung während der Veranstaltung', 'Schnelle Reaktion bei Änderungen'],
+  },
+] as const;
+const TEAM_FALLBACK_STANDARDS = ['Sicherheitscheck', 'Kommunikation', 'Sauberer Abbau', 'Timing'] as const;
+const WORKFLOW_STEP_FALLBACK = [
+  {
+    title: 'Anfrage & Zielklärung',
+    description: 'Anlass, Termin, Ort, Ziel – wir klären Anforderungen und Prioritäten.',
   },
   {
-    id: 'service-workshop',
-    icon: Wrench,
-    title: 'Werkstatt',
-    description:
-      'Reparatur, Wartung und Sicherheitspruefung fuer einsatzbereite Technik und planbare Eventqualitaet.',
-    highlights: ['Reparatur', 'Wartung', 'Sicherheitschecks'],
-    layoutClass: 'lg:col-span-3',
-  },
-];
-
-const processSteps = [
-  {
-    title: 'Anfrage und Zielklaerung',
-    description: 'Sie beschreiben Anlass, Termin und Location. Wir klaeren Anforderungen und Prioritaeten.',
+    title: 'Konzept & Angebot',
+    description: 'Setup, Leistungsumfang und Zeitplan – als transparentes Angebot.',
   },
   {
-    title: 'Konzept und Angebot',
-    description: 'Sie erhalten ein klares Setup mit Leistungsumfang, Zeitplan und transparentem Angebot.',
+    title: 'Aufbau & Betrieb',
+    description: 'Aufbau nach Plan und Betrieb vor Ort – pünktlich zum Einlass.',
   },
   {
-    title: 'Aufbau und Durchfuehrung',
-    description: 'Wir liefern, bauen auf und betreuen den Betrieb waehrend des Events in abgestimmten Rollen.',
+    title: 'Abbau & Abschluss',
+    description: 'Rückbau, Übergabe und offene Punkte sauber abschließen.',
   },
-  {
-    title: 'Rueckbau und Nachlauf',
-    description: 'Nach Veranstaltungsende uebernehmen wir den Rueckbau und dokumentieren offene Punkte.',
-  },
-];
+] as const;
 
 const shopHighlights = [
   {
     title: 'Lichttechnik',
-    description: 'Moving Heads, Washes, Spots und Ambient-Licht fuer klare Stimmung und Fuehrung.',
+    description: 'Moving Heads, Washes, Spots und Ambient-Licht für klare Stimmung und Führung.',
   },
   {
     title: 'Tontechnik',
-    description: 'PA, Monitoring, Funkstrecken und Mischpulte fuer Sprache und Musik.',
+    description: 'PA, Monitoring, Funkstrecken und Mischpulte für Sprache und Musik.',
   },
   {
-    title: 'Buehne und Infrastruktur',
-    description: 'Buehnenmodule, Traversen, Stromverteilung und sichere Verkabelung.',
+    title: 'Bühne und Infrastruktur',
+    description: 'Bühnenmodule, Traversen, Stromverteilung und sichere Verkabelung.',
   },
 ];
 
@@ -141,6 +133,53 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const { data: heroContent } = useSiteContent('home.hero', HOME_HERO_FALLBACK, normalizeHomeHeroContent);
+  const { data: proofContent } = useSiteContent('home.proof', HOME_PROOF_FALLBACK, normalizeHomeProofContent);
+  const { data: servicesContent } = useSiteContent('home.services', HOME_SERVICES_FALLBACK, normalizeHomeServicesContent);
+  const { data: processContent } = useSiteContent('home.process', HOME_PROCESS_FALLBACK, normalizeHomeProcessContent);
+  const { data: faqContent } = useSiteContent('home.faq', HOME_FAQ_FALLBACK, normalizeHomeFaqContent);
+  const { data: ctaContent } = useSiteContent('home.cta', HOME_CTA_FALLBACK, normalizeHomeCtaContent);
+
+  const heroBadge = heroContent.badge.trim();
+  const heroSubheadline = heroContent.subheadline.trim();
+  const heroBadgeLower = heroBadge.toLowerCase();
+  const heroSubheadlineLower = heroSubheadline.toLowerCase();
+  const hasMatchingRegionCopy =
+    heroBadgeLower.includes('deutschlandweit') &&
+    heroSubheadlineLower.includes('deutschlandweit') &&
+    ((heroBadgeLower.includes('berlin') && heroSubheadlineLower.includes('berlin')) ||
+      (heroBadgeLower.includes('brandenburg') && heroSubheadlineLower.includes('brandenburg')));
+  const isDuplicateBadge = heroBadgeLower === heroSubheadlineLower;
+  const shouldShowHeroBadge = heroBadge.length > 0 && !hasMatchingRegionCopy && !isDuplicateBadge;
+  const trustPromiseText = (proofContent.microline?.trim() || 'Aufbau nach festen Timings – pünktlich zum Einlass.').trim();
+
+  const serviceCards = servicesContent.cards.map((card, index) => ({
+    id: `service-${index + 1}`,
+    icon: SERVICE_ICONS[index] ?? Sparkles,
+    ...card,
+  }));
+  const featuredServiceIndex = serviceCards.findIndex((card) => {
+    const normalizedTitle = card.title.toLowerCase();
+    return normalizedTitle.includes('technik') || normalizedTitle.includes('full-service') || normalizedTitle.includes('full service');
+  });
+  const fallbackFeaturedServiceIndex = serviceCards.length > 1 ? 1 : 0;
+  const resolvedFeaturedServiceIndex = featuredServiceIndex >= 0 ? featuredServiceIndex : fallbackFeaturedServiceIndex;
+  const featuredServiceCard = serviceCards[resolvedFeaturedServiceIndex] ?? null;
+  const secondaryServiceCards = serviceCards
+    .filter((_, index) => index !== resolvedFeaturedServiceIndex)
+    .slice(0, 2);
+
+  const processSteps = processContent.steps;
+  const workflowTitle = processContent.title.trim() || 'So läuft die Zusammenarbeit';
+  const workflowSubline =
+    processContent.copy.trim() || 'Ein klarer Ablauf sorgt für Planungssicherheit am Veranstaltungstag.';
+  const workflowSteps = (processSteps.length > 0 ? processSteps : WORKFLOW_STEP_FALLBACK).slice(0, 4);
+  const validProjects = projects.filter(
+    (project) => project.title?.trim().length > 0 && project.description?.trim().length > 0
+  );
+  const validTeamMembers = teamMembers.filter((member) => member.name?.trim().length > 0 && member.role?.trim().length > 0);
+  const hasProjects = validProjects.length > 0 && !previewError;
+  const hasTeam = validTeamMembers.length > 0 && !previewError;
 
   useEffect(() => {
     let isMounted = true;
@@ -154,7 +193,8 @@ export default function HomePage() {
 
         if (!isMounted) return;
 
-        setProjects(projectData.slice(0, 3));
+        const visibleProjects = projectData.filter((project) => project.is_published !== false);
+        setProjects(visibleProjects.slice(0, 3));
         setTeamMembers(teamData.slice(0, 4));
         setPreviewError(null);
       } catch (error) {
@@ -184,18 +224,16 @@ export default function HomePage() {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.from('inquiries').insert({
-        inquiry_type: 'contact',
+      await createInquiry({
+        source: 'home',
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim() || null,
-        message: `${formData.subject}: ${formData.message.trim()}`,
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+        source_url: typeof window !== 'undefined' ? window.location.href : null,
         status: 'new',
       });
-
-      if (error) {
-        throw error;
-      }
 
       trackAnalyticsEvent('Onepager Kontaktformular abgesendet', {
         subject: formData.subject,
@@ -213,128 +251,198 @@ export default function HomePage() {
 
   return (
     <div className="bg-app-bg text-white">
-      <section className="section-shell section-shell--hero relative flex min-h-[74vh] items-center overflow-hidden scroll-anchor">
+      <section id="home-hero" className="section-shell section-shell--hero relative flex min-h-[74vh] items-center overflow-hidden scroll-anchor">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-app-bg/25 to-app-bg/72"></div>
+        <div aria-hidden="true" className="hero-spotlight pointer-events-none absolute inset-0"></div>
         <div className="pointer-events-none absolute left-1/2 top-0 h-[380px] w-[820px] -translate-x-1/2 rounded-full bg-[rgb(var(--primary)/0.2)] blur-[120px]"></div>
         <div className="pointer-events-none absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDE0NSwgMTk2LCAyMjMsIDAuMDYpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-25"></div>
 
         <div className="content-container relative z-10">
           <div className="mx-auto max-w-4xl text-center">
-            <div className="hero-badge mb-6">
-              <span className="hero-badge-dot" aria-hidden="true"></span>
-              <span>One Team fuer Technik, Ablauf und Betrieb</span>
-            </div>
+            {shouldShowHeroBadge ? (
+              <div className="hero-badge mb-6">
+                <span className="hero-badge-dot" aria-hidden="true"></span>
+                <span>{heroBadge}</span>
+              </div>
+            ) : null}
 
-            <h1 className="hero-title text-glow mb-6 font-bold">
-              Eventtechnik, die ruhig wirkt. <br className="hidden md:block" />
-              <span className="text-transparent bg-gradient-to-b from-white to-white/55 bg-clip-text">
-                Weil der Ablauf sicher steht.
-              </span>
+            <h1 className="hero-title type-h1 text-glow mb-6 font-bold">
+              {heroContent.headline}
+              {heroContent.highlightedText.trim() ? (
+                <>
+                  {' '}
+                  <br className="hidden md:block" />
+                  <span className="text-transparent bg-gradient-to-b from-white to-white/55 bg-clip-text">
+                    {heroContent.highlightedText}
+                  </span>
+                </>
+              ) : null}
             </h1>
 
-            <p className="hero-copy mx-auto mb-10 text-gray-300">
-              CF Veranstaltungstechnik begleitet Veranstaltungen in Berlin und Brandenburg von der ersten Planung bis zum
-              letzten Abbau. Ein Ansprechpartner, ein klarer Prozess, ein verlässliches Ergebnis.
-            </p>
+            <p className="hero-copy type-lead mx-auto mb-10 text-gray-300">{heroContent.subheadline}</p>
 
             <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
               <a
                 href="/#kontakt"
                 className="btn-primary focus-ring tap-target interactive group w-full text-base sm:w-auto"
               >
-                <span>{PRIMARY_CTA_LABEL}</span>
+                <span>{ctaContent.primaryLabel}</span>
                 <ArrowRight className="icon-std transition-transform group-hover:translate-x-1" />
               </a>
               <a
                 href="/mietshop"
-                className="btn-secondary focus-ring tap-target interactive w-full text-base sm:w-auto"
+                className="btn-ghost focus-ring tap-target interactive w-full text-base sm:w-auto"
               >
-                {SECONDARY_CTA_LABEL}
+                {ctaContent.secondaryLabel}
               </a>
             </div>
-
-            <ul className="mt-8 grid grid-cols-1 gap-2.5 text-left sm:grid-cols-2 lg:grid-cols-4">
-              {proofItems.map((item) => (
-                <li key={item.label} className="proof-chip">
-                  <item.icon className="icon-std icon-std--sm text-[rgb(var(--accent))]" />
-                  <div>
-                    <p className="text-[0.7rem] uppercase tracking-[0.12em] text-gray-400">{item.label}</p>
-                    <p className="text-sm font-medium text-gray-100">{item.value}</p>
+            <div className="hero-trust">
+              <div className="hero-trustTop">
+                {trustPromiseText ? (
+                  <div className="hero-trustChip">
+                    <span className="hero-trustChipLabel">Timing-Garantie</span>
+                    <span className="hero-trustChipText">{trustPromiseText}</span>
                   </div>
-                </li>
-              ))}
-            </ul>
+                ) : null}
+                <div className="hero-trustSteps" aria-label="So läuft’s in 4 Schritten">
+                  <div className="hero-trustStepsLabel">So läuft’s</div>
+                  <ol className="hero-trustStepsList">
+                    {HERO_TRUST_STEPS.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+
+              <div className="hero-proofChips" aria-label="Kennzahlen">
+                {proofContent.items.map((item) => (
+                  <div key={item.label} className="hero-proofChip">
+                    <span className="hero-proofValue">{item.value}</span>
+                    <span className="hero-proofLabel">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="leistungen" className="section-shell scroll-anchor">
+      <section id="leistungen" className="section-shell section-surface brand-motif brand-motif--left scroll-anchor">
         <div className="content-container">
-          <div className="section-head mb-12 md:mb-14">
-            <h2 className="section-title font-bold">Leistungen fuer Events, die funktionieren sollen</h2>
-            <p className="section-copy">
-              Problem zuerst, Technik danach: Wir strukturieren Anforderungen und liefern passende Systeme.
-            </p>
+          <div className="section-head">
+            <h2 className="section-title type-h2 font-bold">{servicesContent.title}</h2>
+            <p className="section-copy type-lead">{servicesContent.copy}</p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 md:gap-6">
-            {serviceCards.map((card) => (
-              <article key={card.id} className={`glass-panel card interactive-card ${card.layoutClass}`}>
+          <div className="services-grid">
+            {featuredServiceCard ? (
+              <article className="service-card service-card--featured">
+                <div className="service-badge">Full-Service</div>
                 <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgb(var(--accent)/0.3)] bg-[rgb(var(--primary)/0.14)]">
-                  <card.icon className="icon-std text-[rgb(var(--accent))]" />
+                  <featuredServiceCard.icon className="icon-std text-[rgb(var(--accent))]" />
                 </div>
-                <h3 className="mb-3 text-2xl font-bold leading-tight">{card.title}</h3>
-                <p className="mb-6 leading-relaxed text-gray-300">{card.description}</p>
+                <h3 className="type-h3 mb-3 font-bold">{featuredServiceCard.title}</h3>
+                <p className="type-body mb-6 text-gray-300">{featuredServiceCard.description}</p>
                 <ul className="space-y-2.5">
-                  {card.highlights.map((highlight) => (
-                    <li key={highlight} className="flex items-center gap-2 text-sm text-gray-100">
+                  {featuredServiceCard.highlights.map((highlight) => (
+                    <li key={highlight} className="type-body flex items-center gap-2 text-gray-100">
                       <CheckCircle2 className="icon-std icon-std--sm text-[rgb(var(--accent))]" />
                       <span>{highlight}</span>
                     </li>
                   ))}
                 </ul>
               </article>
-            ))}
+            ) : null}
+
+            <div className="services-side">
+              {secondaryServiceCards.map((card) => (
+                <article key={card.id} className="service-card service-card--secondary">
+                  <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgb(var(--accent)/0.3)] bg-[rgb(var(--primary)/0.14)]">
+                    <card.icon className="icon-std text-[rgb(var(--accent))]" />
+                  </div>
+                  <h3 className="type-h3 mb-3 font-bold">{card.title}</h3>
+                  <p className="type-body mb-6 text-gray-300">{card.description}</p>
+                  <ul className="space-y-2.5">
+                    {card.highlights.map((highlight) => (
+                      <li key={highlight} className="type-body flex items-center gap-2 text-gray-100">
+                        <CheckCircle2 className="icon-std icon-std--sm text-[rgb(var(--accent))]" />
+                        <span>{highlight}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
           </div>
 
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <a href="/#kontakt" className="btn-primary focus-ring tap-target interactive">
-              {PRIMARY_CTA_LABEL}
+              {ctaContent.primaryLabel}
             </a>
-            <a href="/mietshop" className="btn-secondary focus-ring tap-target interactive">
-              {SECONDARY_CTA_LABEL}
+            <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
+              {ctaContent.secondaryLabel}
             </a>
           </div>
         </div>
       </section>
 
-      <section id="prozess" className="section-shell scroll-anchor">
+      <section id="prozess" className="section-shell section-surface section-surface--alt brand-motif scroll-anchor">
         <div className="content-container">
-          <div className="section-head mb-12 md:mb-14">
-            <h2 className="section-title font-bold">So laeuft die Zusammenarbeit</h2>
-            <p className="section-copy">Ein klarer Ablauf minimiert Reibung am Eventtag.</p>
-          </div>
+          <div className="workflow-split">
+            <div className="workflow-left">
+              <h2 className="section-title type-h2 font-bold">{workflowTitle}</h2>
+              <p className="workflow-subline type-lead">{workflowSubline}</p>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-5">
-            {processSteps.map((step, index) => (
-              <article key={step.title} className="glass-panel--soft card-inner interactive-card p-5 md:p-6">
-                <div className="mb-4 inline-flex items-center rounded-full border border-[rgb(var(--accent)/0.35)] bg-[rgb(var(--primary)/0.12)] px-2.5 py-1 text-xs font-semibold tracking-wide text-[rgb(var(--accent))]">
-                  Schritt {String(index + 1).padStart(2, '0')}
-                </div>
-                <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-300">{step.description}</p>
-              </article>
-            ))}
+              <ul className="workflow-bullets">
+                <li className="type-body">
+                  <strong>Klare Zuständigkeiten</strong> – ein Ansprechpartner, sauberer Ablauf.
+                </li>
+                <li className="type-body">
+                  <strong>Timing im Blick</strong> – Aufbau nach festen Timings, pünktlich zum Einlass.
+                </li>
+                <li className="type-body">
+                  <strong>Transparentes Angebot</strong> – Umfang, Zeiten und Budget nachvollziehbar.
+                </li>
+              </ul>
+
+              <div className="workflow-ctaRow">
+                <a href="/#kontakt" className="btn-primary focus-ring tap-target interactive">
+                  {ctaContent.primaryLabel}
+                </a>
+                <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
+                  {ctaContent.secondaryLabel}
+                </a>
+              </div>
+            </div>
+
+            <ol className="workflow-stepper" aria-label="Ablauf in 4 Schritten">
+              {workflowSteps.map((step, index) => (
+                <li key={`${step.title}-${index}`} className="workflow-step">
+                  <div className="workflow-stepRail" aria-hidden="true">
+                    <div className="workflow-stepDot" />
+                    <div className="workflow-stepLine" />
+                  </div>
+
+                  <div className="workflow-stepBody">
+                    <div className="workflow-stepMeta">
+                      <span className="workflow-stepNum">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="workflow-stepTitle type-h3">{step.title}</span>
+                    </div>
+                    <p className="workflow-stepDesc type-body">{step.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
 
-      <section id="mietshop" className="section-shell scroll-anchor">
+      <section id="mietshop" className="section-shell section-surface scroll-anchor">
         <div className="content-container">
-          <div className="section-head mb-12 md:mb-14">
-            <h2 className="section-title font-bold">Mietshop Preview</h2>
-            <p className="section-copy">
-              Schnelle Orientierung zu Kategorien und Einsatzzwecken. Die komplette Auswahl bleibt im Shop.
+          <div className="section-head">
+            <h2 className="section-title type-h2 font-bold">Mietshop im Überblick</h2>
+            <p className="section-copy type-lead">
+              Eine schnelle Orientierung zu Kategorien und Einsatzbereichen. Die komplette Auswahl bleibt im Shop.
             </p>
           </div>
 
@@ -344,39 +452,39 @@ export default function HomePage() {
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgb(var(--accent)/0.3)] bg-[rgb(var(--primary)/0.14)]">
                   <Layers3 className="icon-std text-[rgb(var(--accent))]" />
                 </div>
-                <h3 className="mb-2 text-xl font-bold">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-300">{item.description}</p>
+                <h3 className="type-h3 mb-2 font-bold">{item.title}</h3>
+                <p className="type-body text-gray-300">{item.description}</p>
               </article>
             ))}
           </div>
 
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <a href="/#kontakt" className="btn-primary focus-ring tap-target interactive">
-              {PRIMARY_CTA_LABEL}
+              {ctaContent.primaryLabel}
             </a>
-            <a href="/mietshop" className="btn-secondary focus-ring tap-target interactive">
-              {SECONDARY_CTA_LABEL}
+            <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
+              {ctaContent.secondaryLabel}
             </a>
           </div>
         </div>
       </section>
 
-      <section id="projekte" className="section-shell scroll-anchor">
+      <section id="projekte" className="section-shell section-surface section-surface--alt scroll-anchor">
         <div className="content-container">
-          <div className="section-head mb-12 md:mb-14">
-            <h2 className="section-title font-bold">Ausgewaehlte Projekte</h2>
-            <p className="section-copy">Proof aus realen Produktionen mit unterschiedlichen Anforderungen und Setups.</p>
+          <div className="section-head">
+            <h2 className="section-title type-h2 font-bold">Ausgewählte Projekte</h2>
+            <p className="section-copy type-lead">
+              {hasProjects
+                ? 'Referenzen aus realen Produktionen mit unterschiedlichen Anforderungen.'
+                : 'Typische Setups – Referenzen senden wir gern passend zu Branche und Größe.'}
+            </p>
           </div>
 
           {isLoadingPreview ? (
             <div className="glass-panel--soft card-inner py-12 text-center text-gray-300">Referenzen werden geladen...</div>
-          ) : previewError ? (
-            <div className="glass-panel--soft card-inner py-12 text-center text-gray-300">{previewError}</div>
-          ) : projects.length === 0 ? (
-            <div className="glass-panel--soft card-inner py-12 text-center text-gray-300">Noch keine Referenzen verfuegbar.</div>
-          ) : (
+          ) : hasProjects ? (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
-              {projects.map((project) => (
+              {validProjects.map((project) => (
                 <article key={project.id} className="glass-panel card interactive-card overflow-hidden">
                   <div className="card-inner aspect-video overflow-hidden bg-[rgb(var(--card)/0.55)]">
                     <img
@@ -387,41 +495,94 @@ export default function HomePage() {
                     />
                   </div>
                   <div className="pt-4">
-                    <h3 className="mb-2 text-xl font-bold">{project.title}</h3>
-                    <p className="line-clamp-3 text-sm leading-relaxed text-gray-300">{project.description}</p>
+                    <h3 className="type-h3 mb-2 font-bold">{project.title}</h3>
+                    <p className="type-body line-clamp-3 text-gray-300">{project.description}</p>
+                    {project.slug ? (
+                      <a
+                        href={`/projekte/${project.slug}`}
+                        className="btn-ghost focus-ring tap-target interactive mt-4 inline-flex"
+                      >
+                        Projekt ansehen
+                      </a>
+                    ) : null}
                   </div>
                 </article>
               ))}
             </div>
+          ) : (
+            <div className="blueprint-panel blueprint-grid p-5 md:p-7">
+              <div className="projects-fallback-layout">
+                <div>
+                  <h3 className="type-h3 mb-4 font-bold text-gray-100">Typische Setups</h3>
+                  <div className="projects-setup-grid">
+                    {PROJECT_FALLBACK_SETUPS.map((setup) => (
+                      <article key={setup.title} className="setup-card blueprint-corner">
+                        <h4 className="type-h3 font-semibold text-gray-100">{setup.title}</h4>
+                        <div className="setup-chips mt-3">
+                          {setup.chips.map((chip) => (
+                            <span key={chip}>{chip}</span>
+                          ))}
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+
+                  <div className="standards-row standards-row--compact mt-4" aria-label="Kennzahlen">
+                    {PROJECT_FALLBACK_CHIPS.map((chip) => (
+                      <span key={chip}>{chip}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <aside className="standards-box blueprint-corner">
+                  <h3 className="type-h3 font-semibold text-gray-100">Das bekommen Sie</h3>
+                  <ul className="standards-list">
+                    {PROJECT_FALLBACK_STANDARDS.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <div className="workflow-ctaRow">
+                    <a href="/#kontakt" className="btn-primary focus-ring tap-target interactive">
+                      {ctaContent.primaryLabel}
+                    </a>
+                    <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
+                      {ctaContent.secondaryLabel}
+                    </a>
+                  </div>
+                </aside>
+              </div>
+            </div>
           )}
 
-          <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-            <a href="/#kontakt" className="btn-primary focus-ring tap-target interactive">
-              {PRIMARY_CTA_LABEL}
-            </a>
-            <a href="/mietshop" className="btn-secondary focus-ring tap-target interactive">
-              {SECONDARY_CTA_LABEL}
-            </a>
-          </div>
+          {hasProjects ? (
+            <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+              <a href="/projekte" className="btn-ghost focus-ring tap-target interactive">
+                Alle Projekte ansehen
+              </a>
+              <a href="/#kontakt" className="btn-primary focus-ring tap-target interactive">
+                {ctaContent.primaryLabel}
+              </a>
+            </div>
+          ) : null}
         </div>
       </section>
 
-      <section id="team" className="section-shell scroll-anchor">
+      <section id="team" className="section-shell section-surface scroll-anchor">
         <div className="content-container">
-          <div className="section-head mb-12 md:mb-14">
-            <h2 className="section-title font-bold">Team Preview</h2>
-            <p className="section-copy">Technik, Organisation und Kommunikation greifen in einem Team ineinander.</p>
+          <div className="section-head">
+            <h2 className="section-title type-h2 font-bold">Team im Überblick</h2>
+            <p className="section-copy type-lead">
+              {hasTeam
+                ? 'Kernteam mit klaren Rollen, bei Bedarf skalierbar mit eingespielter Crew.'
+                : 'Kernteam ab 6 Personen – je nach Aufbau skalierbar mit eingespielter Crew.'}
+            </p>
           </div>
 
           {isLoadingPreview ? (
             <div className="glass-panel--soft card-inner py-12 text-center text-gray-300">Team wird geladen...</div>
-          ) : previewError ? (
-            <div className="glass-panel--soft card-inner py-12 text-center text-gray-300">{previewError}</div>
-          ) : teamMembers.length === 0 ? (
-            <div className="glass-panel--soft card-inner py-12 text-center text-gray-300">Teamdaten sind derzeit nicht verfuegbar.</div>
-          ) : (
+          ) : hasTeam ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
-              {teamMembers.map((member) => (
+              {validTeamMembers.map((member) => (
                 <article key={member.id} className="glass-panel card interactive-card overflow-hidden">
                   <div className="card-inner aspect-square overflow-hidden bg-[rgb(var(--card)/0.55)]">
                     <img
@@ -432,9 +593,9 @@ export default function HomePage() {
                     />
                   </div>
                   <div className="pt-4">
-                    <h3 className="text-xl font-bold">{member.name}</h3>
+                    <h3 className="type-h3 font-bold">{member.name}</h3>
                     <p className="mb-3 text-sm font-medium text-[rgb(var(--accent))]">{member.role}</p>
-                    {member.bio ? <p className="mb-3 line-clamp-3 text-sm text-gray-300">{member.bio}</p> : null}
+                    {member.bio ? <p className="type-body mb-3 line-clamp-3 text-gray-300">{member.bio}</p> : null}
                     <p className="text-xs text-gray-300">
                       {member.phone?.trim() ? member.phone : COMPANY_INFO.contact.phone}
                     </p>
@@ -442,24 +603,45 @@ export default function HomePage() {
                 </article>
               ))}
             </div>
+          ) : (
+            <div className="blueprint-panel blueprint-grid p-5 md:p-7">
+              <h3 className="type-h3 mb-4 font-bold text-gray-100">Team & Zuständigkeiten</h3>
+              <div className="team-setup-grid">
+                {TEAM_FALLBACK_CARDS.map((item) => (
+                  <article key={item.title} className="setup-card blueprint-corner">
+                    <h4 className="type-h3 font-semibold text-gray-100">{item.title}</h4>
+                    <ul className="standards-list standards-list--tight">
+                      {item.points.map((point) => (
+                        <li key={point}>{point}</li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>
+              <div className="standards-row mt-4">
+                {TEAM_FALLBACK_STANDARDS.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+              </div>
+            </div>
           )}
 
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <a href="/#kontakt" className="btn-primary focus-ring tap-target interactive">
-              {PRIMARY_CTA_LABEL}
+              {ctaContent.primaryLabel}
             </a>
-            <a href="/mietshop" className="btn-secondary focus-ring tap-target interactive">
-              {SECONDARY_CTA_LABEL}
+            <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
+              {ctaContent.secondaryLabel}
             </a>
           </div>
         </div>
       </section>
 
-      <section id="faq" className="section-shell scroll-anchor">
+      <section id="faq" className="section-shell section-surface section-surface--alt scroll-anchor">
         <div className="content-container">
-          <div className="section-head mb-10 md:mb-12">
-            <h2 className="section-title font-bold">Haeufige Fragen</h2>
-            <p className="section-copy">Ein FAQ-Datensatz fuer konsistente Antworten im gesamten Marketing-Flow.</p>
+          <div className="section-head">
+            <h2 className="section-title type-h2 font-bold">{faqContent.title}</h2>
+            <p className="section-copy type-lead">{faqContent.copy}</p>
           </div>
 
           <div className="mx-auto max-w-4xl space-y-3 md:space-y-4">
@@ -489,11 +671,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="kontakt" className="section-shell scroll-anchor">
+      <section id="kontakt" className="section-shell section-surface brand-motif brand-motif--right scroll-anchor">
         <div className="content-container">
-          <div className="section-head mb-10 md:mb-12">
-            <h2 className="section-title font-bold">Kontakt und Angebot</h2>
-            <p className="section-copy">Ein Formular fuer den Marketing-Flow. Produktspezifische Anfragen bleiben im Mietshop.</p>
+          <div className="section-head">
+            <h2 className="section-title type-h2 font-bold">{ctaContent.contactTitle}</h2>
+            <p className="section-copy type-lead">{ctaContent.contactCopy}</p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 md:gap-8">
@@ -502,7 +684,7 @@ export default function HomePage() {
                 <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[rgb(var(--accent)/0.28)] bg-[rgb(var(--primary)/0.12)]">
                   <Phone className="icon-std text-[rgb(var(--accent))]" />
                 </div>
-                <h3 className="mb-2 text-lg font-bold">Telefon</h3>
+                <h3 className="type-h3 mb-2 font-bold">Telefon</h3>
                 <a href={COMPANY_INFO.contact.phoneLink} className="interactive-link focus-ring inline-flex rounded px-1 py-0.5 text-gray-200">
                   {COMPANY_INFO.contact.phone}
                 </a>
@@ -513,20 +695,20 @@ export default function HomePage() {
                 <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[rgb(var(--accent)/0.28)] bg-[rgb(var(--primary)/0.12)]">
                   <Mail className="icon-std text-[rgb(var(--accent))]" />
                 </div>
-                <h3 className="mb-2 text-lg font-bold">E-Mail</h3>
+                <h3 className="type-h3 mb-2 font-bold">E-Mail</h3>
                 <a href={COMPANY_INFO.contact.emailLink} className="interactive-link focus-ring inline-flex rounded px-1 py-0.5 text-gray-200">
                   {COMPANY_INFO.contact.email}
                 </a>
-                <p className="mt-2 text-sm text-gray-400">{RESPONSE_PROMISE}</p>
+                <p className="mt-2 text-sm text-gray-400">{ctaContent.responsePromise}</p>
               </div>
 
               <div className="glass-panel--soft card-inner p-5">
                 <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[rgb(var(--accent)/0.28)] bg-[rgb(var(--primary)/0.12)]">
                   <ClipboardList className="icon-std text-[rgb(var(--accent))]" />
                 </div>
-                <h3 className="mb-2 text-lg font-bold">Servicegebiet</h3>
-                <p className="text-sm leading-relaxed text-gray-300">
-                  Berlin und Brandenburg. Einsaetze ausserhalb der Region stimmen wir individuell ab.
+                <h3 className="type-h3 mb-2 font-bold">Servicegebiet</h3>
+                <p className="type-body text-gray-300">
+                  Deutschlandweit verfügbar, Schwerpunkt Berlin/Brandenburg.
                 </p>
               </div>
             </aside>
@@ -535,14 +717,14 @@ export default function HomePage() {
               <div className="glass-panel card p-5 sm:p-6 lg:p-8">
                 {submitSuccess ? (
                   <div className="card-inner rounded-xl border border-[rgb(var(--accent)/0.3)] bg-[rgb(var(--primary)/0.1)] p-6 text-center">
-                    <h3 className="mb-2 text-2xl font-bold">Anfrage eingegangen</h3>
-                    <p className="mx-auto mb-6 max-w-[56ch] text-gray-200">
-                      Danke fuer Ihre Anfrage. Wir melden uns in der Regel innerhalb von 24 Stunden zurueck.
+                    <h3 className="type-h3 mb-2 font-bold">Anfrage eingegangen</h3>
+                    <p className="type-body mx-auto mb-6 max-w-[56ch] text-gray-200">
+                      Danke für Ihre Anfrage. Wir melden uns in der Regel innerhalb von 24 Stunden zurück.
                     </p>
                     <button
                       type="button"
                       onClick={() => setSubmitSuccess(false)}
-                      className="btn-secondary focus-ring tap-target interactive"
+                      className="btn-ghost focus-ring tap-target interactive"
                     >
                       Neue Anfrage erfassen
                     </button>
@@ -625,7 +807,7 @@ export default function HomePage() {
                     </div>
 
                     <div className="card-inner rounded-lg border border-[rgb(var(--accent)/0.3)] bg-[rgb(var(--primary)/0.1)] p-4">
-                      <p className="text-sm text-gray-200">{RESPONSE_PROMISE}</p>
+                      <p className="text-sm text-gray-200">{ctaContent.responsePromise}</p>
                     </div>
 
                     {submitError ? (
@@ -640,11 +822,11 @@ export default function HomePage() {
                       className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 text-base disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <ArrowRight className="icon-std" />
-                      <span>{isSubmitting ? 'Wird gesendet...' : PRIMARY_CTA_LABEL}</span>
+                      <span>{isSubmitting ? 'Wird gesendet...' : ctaContent.primaryLabel}</span>
                     </button>
 
-                    <a href="/mietshop" className="btn-secondary focus-ring tap-target interactive inline-flex w-full justify-center">
-                      {SECONDARY_CTA_LABEL}
+                    <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive inline-flex w-full justify-center">
+                      {ctaContent.secondaryLabel}
                     </a>
                   </form>
                 )}
@@ -652,6 +834,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+        <div className="section-bottom-divider" aria-hidden="true"></div>
       </section>
     </div>
   );

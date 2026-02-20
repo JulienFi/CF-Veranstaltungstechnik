@@ -23,9 +23,9 @@ const STATUS_LABELS: Record<InquiryStatus, string> = {
 };
 
 const STATUS_BADGE_CLASSES: Record<InquiryStatus, string> = {
-  new: 'bg-orange-500/10 text-orange-300 border-orange-500/30',
-  in_progress: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
-  closed: 'bg-green-500/10 text-green-300 border-green-500/30',
+  new: 'badge--warning',
+  in_progress: 'badge--info',
+  closed: 'badge--success',
 };
 
 function toStatus(value: string | null): InquiryStatus {
@@ -214,7 +214,7 @@ export default function AdminInquiriesPage() {
               id="status-filter"
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value as InquiryFilterStatus)}
-              className="px-3 py-2 bg-card-bg border border-gray-700 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+              className="field-control focus-ring py-2"
             >
               {STATUS_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -228,7 +228,7 @@ export default function AdminInquiriesPage() {
         {loading ? (
           <div className="text-gray-300">Lade Anfragen...</div>
         ) : inquiries.length === 0 ? (
-          <div className="bg-card-bg border border-card rounded-xl p-8 text-center text-gray-400">
+          <div className="panel panel--neutral p-8 text-center">
             Keine Anfragen für den gewählten Status.
           </div>
         ) : (
@@ -255,7 +255,7 @@ export default function AdminInquiriesPage() {
 
                     <div className="flex flex-col gap-2 md:items-end">
                       <span
-                        className={`inline-flex px-3 py-1 rounded-full border text-xs font-medium ${STATUS_BADGE_CLASSES[status]}`}
+                        className={`badge ${STATUS_BADGE_CLASSES[status]}`}
                       >
                         {STATUS_LABELS[status]}
                       </span>
@@ -265,7 +265,7 @@ export default function AdminInquiriesPage() {
                         onChange={(event) =>
                           handleStatusChange(inquiry.id, event.target.value as InquiryStatus)
                         }
-                        className="px-3 py-2 bg-card-hover border border-gray-700 rounded-lg text-white text-sm focus:border-blue-500 focus:outline-none disabled:opacity-60"
+                        className="field-control focus-ring py-2 text-sm disabled:opacity-60"
                       >
                         <option value="new">Neu</option>
                         <option value="in_progress">In Bearbeitung</option>
@@ -294,8 +294,8 @@ export default function AdminInquiriesPage() {
                   </div>
 
                   {inquiry.message && (
-                    <div className="mt-4 p-3 rounded-lg bg-card-hover border border-gray-700">
-                      <p className="text-sm text-gray-300 whitespace-pre-wrap">{inquiry.message}</p>
+                    <div className="panel panel--neutral mt-4">
+                      <p className="text-sm whitespace-pre-wrap">{inquiry.message}</p>
                     </div>
                   )}
 
@@ -303,7 +303,7 @@ export default function AdminInquiriesPage() {
                     <button
                       type="button"
                       onClick={() => handleCopySummary(inquiry)}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-card-hover text-gray-100 hover:bg-gray-700 transition-colors text-sm"
+                      className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2 px-3 py-2 text-sm"
                     >
                       <Copy className="w-4 h-4" />
                       <span>{copyFeedbackId === inquiry.id ? 'Kopiert' : 'Zusammenfassung kopieren'}</span>
@@ -312,7 +312,7 @@ export default function AdminInquiriesPage() {
                     {inquiry.email && (
                       <a
                         href={`mailto:${inquiry.email}`}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-card-hover text-gray-100 hover:bg-gray-700 transition-colors text-sm"
+                        className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2 px-3 py-2 text-sm"
                       >
                         <Mail className="w-4 h-4" />
                         <span>E-Mail</span>
@@ -322,7 +322,7 @@ export default function AdminInquiriesPage() {
                     {inquiry.phone && (
                       <a
                         href={`tel:${inquiry.phone}`}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-card-hover text-gray-100 hover:bg-gray-700 transition-colors text-sm"
+                        className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2 px-3 py-2 text-sm"
                       >
                         <Phone className="w-4 h-4" />
                         <span>Anrufen</span>
@@ -334,7 +334,7 @@ export default function AdminInquiriesPage() {
                         href={whatsappLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors text-sm"
+                        className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2 px-3 py-2 text-sm"
                       >
                         <MessageCircle className="w-4 h-4" />
                         <span>WhatsApp</span>
@@ -347,7 +347,7 @@ export default function AdminInquiriesPage() {
                         href={inquiry.source_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-card-hover text-gray-100 hover:bg-gray-700 transition-colors text-sm"
+                        className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2 px-3 py-2 text-sm"
                       >
                         <ExternalLink className="w-4 h-4" />
                         <span>Quelle</span>
@@ -363,3 +363,4 @@ export default function AdminInquiriesPage() {
     </div>
   );
 }
+

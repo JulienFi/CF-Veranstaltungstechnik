@@ -4,12 +4,15 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import SEOHead from './components/SEOHead';
 import SpotlightRig from './components/SpotlightRig';
+import { AuroraBackground } from './components/AuroraBackground';
 import { SEOProvider } from './contexts/SEOContext';
 import { useSEO } from './contexts/seo-state';
 import { generateLocalBusinessSchema } from './lib/seo';
 import { getBaseUrl } from './lib/site';
 import HomePage from './pages/HomePage';
 import InquiryPage from './pages/InquiryPage';
+import ProjectDetailPage from './pages/ProjectDetailPage';
+import ProjectsPage from './pages/ProjectsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopPage from './pages/ShopPage';
 
@@ -21,11 +24,11 @@ const ProductsPage = lazy(() => import('./pages/admin/ProductsPage'));
 const AdminProjectsPage = lazy(() => import('./pages/admin/AdminProjectsPage'));
 const AdminTeamPage = lazy(() => import('./pages/admin/AdminTeamPage'));
 const AdminInquiriesPage = lazy(() => import('./pages/admin/AdminInquiriesPage'));
+const AdminContentPage = lazy(() => import('./pages/admin/AdminContentPage'));
 
 const LEGACY_ONEPAGER_ROUTE_HASH: Record<string, string> = {
   '/dienstleistungen': '#leistungen',
   '/werkstatt': '#leistungen',
-  '/projekte': '#projekte',
   '/team': '#team',
   '/kontakt': '#kontakt',
 };
@@ -108,7 +111,7 @@ function RouterContent() {
     resetSEO();
   }, [currentPath, resetSEO]);
 
-  const adminPaths = ['/admin/login', '/admin', '/admin/products', '/admin/projects', '/admin/team', '/admin/inquiries'];
+  const adminPaths = ['/admin/login', '/admin', '/admin/products', '/admin/projects', '/admin/team', '/admin/inquiries', '/admin/content'];
   const isAdminRoute = adminPaths.some((path) => currentPath === path || currentPath.startsWith(path + '/'));
 
   const routeHash = LEGACY_ONEPAGER_ROUTE_HASH[currentPath] ?? '';
@@ -183,6 +186,12 @@ function RouterContent() {
           <AdminInquiriesPage />
         </AdminGuard>
       );
+    } else if (currentPath === '/admin/content') {
+      adminContent = (
+        <AdminGuard>
+          <AdminContentPage />
+        </AdminGuard>
+      );
     } else {
       adminContent = (
         <AdminGuard>
@@ -213,12 +222,12 @@ function RouterContent() {
   } else if (currentPath === '/mietshop') {
     content = <ShopPage />;
     seoPageKey = 'mietshop';
-    schemaData = {
-      '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: 'Mietshop fuer Veranstaltungstechnik',
-      url: `${getBaseUrl()}/mietshop`,
-    };
+      schemaData = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Mietshop für Veranstaltungstechnik',
+        url: `${getBaseUrl()}/mietshop`,
+      };
   } else if (currentPath.startsWith('/mietshop/') && currentPath !== '/mietshop/anfrage') {
     const rawSlug = currentPath.slice('/mietshop/'.length).replace(/\/+$/, '');
 
@@ -233,6 +242,19 @@ function RouterContent() {
   } else if (currentPath === '/mietshop/anfrage') {
     content = <InquiryPage />;
     seoPageKey = 'anfrage';
+  } else if (currentPath === '/projekte') {
+    content = <ProjectsPage />;
+    seoPageKey = 'projekte';
+  } else if (currentPath.startsWith('/projekte/')) {
+    const rawSlug = currentPath.slice('/projekte/'.length).replace(/\/+$/, '');
+    if (!rawSlug) {
+      content = <ProjectsPage />;
+      seoPageKey = 'projekte';
+    } else {
+      const slug = decodePathSegment(rawSlug);
+      content = <ProjectDetailPage slug={slug} />;
+      seoPageKey = 'projekte';
+    }
   } else if (currentPath === '/impressum') {
     content = <ImpressumPage />;
     seoPageKey = 'impressum';
@@ -258,6 +280,7 @@ function RouterContent() {
   return (
     <>
       <SEOHead pageKey={seoPageKey} schemaData={schemaData} />
+      <AuroraBackground />
       <div className="global-stage-bg" aria-hidden="true" />
       <SpotlightRig />
       <div className="app-shell">

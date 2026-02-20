@@ -10,7 +10,7 @@ interface SearchBarProps {
 
 export default function SearchBar({
   onSearch,
-  placeholder = 'Produkte durchsuchen...',
+  placeholder = 'Technik im Mietshop suchen...',
   debounceMs = 250,
   initialQuery = '',
 }: SearchBarProps) {
@@ -52,7 +52,7 @@ export default function SearchBar({
           autoComplete="off"
           enterKeyHint="search"
           className="field-control focus-ring border-0 bg-transparent py-3 pl-12 pr-12"
-          aria-label="Produktsuche"
+          aria-label="Produktsuche im Mietshop"
         />
         {query && (
           <button

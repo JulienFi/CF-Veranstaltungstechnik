@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import { CheckCircle2, Send, MessageCircle, ExternalLink, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Json } from '../lib/database.types';
@@ -8,7 +8,11 @@ import { useSEO } from '../contexts/seo-state';
 import { getBaseUrl } from '../lib/site';
 import { resolveImageUrl } from '../utils/image';
 import { COMPANY_INFO } from '../config/company';
-import { inquiryRepository } from '../repositories/inquiryRepository';
+import { createInquiry } from '../services/inquiryService';
+import {
+  getActiveProductLookupByReference,
+  listActiveProductLookupsByIds,
+} from '../repositories/productRepository';
 
 type CategoryRelation = { name: string | null } | Array<{ name: string | null }> | null;
 
@@ -65,8 +69,6 @@ const INITIAL_FORM_DATA: InquiryFormData = {
   budget: '',
   message: '',
 };
-
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function getCategoryName(categories: CategoryRelation): string {
   if (Array.isArray(categories)) {
@@ -272,7 +274,7 @@ export default function InquiryPage() {
     setSEO({
       title: 'Anfrage | CF Veranstaltungstechnik',
       description:
-        'Senden Sie Ihre unverbindliche Anfrage für Veranstaltungstechnik. Wir erstellen ein passendes Angebot für Ihr Event.',
+        'Senden Sie Ihre Anfrage für Mietshop oder Full-Service. Wir antworten in der Regel innerhalb von 24 Stunden.',
       canonical,
       ogImage: '/images/og-cf-veranstaltungstechnik.jpg',
       schemaData: {
@@ -280,7 +282,7 @@ export default function InquiryPage() {
         '@type': 'ContactPage',
         name: 'Anfrage',
         description:
-          'Anfrageformular für Mietshop-Produkte und Veranstaltungstechnik in Berlin und Brandenburg.',
+          'Anfrageformular für Mietshop und Full-Service – deutschlandweit verfügbar, Schwerpunkt Berlin/Brandenburg.',
         url: canonical,
       },
     });
@@ -295,15 +297,7 @@ export default function InquiryPage() {
         return null;
       }
 
-      const baseQuery = supabase
-        .from('products')
-        .select('id, slug, name, image_url, categories(name)')
-        .eq('is_active', true)
-        .limit(1);
-
-      const { data, error } = UUID_PATTERN.test(candidate)
-        ? await baseQuery.eq('id', candidate).maybeSingle()
-        : await baseQuery.eq('slug', candidate).maybeSingle();
+      const { data, error } = await getActiveProductLookupByReference(supabase, candidate);
 
       if (error || !data) {
         return null;
@@ -317,11 +311,7 @@ export default function InquiryPage() {
         return [];
       }
 
-      const { data, error } = await supabase
-        .from('products')
-        .select('id, slug, name, image_url, categories(name)')
-        .in('id', ids)
-        .eq('is_active', true);
+      const { data, error } = await listActiveProductLookupsByIds(supabase, ids);
 
       if (error || !data) {
         return [];
@@ -446,10 +436,10 @@ export default function InquiryPage() {
 
       const messagePayload = buildMessagePayload(formData, queryContext);
 
-      await inquiryRepository.createInquiry({
+      await createInquiry({
+        source: 'shop',
         inquiry_type: 'rental',
         name: formData.name.trim(),
-        company: null,
         email: formData.email.trim() || '',
         phone: formData.phone.trim() || null,
         event_type: formData.eventType.trim() || null,
@@ -500,7 +490,7 @@ export default function InquiryPage() {
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold mb-4">Vielen Dank für Ihre Anfrage!</h1>
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von zwei Stunden mit den nächsten Schritten.
+              Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von 24 Stunden mit den nächsten Schritten.
             </p>
             <div className="mb-4 flex flex-col justify-center gap-3 sm:flex-row">
               <a
@@ -542,12 +532,12 @@ export default function InquiryPage() {
         <div className="mx-auto max-w-4xl">
           <h1 className="section-title mb-4 font-bold">Angebotsanfrage</h1>
           <p className="section-copy mb-8 text-gray-200 md:mb-12">
-            Fünf Felder reichen für den Start. Wir melden uns schnell mit einer passenden Lösung für Ihr Event.
+            Wenige Angaben reichen für den Start. Wir melden uns mit einer passenden Lösung für Miete oder Full-Service.
           </p>
 
           {prefilledProduct && (
             <div className="glass-panel card border-blue-500/30 p-4 md:p-5 mb-6">
-              <p className="text-sm text-blue-300 mb-3">Du fragst an für:</p>
+              <p className="text-sm text-blue-300 mb-3">Ihre aktuelle Anfrageposition:</p>
               <div className="flex items-center gap-4">
                 <img
                   src={resolveImageUrl(prefilledProduct.image_url, 'product', prefilledProduct.slug ?? prefilledProduct.name)}
@@ -758,7 +748,7 @@ export default function InquiryPage() {
                 className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 text-base disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Send className="icon-std" />
-                <span>{loading ? 'Wird gesendet...' : 'Angebot anfragen (Antwort i.d.R. in 24h)'}</span>
+                <span>{loading ? 'Wird gesendet...' : 'Angebot anfragen (Antwort in der Regel innerhalb von 24 Stunden)'}</span>
               </button>
 
               {whatsappHref ? (
@@ -770,7 +760,7 @@ export default function InquiryPage() {
                   className="focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-400/70 bg-emerald-500 px-6 py-4 text-base font-semibold text-white hover:bg-emerald-600"
                 >
                   <MessageCircle className="icon-std" />
-                  <span>Schnell per WhatsApp</span>
+                  <span>Per WhatsApp abstimmen</span>
                   <ExternalLink className="icon-std icon-std--sm" />
                 </a>
               ) : (
@@ -779,7 +769,7 @@ export default function InquiryPage() {
                   className="focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 rounded-lg border border-emerald-400/70 bg-emerald-500 px-6 py-4 text-base font-semibold text-white hover:bg-emerald-600"
                 >
                   <MessageCircle className="icon-std" />
-                  <span>Schnell per WhatsApp</span>
+                  <span>Per WhatsApp abstimmen</span>
                 </a>
               )}
             </div>
@@ -789,3 +779,5 @@ export default function InquiryPage() {
     </div>
   );
 }
+
+

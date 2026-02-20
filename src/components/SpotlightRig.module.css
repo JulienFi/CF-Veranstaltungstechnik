@@ -1,8 +1,8 @@
 .overlay {
   --beam-length: 1600px;
-  --beam-alpha: 0.18;
-  --beam-haze-alpha: 0.12;
-  --global-haze-alpha: 0.19;
+  --beam-alpha: 0.24;
+  --beam-haze-alpha: 0.15;
+  --global-haze-alpha: 0.22;
   --beam-blur: 22px;
   --beam-haze-blur: 36px;
   --beam-falloff: 78%;
@@ -74,11 +74,11 @@
   background: linear-gradient(
     90deg,
     rgb(var(--primary) / 0) 0%,
-    rgb(var(--accent) / 0.18) 34%,
-    rgb(var(--primary) / 0.09) 72%,
+    rgb(var(--accent) / 0.24) 34%,
+    rgb(var(--primary) / 0.13) 72%,
     rgb(var(--primary) / 0) 100%
   );
-  filter: blur(var(--beam-blur)) brightness(0.9) saturate(0.8);
+  filter: blur(var(--beam-blur)) brightness(1.02) saturate(0.92);
   opacity: var(--beam-alpha);
 }
 
@@ -87,11 +87,11 @@
   background: linear-gradient(
     90deg,
     rgb(var(--accent) / 0) 0%,
-    rgb(var(--accent) / 0.16) 38%,
-    rgb(var(--primary) / 0.05) 78%,
+    rgb(var(--accent) / 0.2) 38%,
+    rgb(var(--primary) / 0.08) 78%,
     rgb(var(--primary) / 0) 100%
   );
-  filter: blur(var(--beam-haze-blur)) brightness(0.9) saturate(0.76);
+  filter: blur(var(--beam-haze-blur)) brightness(0.98) saturate(0.86);
   opacity: var(--beam-haze-alpha);
 }
 

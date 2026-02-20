@@ -5,7 +5,10 @@ function normalizeBaseUrl(value: string): string {
 }
 
 export function getBaseUrl(): string {
-  const envBaseUrl = import.meta.env.VITE_SITE_URL as string | undefined;
+  const envBaseUrl =
+    (import.meta.env.VITE_SITE_URL as string | undefined) ||
+    (import.meta.env.SITE_URL as string | undefined);
+
   if (envBaseUrl && envBaseUrl.trim() !== '') {
     return normalizeBaseUrl(envBaseUrl);
   }

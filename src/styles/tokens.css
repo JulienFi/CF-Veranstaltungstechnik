@@ -37,6 +37,18 @@
   --success: rgb(22 163 74);
   --warning: rgb(245 158 11);
   --danger: rgb(239 68 68);
+  --feedback-info-bg: color-mix(in srgb, var(--accent-main) 18%, transparent);
+  --feedback-info-border: color-mix(in srgb, var(--accent-main) 44%, transparent);
+  --feedback-info-text: color-mix(in srgb, var(--accent-main) 56%, rgb(var(--text)));
+  --feedback-success-bg: color-mix(in srgb, var(--success) 16%, transparent);
+  --feedback-success-border: color-mix(in srgb, var(--success) 46%, transparent);
+  --feedback-success-text: color-mix(in srgb, var(--success) 70%, rgb(var(--text)));
+  --feedback-warning-bg: color-mix(in srgb, var(--warning) 18%, transparent);
+  --feedback-warning-border: color-mix(in srgb, var(--warning) 48%, transparent);
+  --feedback-warning-text: color-mix(in srgb, var(--warning) 72%, rgb(var(--text)));
+  --feedback-error-bg: color-mix(in srgb, var(--danger) 16%, transparent);
+  --feedback-error-border: color-mix(in srgb, var(--danger) 46%, transparent);
+  --feedback-error-text: color-mix(in srgb, var(--danger) 70%, rgb(var(--text)));
 
   --radius-xs: 0.5rem;
   --radius-sm: 0.75rem;

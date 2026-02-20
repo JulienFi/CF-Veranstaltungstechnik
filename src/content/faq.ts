@@ -7,26 +7,46 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'Wie viel Vorlaufzeit sollten wir einplanen?',
     answer:
-      'Fuer Veranstaltungen mit Full-Service empfehlen wir 3 bis 6 Wochen Vorlauf. Kurzfristige Termine sind moeglich, sofern Technik und Team verfuegbar sind.',
+      'Für Full-Service empfehlen wir 3 bis 6 Wochen Vorlauf. Kurzfristige Termine sind möglich, wenn Technik und Crew verfügbar sind.',
   },
   {
-    question: 'Uebernehmen Sie Aufbau und Abbau?',
+    question: 'Übernehmen Sie Aufbau und Abbau?',
     answer:
-      'Ja. Auf Wunsch uebernehmen wir Lieferung, Aufbau, technischen Betrieb waehrend der Veranstaltung und den kompletten Abbau.',
+      'Ja. Auf Wunsch übernehmen wir Lieferung, Aufbau, technischen Betrieb und Abbau aus einer Hand.',
   },
   {
     question: 'In welchem Einsatzgebiet sind Sie unterwegs?',
     answer:
-      'Unser Schwerpunkt liegt auf Berlin und Brandenburg. Einsaetze ausserhalb der Region pruefen wir gerne individuell.',
+      'Wir sind deutschlandweit verfügbar, mit Schwerpunkt Berlin/Brandenburg. Einsätze außerhalb der Region stimmen wir individuell ab.',
   },
   {
-    question: 'Arbeiten Sie fuer Privatkunden und Geschaeftskunden?',
+    question: 'Für welche Eventgrößen arbeiten Sie?',
     answer:
-      'Ja, wir betreuen beide Zielgruppen. Von der privaten Feier bis zum Corporate Event erhalten Sie eine passende Loesung.',
+      'Wir betreuen Formate bis ca. 2.500 Personen – von privaten Feiern bis zu Corporate- und Kulturveranstaltungen.',
   },
   {
-    question: 'Wie funktioniert die Preisgestaltung?',
+    question: 'Wie groß ist Ihr Team vor Ort?',
     answer:
-      'Im Mietshop finden Sie je nach Produkt ab-Preise oder Richtwerte. Das finale Angebot wird auf Umfang, Laufzeit, Logistik und Servicelevel abgestimmt.',
+      'Das Kernteam umfasst ca. 6 Personen. Je nach Eventgröße skalieren wir mit eingespielter Crew.',
+  },
+  {
+    question: 'Seit wann sind Sie im Einsatz?',
+    answer:
+      'Wir betreuen Veranstaltungen seit 2014 und realisieren im Schnitt rund 90 Events pro Jahr.',
+  },
+  {
+    question: 'Was bedeutet bei Ihnen „pünktlich“?',
+    answer:
+      'Wir arbeiten mit festen Timings und abgestimmten Aufbaufenstern – pünktlich zum Einlass.',
+  },
+  {
+    question: 'Wie schnell erhalten wir eine Rückmeldung?',
+    answer:
+      'In der Regel erhalten Sie innerhalb von 24 Stunden eine erste Rückmeldung.',
+  },
+  {
+    question: 'Wie funktioniert die Preisgestaltung im Mietshop?',
+    answer:
+      'Im Mietshop sehen Sie klare Positionen. Das finale Angebot wird auf Umfang, Laufzeit, Logistik und Service abgestimmt.',
   },
 ];
