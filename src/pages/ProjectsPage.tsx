@@ -187,15 +187,15 @@ export default function ProjectsPage() {
       <section className="section-shell bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
         <div className="content-container">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="section-title mb-6 font-bold">Ihr Projekt mit uns?</h2>
+            <h2 className="section-title mb-6 font-bold">Gefällt Ihnen dieses Konzept?</h2>
             <p className="section-copy mb-8 text-gray-200">
-              Beschreiben Sie kurz Anlass, Termin und Location. Sie erhalten ein unverbindliches Angebot in der Regel innerhalb von 24 Stunden.
+              Fragen Sie jetzt unverbindlich Technik und Betreuung für Ihr eigenes Event an.
             </p>
             <a
-              href="/#kontakt"
+              href="/?subject=Dienstleistung#kontakt"
               className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 sm:w-auto px-8 py-4 text-lg"
             >
-              <span>Unverbindliches Angebot anfragen</span>
+              <span>Jetzt unverbindlich anfragen</span>
               <ArrowRight className="icon-std" />
             </a>
           </div>

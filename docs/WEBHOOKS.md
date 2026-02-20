@@ -1,6 +1,6 @@
-# Webhooks: Inquiry -> Discord
+# Webhooks: Inquiry -> Resend E-Mail
 
-Diese Anleitung richtet einen Alert ein, der bei **INSERT** in `inquiries` automatisch eine Discord-Nachricht sendet.
+Diese Anleitung richtet einen Flow ein, der bei **INSERT** in `inquiries` automatisch eine E-Mail an das Admin-Postfach versendet.
 
 ## 1) Supabase Edge Function deployen
 
@@ -9,18 +9,18 @@ Diese Anleitung richtet einen Alert ein, der bei **INSERT** in `inquiries` autom
 2. Deploye die Function:
    - `supabase functions deploy inquiry-notify`
 
-## 2) Environment Variablen setzen (Supabase)
+## 2) Environment-Variablen setzen (Supabase)
 
 Setze in Supabase für die Function diese Variablen:
 
-- `DISCORD_WEBHOOK_URL`
 - `WEBHOOK_SECRET`
-- `ADMIN_URL` (optional, z. B. `https://www.cf-veranstaltungstechnik.berlin`)
+- `RESEND_API_KEY`
+- `ADMIN_EMAIL`
 
 Beispiel CLI:
 
 ```bash
-supabase secrets set DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..." WEBHOOK_SECRET="ein-langes-zufälliges-secret" ADMIN_URL="https://www.cf-veranstaltungstechnik.berlin"
+supabase secrets set WEBHOOK_SECRET="ein-langes-zufaelliges-secret" RESEND_API_KEY="re_xxx" ADMIN_EMAIL="admin@your-domain.tld"
 ```
 
 ## 3) Database Webhook im Dashboard anlegen
@@ -41,7 +41,7 @@ Pfad im Dashboard:
 ### Variante A: End-to-End in der App
 
 1. In der UI eine neue Anfrage erstellen (`/mietshop/anfrage`).
-2. Prüfen, dass in Discord eine Nachricht eingeht.
+2. Prüfen, dass eine E-Mail im Admin-Postfach eingeht.
 
 ### Variante B: Lokal gegen lokale Function
 
@@ -70,14 +70,11 @@ Optional per Env überschreiben:
 - Spam-Guard -> `204` (falls Honeypot-Feld `website` oder `company` gefüllt ist)
 - Spam-Guard -> `204` (falls Nachricht kürzer als 3 Zeichen und kein Telefon/E-Mail vorhanden)
 - Dedup-Guard -> `204` (gleicher Schlüssel aus `phone||email`, `product_slug||product_name`, `source_url` innerhalb von 120 Sekunden)
-- Gültiger Inquiry-Insert -> Discord-POST und `200 {"ok":true}`
-
-Bei gesetztem `ADMIN_URL` enthält die Discord-Nachricht zusätzlich einen direkten Admin-Link:
-
-- `Admin: <ADMIN_URL>/admin/inquiries`
+- Gültiger Inquiry-Insert -> Resend-API-POST und `200 {"ok":true}`
 
 ## 6) Sicherheit
 
 - Keine Secrets in Git committen.
 - `WEBHOOK_SECRET` lang und zufällig wählen.
-- Secret in Webhook Header und Function Env identisch halten.
+- Secret in Webhook-Header und Function-Env identisch halten.
+- `RESEND_API_KEY` ausschließlich als Function Secret speichern.

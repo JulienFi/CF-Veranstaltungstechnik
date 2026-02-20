@@ -4,7 +4,7 @@ import { LEGAL_INFO, hasLegalValue } from '../config/legal';
 
 export default function DatenschutzPage() {
   return (
-    <div className="bg-app-bg text-white min-h-screen">
+    <div className="bg-zinc-900 text-slate-200 min-h-screen">
       <section className="section-shell">
         <div className="content-container content-container--narrow">
           <div className="mx-auto max-w-4xl">
@@ -17,7 +17,7 @@ export default function DatenschutzPage() {
               <div>
                 <h2 className="text-2xl font-bold mb-4">1. Verantwortlicher</h2>
                 <div className="glass-panel--soft card-inner p-4 muted-readable space-y-1">
-                  <p className="font-semibold text-white">{COMPANY_INFO.legalName}</p>
+                  <p className="font-semibold text-slate-100">{COMPANY_INFO.legalName}</p>
                   <p>{COMPANY_INFO.address.street}</p>
                   <p>
                     {COMPANY_INFO.address.postalCode} {COMPANY_INFO.address.city}

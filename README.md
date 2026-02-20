@@ -8,13 +8,15 @@ Eine moderne, professionelle Website für ein Unternehmen im Bereich Veranstaltu
 
 - **Homepage**: Hero-Sektion mit Hauptversprechen, Service-Übersicht und Vertrauenselemente
 - **Mietshop**: Produktkatalog mit Kategorien (Lichttechnik, Tontechnik, DJ-Equipment, Bühnentechnik)
+  - Kategorie-Prefilter via URL-Parameter (`/mietshop?category=...`)
+  - Hauptkategorien + einblendbare Detail-Filter (Tags)
   - Produktdetailseiten mit technischen Spezifikationen
   - Anfrageliste-System (keine Preise, kein Warenkorb)
   - Angebotsanfrage-Formular
 - **Dienstleistungen**: Technische Planung, Aufbau, Betreuung, Festinstallationen
 - **Werkstatt**: Reparatur, Wartung, Modifikationen, Sicherheitsprüfungen
-- **Projekte**: Referenzen mit Filteroptionen
-- **Team**: Teammitglieder-Übersicht
+- **Projekte**: Dynamisches Grid aus Admin-Daten mit Bild-Fallbacks
+- **Team**: Dynamisches Team-Grid aus Admin-Daten mit runden Profilkarten
 - **Kontakt**: Kontaktformular mit Auswahl des Anfrage-Typs
 
 ### Admin-Bereich
@@ -22,8 +24,9 @@ Eine moderne, professionelle Website für ein Unternehmen im Bereich Veranstaltu
 - **Authentifizierung**: Supabase Auth mit Email/Passwort
 - **Dashboard**: Übersicht über Produkte, Projekte, Team und Anfragen
 - **Produkte verwalten**: Anlegen, Bearbeiten, Aktivieren/Deaktivieren, Löschen
-- **Projekte verwalten**: (Struktur vorhanden, kann erweitert werden)
-- **Team verwalten**: (Struktur vorhanden, kann erweitert werden)
+- **Projekte verwalten**: CRUD inkl. Bild-Upload
+- **Team verwalten**: CRUD inkl. Bild-Upload
+- **Anfragen verwalten**: Status-Workflow (`new`, `pending`, `completed`, `cancelled`) direkt in der Admin-Liste
 
 ## 🛠 Technologie-Stack
 
@@ -268,11 +271,16 @@ Die Build-Dateien werden im `dist/`-Verzeichnis erstellt.
 
 ### E-Mail-Benachrichtigungen
 
-Die Anfragen werden aktuell nur in der Datenbank gespeichert. Fuer automatische E-Mail-Benachrichtigungen koennen Sie:
+Neue Inquiries werden per Supabase Database Webhook an die Edge Function `inquiry-notify` gesendet.
+Die Function versendet danach eine Admin-Benachrichtigung per **Resend**.
 
-1. **Supabase Edge Functions** verwenden, um E-Mails zu versenden
-2. **Webhooks** einrichten, die bei neuen Anfragen ausgeloest werden
-3. Einen **E-Mail-Service** (z.B. SendGrid, Mailgun) integrieren
+Benötigte Function-Secrets:
+
+- `WEBHOOK_SECRET`
+- `RESEND_API_KEY`
+- `ADMIN_EMAIL`
+
+Einrichtung und Test: `ADMIN-SETUP.md` und `docs/WEBHOOKS.md`.
 
 
 ### Web-Analytics (Plausible)
@@ -363,4 +371,4 @@ Optional:
 
 - Function: `supabase/functions/inquiry-notify/index.ts`
 - Setup guide: `ADMIN-SETUP.md` section "Inquiries notifications".
-- Secrets: `WEBHOOK_SECRET`, `DISCORD_WEBHOOK_URL`, optional `ADMIN_URL`.
+- Secrets: `WEBHOOK_SECRET`, `RESEND_API_KEY`, `ADMIN_EMAIL`.

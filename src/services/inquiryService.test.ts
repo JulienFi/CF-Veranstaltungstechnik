@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Json } from '../lib/database.types';
-import { createInquiry } from './inquiryService';
+import { createInquiry, updateInquiryStatus } from './inquiryService';
 
 const mockCreateInquiry = vi.hoisted(() => vi.fn());
+const mockUpdateInquiryStatus = vi.hoisted(() => vi.fn());
 
 vi.mock('../repositories/inquiryRepository', () => ({
   inquiryRepository: {
     createInquiry: mockCreateInquiry,
+    updateInquiryStatus: mockUpdateInquiryStatus,
   },
 }));
 
@@ -14,6 +16,10 @@ describe('createInquiry', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCreateInquiry.mockResolvedValue(undefined);
+    mockUpdateInquiryStatus.mockResolvedValue({
+      id: 'inquiry-1',
+      status: 'completed',
+    });
   });
 
   it('maps contact payload to repository input with normalized fields', async () => {
@@ -39,6 +45,10 @@ describe('createInquiry', () => {
       event_type: 'Firmenfeier',
       event_date: '2026-03-10',
       event_location: 'Berlin',
+      start_date: null,
+      end_date: null,
+      handover_type: null,
+      guest_count: null,
       selected_products: null,
       product_id: null,
       product_slug: null,
@@ -93,6 +103,10 @@ describe('createInquiry', () => {
       event_type: ' Konzert ',
       event_date: ' 2026-07-01 ',
       event_location: ' Hamburg ',
+      start_date: ' 2026-07-01 ',
+      end_date: ' 2026-07-03 ',
+      handover_type: 'delivery',
+      guest_count: 250,
       status: 'in_progress',
     });
 
@@ -105,6 +119,10 @@ describe('createInquiry', () => {
       event_type: 'Konzert',
       event_date: '2026-07-01',
       event_location: 'Hamburg',
+      start_date: '2026-07-01',
+      end_date: '2026-07-03',
+      handover_type: 'delivery',
+      guest_count: 250,
       selected_products: selectedProducts,
       product_id: 'p-1',
       product_slug: 'moving-head',
@@ -116,5 +134,21 @@ describe('createInquiry', () => {
       message: null,
       status: 'in_progress',
     });
+  });
+});
+
+describe('updateInquiryStatus', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUpdateInquiryStatus.mockResolvedValue({
+      id: 'inquiry-1',
+      status: 'completed',
+    });
+  });
+
+  it('forwards id and status to the repository', async () => {
+    await updateInquiryStatus('inquiry-1', 'completed');
+
+    expect(mockUpdateInquiryStatus).toHaveBeenCalledWith('inquiry-1', 'completed');
   });
 });

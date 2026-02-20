@@ -43,7 +43,7 @@ export default function SearchBar({
   return (
     <form onSubmit={handleSubmit} role="search" className="relative w-full max-w-2xl">
       <div className="glass-panel--soft card-inner border-subtle relative">
-        <Search className="icon-std absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+        <Search className="icon-std pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
           type="text"
           value={query}
@@ -51,7 +51,7 @@ export default function SearchBar({
           placeholder={placeholder}
           autoComplete="off"
           enterKeyHint="search"
-          className="field-control focus-ring border-0 bg-transparent py-3 pl-12 pr-12"
+          className="field-control focus-ring border-0 bg-transparent py-3 pl-10 pr-12"
           aria-label="Produktsuche im Mietshop"
         />
         {query && (

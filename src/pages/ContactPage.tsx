@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, ChevronDown } from 'lucide-react';
 import { COMPANY_INFO } from '../config/company';
 import BackButton from '../components/BackButton';
 import { trackAnalyticsEvent } from '../lib/analytics';
@@ -189,17 +189,23 @@ export default function ContactPage() {
 
                     <div>
                       <label className="mb-2 block text-sm font-medium">Ich interessiere mich für *</label>
-                      <select
-                        required
-                        value={formData.subject}
-                        onChange={(event) => setFormData({ ...formData, subject: event.target.value })}
-                        className="field-control focus-ring"
-                      >
-                        <option value="Mietshop">Mietshop</option>
-                        <option value="Dienstleistung">Dienstleistung</option>
-                        <option value="Werkstatt">Werkstatt</option>
-                        <option value="Allgemeine Anfrage">Allgemeine Anfrage</option>
-                      </select>
+                      <div className="relative">
+                        <select
+                          required
+                          value={formData.subject}
+                          onChange={(event) => setFormData({ ...formData, subject: event.target.value })}
+                          className="field-control focus-ring appearance-none pr-11"
+                        >
+                          <option value="Mietshop">Mietshop</option>
+                          <option value="Dienstleistung">Dienstleistung</option>
+                          <option value="Werkstatt">Werkstatt</option>
+                          <option value="Allgemeine Anfrage">Allgemeine Anfrage</option>
+                        </select>
+                        <ChevronDown
+                          className="icon-std pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                          aria-hidden="true"
+                        />
+                      </div>
                     </div>
 
                     <div className="md:col-span-2">

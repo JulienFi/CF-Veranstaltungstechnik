@@ -1,9 +1,12 @@
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { LifeBuoy, Mail, MapPin, Phone } from 'lucide-react';
 import { COMPANY_INFO } from '../config/company';
 import { Container } from './ui';
 import styles from './Footer.module.css';
 
 export default function Footer() {
+  const localSeoRegion =
+    COMPANY_INFO.seo.localSeoRegion.trim() || COMPANY_INFO.seo.localSeoPlaceholder.trim();
+
   return (
     <footer className={styles.footer}>
       <Container className={styles.inner} size="wide">
@@ -12,6 +15,13 @@ export default function Footer() {
           <p className={styles.lead}>
             Mietshop und Full-Service für Veranstaltungen: Planung, Aufbau, Betrieb und Abbau aus einer Hand.
           </p>
+          <p className={styles.localSeo}>
+            Ihr Partner für professionelle Veranstaltungstechnik in {localSeoRegion}.
+          </p>
+          <div className={styles.supportBadge}>
+            <LifeBuoy size={14} />
+            <span>24/7 Notfall-Support</span>
+          </div>
         </div>
 
         <div className={styles.grid}>

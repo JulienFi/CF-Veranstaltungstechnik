@@ -14,7 +14,6 @@
   --card-radius: 22px;
   --card-shadow: 0 18px 60px rgb(0 0 0 / 0.22);
   --card-shadow-hover: 0 22px 70px rgb(0 0 0 / 0.28);
-  --service-feature-border: rgb(56 189 248 / 0.22);
   --measure: 62ch;
   --measure-narrow: 52ch;
   --lh-tight: 1.1;
@@ -633,89 +632,6 @@
   animation: heroSpotSweep 12s ease-in-out infinite alternate;
 }
 
-.hero-trust {
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
-
-.hero-trustTop {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: stretch;
-  width: min(920px, 100%);
-}
-
-.hero-trustChip {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.06);
-  border: 1px solid rgb(255 255 255 / 0.12);
-}
-
-.hero-trustChipLabel {
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
-
-.hero-trustChipText {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-.hero-trustSteps {
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgb(0 0 0 / 0.16);
-  border: 1px solid rgb(255 255 255 / 0.1);
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.hero-trustStepsLabel {
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.6;
-}
-
-.hero-trustStepsList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.hero-trustStepsList li {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.8;
-}
-
-.hero-trustStepsList li::before {
-  content: '•';
-  margin: 0 8px 0 0;
-  opacity: 0.35;
-}
-
-.hero-trustStepsList li:first-child::before {
-  content: '';
-  margin: 0;
-}
-
 .hero-proofChips {
   width: min(980px, 100%);
   display: flex;
@@ -746,20 +662,6 @@
   margin-top: 2px;
 }
 
-.services-grid {
-  width: min(1100px, 100%);
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-.services-side {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
 .service-card {
   position: relative;
   overflow: hidden;
@@ -768,38 +670,6 @@
   border: 1px solid rgb(255 255 255 / 0.1);
   padding: 22px;
   box-shadow: 0 18px 60px rgb(0 0 0 / 0.22);
-}
-
-.service-card--featured {
-  background: rgb(255 255 255 / 0.055);
-  border-color: rgb(56 189 248 / 0.22);
-}
-
-.service-card--featured::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 22px;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 20% 20%, rgb(56 189 248 / 0.14), rgb(56 189 248 / 0) 55%),
-    radial-gradient(circle at 80% 30%, rgb(99 102 241 / 0.12), rgb(99 102 241 / 0) 60%);
-  opacity: 0.9;
-}
-
-.service-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgb(255 255 255 / 0.9);
-  background: rgb(56 189 248 / 0.1);
-  border: 1px solid rgb(56 189 248 / 0.22);
 }
 
 .workflow-split {
@@ -1034,11 +904,6 @@
     width: calc(50% - 6px);
     min-width: 0;
   }
-
-  .hero-trustSteps {
-    border-radius: 18px;
-  }
-
   .workflow-step {
     grid-template-columns: 16px 1fr;
     gap: 12px;
@@ -1054,6 +919,7 @@
 .section-surface {
   position: relative;
   isolation: isolate;
+  overflow: visible;
 }
 
 .section-surface::before {
@@ -1117,20 +983,6 @@
 }
 
 @media (min-width: 1024px) {
-  .services-grid {
-    grid-template-columns: 1.25fr 0.75fr;
-    gap: 18px;
-    align-items: stretch;
-  }
-
-  .service-card--featured {
-    min-height: 100%;
-  }
-
-  .services-side {
-    grid-template-rows: 1fr 1fr;
-  }
-
   .workflow-split {
     grid-template-columns: 1.05fr 0.95fr;
     gap: 42px;
@@ -1145,15 +997,16 @@
 .brand-motif > .content-container {
   position: relative;
   isolation: isolate;
+  overflow: visible;
 }
 
 .brand-motif > .content-container::before {
   content: '';
   position: absolute;
-  inset: -1px;
+  inset: -30% -18%;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.95;
+  opacity: 0.72;
   background:
     radial-gradient(circle at 18% 22%, rgb(56 189 248 / 0.1), rgb(56 189 248 / 0) 55%),
     radial-gradient(circle at 82% 62%, rgb(99 102 241 / 0.1), rgb(99 102 241 / 0) 60%),
@@ -1164,7 +1017,7 @@
       rgb(99 102 241 / 0.06) 60%,
       rgb(0 0 0 / 0) 100%
     );
-  filter: blur(10px);
+  filter: blur(120px);
 }
 
 .brand-motif--left > .content-container::before {
@@ -1195,8 +1048,9 @@
 
 @media (max-width: 640px) {
   .brand-motif > .content-container::before {
-    opacity: 0.7;
-    filter: blur(12px);
+    inset: -40% -24%;
+    opacity: 0.62;
+    filter: blur(90px);
   }
 }
 
@@ -1403,11 +1257,6 @@
   background: var(--card-bg);
 }
 
-.service-card--featured {
-  border-color: var(--service-feature-border);
-  box-shadow: var(--card-shadow);
-}
-
 /* Disable hover deltas by default; enable only on hover-capable devices below. */
 .glass-panel:hover,
 .glass-panel--soft:hover,
@@ -1424,10 +1273,6 @@
   background: var(--card-bg);
 }
 
-.service-card--featured:hover {
-  border-color: var(--service-feature-border);
-}
-
 @media (hover: hover) and (pointer: fine) {
   .glass-panel:hover,
   .glass-panel--soft:hover,
@@ -1442,10 +1287,6 @@
     border-color: var(--card-border-hover);
     box-shadow: var(--card-shadow-hover);
     background: var(--card-bg-hover);
-  }
-
-  .service-card--featured:hover {
-    border-color: rgb(125 211 252 / 0.34);
   }
 }
 
@@ -1472,3 +1313,4 @@
     background: rgb(255 255 255 / 0.058);
   }
 }
+

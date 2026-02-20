@@ -5,7 +5,7 @@ type InquiryRow = Database['public']['Tables']['inquiries']['Row'];
 type InquiryInsert = Database['public']['Tables']['inquiries']['Insert'];
 type InquiryUpdate = Database['public']['Tables']['inquiries']['Update'];
 
-export type InquiryStatus = 'new' | 'in_progress' | 'closed';
+export type InquiryStatus = 'new' | 'pending' | 'completed' | 'cancelled' | 'in_progress' | 'closed';
 
 export interface InquiryDTO {
   id: string;
@@ -17,6 +17,10 @@ export interface InquiryDTO {
   event_type: string | null;
   event_date: string | null;
   event_location: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  handover_type: string | null;
+  guest_count: number | null;
   selected_products: Json | null;
   product_id: string | null;
   product_slug: string | null;
@@ -43,6 +47,10 @@ export interface InquiryCreateInput {
   event_type?: string | null;
   event_date?: string | null;
   event_location?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  handover_type?: string | null;
+  guest_count?: number | null;
   selected_products?: Json | null;
   product_id?: string | null;
   product_slug?: string | null;
@@ -66,6 +74,10 @@ function mapInquiryRow(row: InquiryRow): InquiryDTO {
     event_type: row.event_type,
     event_date: row.event_date,
     event_location: row.event_location,
+    start_date: row.start_date,
+    end_date: row.end_date,
+    handover_type: row.handover_type,
+    guest_count: row.guest_count,
     selected_products: row.selected_products,
     product_id: row.product_id,
     product_slug: row.product_slug,
@@ -90,6 +102,10 @@ function toInquiryInsert(input: InquiryCreateInput): InquiryInsert {
     event_type: input.event_type ?? null,
     event_date: input.event_date ?? null,
     event_location: input.event_location ?? null,
+    start_date: input.start_date ?? null,
+    end_date: input.end_date ?? null,
+    handover_type: input.handover_type ?? null,
+    guest_count: input.guest_count ?? null,
     selected_products: input.selected_products ?? null,
     product_id: input.product_id ?? null,
     product_slug: input.product_slug ?? null,

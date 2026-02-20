@@ -56,7 +56,7 @@ export const HOME_HERO_FALLBACK: HomeHeroContent = {
   headline: 'Eventtechnik, die einfach läuft.',
   highlightedText: '',
   subheadline:
-    'Miete im Shop oder Full-Service: Planung, Aufbau, Betrieb & Abbau – zuverlässig nach Timing.',
+    'Miete im Shop oder Full-Service. Wir liefern passgenaue Technik und sorgen für einen reibungslosen Ablauf.',
 };
 
 export const HOME_PROOF_FALLBACK: HomeProofContent = {
@@ -124,7 +124,7 @@ export const HOME_FAQ_FALLBACK: HomeFaqContent = {
 };
 
 export const HOME_CTA_FALLBACK: HomeCtaContent = {
-  primaryLabel: 'Angebot in 2 Minuten →',
+  primaryLabel: 'In 2 Minuten anfragen →',
   secondaryLabel: 'Mietshop öffnen',
   responsePromise: 'Antwort in der Regel innerhalb von 24 Stunden.',
   contactTitle: 'Kontakt und Angebot',

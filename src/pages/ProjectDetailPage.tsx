@@ -159,16 +159,16 @@ export default function ProjectDetailPage({ slug }: ProjectDetailPageProps) {
 
       <section className="section-shell">
         <div className="content-container">
-          <div className="glass-panel--soft card text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Ähnliches Projekt geplant?</h2>
+          <div className="glass-panel card border-blue-400/25 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Gefällt Ihnen dieses Konzept?</h2>
             <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Beschreiben Sie Ihre Anforderungen. Wir erstellen ein unverbindliches Angebot in der Regel innerhalb von 24 Stunden.
+              Fragen Sie jetzt unverbindlich Technik und Betreuung für Ihr eigenes Event an.
             </p>
             <a
-              href="/#kontakt"
+              href="/?subject=Dienstleistung#kontakt"
               className="btn-primary focus-ring tap-target interactive inline-flex items-center justify-center gap-2"
             >
-              <span>Unverbindliches Angebot anfragen</span>
+              <span>Jetzt unverbindlich anfragen</span>
               <ArrowRight className="icon-std" />
             </a>
           </div>

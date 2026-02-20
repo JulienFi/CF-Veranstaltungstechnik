@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { Menu, ShoppingBag, X } from 'lucide-react';
+import { type MouseEvent, useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, Menu, ShoppingBag, X } from 'lucide-react';
 import { Button, Container } from './ui';
 import styles from './Header.module.css';
 
 const PRIMARY_CTA_LABEL = 'Unverbindliches Angebot anfragen';
-const SECONDARY_CTA_LABEL = 'Mietshop entdecken';
 
 type HashNavigationItem = {
   name: string;
@@ -58,6 +57,19 @@ function getNavigationIsActive(item: NavigationItem, currentPath: string, active
     return currentPath === item.activePathPrefix || currentPath.startsWith(`${item.activePathPrefix}/`);
   }
   return activeHash === item.hash;
+}
+
+function renderNavigationLabel(item: NavigationItem) {
+  if (!isRouteNavigationItem(item) || item.name !== 'Mietshop') {
+    return item.name;
+  }
+
+  return (
+    <>
+      <span>{item.name}</span>
+      <ArrowUpRight size={14} className="ml-1 inline opacity-70" aria-hidden="true" />
+    </>
+  );
 }
 
 export default function Header() {
@@ -215,11 +227,24 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   const primaryCtaVariant = heroInView ? 'ghost' : 'primary';
+  const handleBrandClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (window.location.pathname !== '/') {
+      return;
+    }
+
+    event.preventDefault();
+    setMobileMenuOpen(false);
+    setCurrentHash('');
+    if (window.location.hash) {
+      window.history.replaceState(null, '', '/');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <header className={styles.header} data-sticky-header="true">
       <Container className={styles.inner} size="wide">
-        <a href="/" className={styles.brand}>
+        <a href="/#" className={styles.brand} onClick={handleBrandClick}>
           <img src="/images/logo-cf.png" alt="CF Veranstaltungstechnik Logo" className={styles.logo} />
           <span className="sr-only">CF Veranstaltungstechnik Startseite</span>
         </a>
@@ -236,7 +261,7 @@ export default function Header() {
                 className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
                 aria-current={isActive ? 'location' : undefined}
               >
-                {item.name}
+                {renderNavigationLabel(item)}
               </a>
             );
           })}
@@ -250,9 +275,6 @@ export default function Header() {
               <span className={styles.countBadge}>{inquiryCount}</span>
             </Button>
           ) : null}
-          <Button href="/mietshop" variant="secondary" size="sm">
-            {SECONDARY_CTA_LABEL}
-          </Button>
           <Button href="/#kontakt" variant={primaryCtaVariant} size="sm">
             {PRIMARY_CTA_LABEL}
           </Button>
@@ -287,7 +309,7 @@ export default function Header() {
                   aria-current={isActive ? 'location' : undefined}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item.name}
+                  {renderNavigationLabel(item)}
                 </a>
               );
             })}
@@ -303,9 +325,6 @@ export default function Header() {
             ) : null}
 
             <div className={styles.drawerActions}>
-              <Button href="/mietshop" variant="secondary" size="md" fullWidth onClick={() => setMobileMenuOpen(false)}>
-                {SECONDARY_CTA_LABEL}
-              </Button>
               <Button href="/#kontakt" variant="primary" size="md" fullWidth onClick={() => setMobileMenuOpen(false)}>
                 {PRIMARY_CTA_LABEL}
               </Button>

@@ -229,6 +229,10 @@ export interface Database {
           event_type: string | null;
           event_date: string | null;
           event_location: string | null;
+          start_date: string | null;
+          end_date: string | null;
+          handover_type: string | null;
+          guest_count: number | null;
           selected_products: Json | null;
           product_id: string | null;
           product_slug: string | null;
@@ -251,6 +255,10 @@ export interface Database {
           event_type?: string | null;
           event_date?: string | null;
           event_location?: string | null;
+          start_date?: string | null;
+          end_date?: string | null;
+          handover_type?: string | null;
+          guest_count?: number | null;
           selected_products?: Json | null;
           product_id?: string | null;
           product_slug?: string | null;
@@ -273,6 +281,10 @@ export interface Database {
           event_type?: string | null;
           event_date?: string | null;
           event_location?: string | null;
+          start_date?: string | null;
+          end_date?: string | null;
+          handover_type?: string | null;
+          guest_count?: number | null;
           selected_products?: Json | null;
           product_id?: string | null;
           product_slug?: string | null;

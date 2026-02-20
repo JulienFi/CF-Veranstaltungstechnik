@@ -1,5 +1,5 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, ShoppingBag, Eye, AlertTriangle } from 'lucide-react';
+import { ArrowRight, ShoppingBag, AlertTriangle, SearchX, SlidersHorizontal, ChevronLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Category, ProductWithCategory } from '../types/shop.types';
 import { ProductCardSkeleton } from '../components/SkeletonLoader';
@@ -10,12 +10,10 @@ import ScrollToTop from '../components/ScrollToTop';
 import { showToast } from '../lib/toast';
 import { useInquiryList } from '../hooks/useInquiryList';
 import { usePriceMode } from '../hooks/usePriceMode';
-import BackButton from '../components/BackButton';
 import type { Database, Json } from '../lib/database.types';
-import { resolveImageUrl } from '../utils/image';
-import PriceDisplay from '../components/PriceDisplay';
 import PriceModeToggle from '../components/PriceModeToggle';
 import MobileStickyCTA from '../components/MobileStickyCTA';
+import ShopProductCard from '../components/ShopProductCard';
 import { navigate } from '../lib/navigation';
 import { parseQuery, updateQuery } from '../utils/queryState';
 import { listActiveProductsForShop } from '../repositories/productRepository';
@@ -98,8 +96,33 @@ function mapProductRow(row: ProductRowWithCategory): ProductWithCategory {
   };
 }
 
+function normalizeCategoryToken(value: string): string {
+  return value
+    .toLocaleLowerCase('de-DE')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function useSearchParams(): URLSearchParams {
+  const [search, setSearch] = useState(() => window.location.search);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setSearch(window.location.search);
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export default function ShopPage() {
   const initialQuery = useMemo(() => parseQuery(), []);
+  const searchParams = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<ProductWithCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>(initialQuery.cat ?? 'all');
@@ -113,6 +136,8 @@ export default function ShopPage() {
   const [quickViewProduct, setQuickViewProduct] = useState<ProductWithCategory | null>(null);
   const [visibleProductCount, setVisibleProductCount] = useState(PRODUCTS_PER_BATCH);
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [hasAppliedInitialCategoryParam, setHasAppliedInitialCategoryParam] = useState(Boolean(initialQuery.cat));
   const { inquiryList, addToInquiry, removeFromInquiry, isInInquiry } = useInquiryList();
   const { priceMode } = usePriceMode();
 
@@ -154,6 +179,36 @@ export default function ShopPage() {
   useEffect(() => {
     void loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (hasAppliedInitialCategoryParam || categories.length === 0) {
+      return;
+    }
+
+    const categoryParam = normalizeCategoryToken(searchParams.get('category') ?? '');
+    if (!categoryParam) {
+      setHasAppliedInitialCategoryParam(true);
+      return;
+    }
+
+    const matchingCategory = categories.find((category) => {
+      const normalizedSlug = normalizeCategoryToken(category.slug ?? '');
+      const normalizedName = normalizeCategoryToken(category.name ?? '');
+      return (
+        normalizedSlug === categoryParam ||
+        normalizedName === categoryParam ||
+        normalizedSlug.includes(categoryParam) ||
+        categoryParam.includes(normalizedSlug) ||
+        normalizedName.includes(categoryParam)
+      );
+    });
+
+    if (matchingCategory) {
+      setSelectedCategory(matchingCategory.id);
+    }
+
+    setHasAppliedInitialCategoryParam(true);
+  }, [categories, hasAppliedInitialCategoryParam, searchParams]);
 
   const normalizeSearchText = (value: string): string =>
     value.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -212,6 +267,13 @@ export default function ShopPage() {
   const availableTags = useMemo(() => {
     return Array.from(new Set(products.flatMap((product) => product.tags)));
   }, [products]);
+  const activeTagFilterCount = activeFilters.tags.length;
+  const filterToggleLabel =
+    !showFilters && activeTagFilterCount > 0
+      ? `Weitere Filter einblenden (${activeTagFilterCount} aktiv)`
+      : showFilters
+        ? 'Filter ausblenden'
+        : 'Weitere Filter einblenden';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -279,23 +341,29 @@ export default function ShopPage() {
 
   return (
     <div className="bg-app-bg text-white min-h-screen pb-24 md:pb-0">
-      <section className="section-shell section-shell--hero bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
+      <section className="section-shell !py-8 md:!py-10 bg-gradient-to-br from-blue-900/20 via-app-bg to-app-bg">
         <div className="content-container">
-          <BackButton href="/" label="Zurück zur Startseite" className="mb-8 md:mb-10" />
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="section-title mb-6 font-bold">Mietshop für Eventtechnik</h1>
-            <p className="section-copy mb-8 text-gray-200">
+            <a
+              href="/"
+              className="focus-ring interactive mb-2 inline-flex items-center gap-1.5 rounded-md px-1 py-0.5 text-sm text-gray-300 hover:text-white"
+            >
+              <ChevronLeft size={16} />
+              <span>Zurück zur Startseite</span>
+            </a>
+            <h1 className="section-title mb-3 font-bold">Mietshop für Eventtechnik</h1>
+            <p className="section-copy !mt-0 mb-5 text-gray-200">
               Wählen Sie die passende Technik für Ihr Event. Wir beraten bei Bedarf persönlich und erstellen ein klares, unverbindliches Angebot – in der Regel innerhalb von 24 Stunden.
             </p>
             <div className="mx-auto flex max-w-2xl justify-center">
               <SearchBar onSearch={setSearchQuery} initialQuery={searchQuery} />
             </div>
-            <PriceModeToggle className="mt-6 flex justify-center" />
+            <PriceModeToggle className="mt-4 flex justify-center" />
           </div>
         </div>
       </section>
 
-      <section className="section-shell--tight sticky top-[4.7rem] z-40 border-subtle-bottom bg-card-bg/92 py-8 backdrop-blur-sm sm:top-[5rem] md:py-10">
+      <section className="section-shell--tight sticky top-[4.7rem] z-40 border-subtle-bottom bg-card-bg/92 py-5 backdrop-blur-sm sm:top-[5rem] md:py-6">
         <div className="content-container">
           <div className="flex flex-wrap items-center justify-center gap-2.5 md:gap-3">
             <button
@@ -325,6 +393,21 @@ export default function ShopPage() {
             ))}
           </div>
 
+          {availableTags.length > 0 ? (
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setShowFilters((current) => !current)}
+                aria-expanded={showFilters}
+                aria-controls="shop-detail-filters"
+                className="btn-secondary focus-ring tap-target interactive inline-flex items-center gap-2 text-sm"
+              >
+                <SlidersHorizontal size={16} />
+                <span>{filterToggleLabel}</span>
+              </button>
+            </div>
+          ) : null}
+
           {inquiryList.length > 0 && (
             <div className="mt-6 flex justify-center">
               <a
@@ -332,7 +415,7 @@ export default function ShopPage() {
                 className="btn-primary focus-ring tap-target interactive inline-flex items-center justify-center gap-2 group text-center"
               >
                 <ShoppingBag className="icon-std group-hover:rotate-12 transition-transform" />
-                <span>Anfrage für {inquiryList.length} Produkt{inquiryList.length !== 1 ? 'e' : ''} senden</span>
+                <span>Mietanfrage für {inquiryList.length} Produkt{inquiryList.length !== 1 ? 'e' : ''} stellen</span>
                 <ArrowRight className="icon-std icon-std--sm group-hover:translate-x-1 transition-transform" />
               </a>
             </div>
@@ -342,8 +425,8 @@ export default function ShopPage() {
 
       <section className="section-shell">
         <div className="content-container">
-          {availableTags.length > 0 && (
-            <div className="mb-8 md:mb-10">
+          {availableTags.length > 0 && showFilters && (
+            <div id="shop-detail-filters" className="mb-8 md:mb-10">
               <ProductFilters
                 availableFilters={{ tags: availableTags, categories: [] }}
                 activeFilters={activeFilters}
@@ -384,9 +467,22 @@ export default function ShopPage() {
                 </a>
               </div>
             </div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="glass-panel--soft card py-16 text-center">
-              <p className="text-lg text-gray-300 md:text-xl">Keine Produkte für diese Auswahl gefunden.</p>
+          ) : visibleProducts.length === 0 ? (
+            <div className="mx-auto max-w-3xl">
+              <div className="glass-panel p-12 text-center">
+                <SearchX className="mx-auto mb-4 h-12 w-12 text-slate-500" />
+                <h2 className="text-xl font-bold">Kein exaktes Match gefunden</h2>
+                <p className="mx-auto mt-4 max-w-[62ch] text-gray-300">
+                  Wir haben aktuell kein exaktes Match in unserem Online-Katalog. Kontaktieren Sie uns trotzdem - wir
+                  haben Zugriff auf ein großes Partner-Netzwerk und können fast jedes Equipment organisieren!
+                </p>
+                <a
+                  href="/?subject=Mietshop#kontakt"
+                  className="btn-primary focus-ring tap-target interactive mt-8 inline-flex items-center justify-center"
+                >
+                  Unverbindlich anfragen
+                </a>
+              </div>
             </div>
           ) : (
             <>
@@ -395,79 +491,15 @@ export default function ShopPage() {
               </div>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
                 {visibleProducts.map(product => (
-                  <div
+                  <ShopProductCard
                     key={product.id}
-                    className="glass-panel card interactive-card group overflow-hidden"
-                  >
-                    <a
-                      href={`/mietshop/${product.slug}`}
-                      className="focus-ring interactive card-inner block aspect-video cursor-pointer overflow-hidden bg-gradient-to-br from-card-hover to-card-bg"
-                    >
-                      <img
-                        src={resolveImageUrl(product.image_url, 'product', product.slug)}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                    </a>
-                    <div className="p-5 md:p-6">
-                      <div className="mb-3 flex flex-wrap gap-2">
-                        <span className="card-inner rounded-md bg-blue-500/14 px-2.5 py-1 text-xs font-medium text-blue-300">
-                          {product.categories.name}
-                        </span>
-                        {product.tags.map(tag => (
-                          <span key={tag} className="glass-panel--soft card-inner px-2.5 py-1 text-xs text-gray-200">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <h3 className="mb-2 text-xl font-bold leading-snug transition-colors group-hover:text-blue-300">
-                        {product.name}
-                      </h3>
-                      <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-gray-300">{product.short_description}</p>
-                      <div className="mb-4 text-lg">
-                        <PriceDisplay
-                          priceNet={product.price_net}
-                          showPrice={product.show_price}
-                          vatRate={product.vat_rate}
-                          mode={priceMode}
-                          prefix="ab"
-                        />
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => setQuickViewProduct(product)}
-                          className="btn-secondary focus-ring tap-target interactive !min-h-0 px-4 py-2.5 text-sm"
-                          aria-label={`Schnellansicht ${product.name}`}
-                        >
-                          <Eye className="icon-std icon-std--sm" />
-                        </button>
-                        <a
-                          href={`/mietshop/${product.slug}`}
-                          className="btn-secondary focus-ring tap-target interactive !min-h-0 flex-1 px-4 py-2.5 text-center text-sm"
-                        >
-                          Details
-                        </a>
-                        {isInInquiry(product.id, product.slug) ? (
-                          <button
-                            onClick={() => handleRemoveFromInquiry(product.id, product.slug)}
-                            className="btn-primary focus-ring tap-target interactive !min-h-0 px-4 py-2.5 text-sm"
-                            aria-label="Von Anfrageliste entfernen"
-                          >
-                            ✓
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleAddToInquiry(product.id, product.slug)}
-                            className="btn-secondary focus-ring tap-target interactive !min-h-0 px-4 py-2.5 text-sm"
-                            aria-label="Zur Anfrageliste hinzufügen"
-                          >
-                            +
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                    product={product}
+                    priceMode={priceMode}
+                    inInquiry={isInInquiry(product.id, product.slug)}
+                    onQuickView={() => setQuickViewProduct(product)}
+                    onAddToInquiry={() => handleAddToInquiry(product.id, product.slug)}
+                    onRemoveFromInquiry={() => handleRemoveFromInquiry(product.id, product.slug)}
+                  />
                 ))}
               </div>
               {hasMoreProducts && (

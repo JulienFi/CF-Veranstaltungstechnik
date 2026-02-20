@@ -186,7 +186,7 @@ export default function QuickViewModal({
                   className="btn-primary focus-ring tap-target interactive inline-flex items-center justify-center gap-2"
                 >
                   <Plus className="icon-std" />
-                  Zur Anfrageliste
+                  Zur Anfrageliste hinzufügen
                 </button>
               )}
             </div>

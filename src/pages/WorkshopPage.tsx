@@ -1,4 +1,4 @@
-import { Wrench, Shield, Sparkles, Settings, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Wrench, Shield, ShieldCheck, Sparkles, Settings, ArrowRight, CheckCircle2 } from 'lucide-react';
 import BackButton from '../components/BackButton';
 
 export default function WorkshopPage() {
@@ -66,7 +66,7 @@ export default function WorkshopPage() {
       description:
         'Wir prüfen Ihre Technik nach relevanten Sicherheitsstandards und dokumentieren Ergebnisse nachvollziehbar.',
       details: [
-        'Elektrische Sicherheitsprüfung',
+        'DGUV V3 Prüfung (inkl. elektrische Sicherheitsprüfung nach DIN VDE 0701-0702)',
         'Prüfung mechanischer und tragender Komponenten',
         'Funktionstest sicherheitsrelevanter Systeme',
         'Prüfprotokoll und Kennzeichnung',
@@ -107,6 +107,7 @@ export default function WorkshopPage() {
   const features = [
     'Erfahrenes Technikteam mit Praxis aus Live-Produktionen',
     'Spezialisierung auf professionelles Veranstaltungsequipment',
+    'DGUV V3 Prüfung mit dokumentierten Nachweisen für Betreiber und B2B-Kunden',
     'Strukturierte Arbeitsprozesse und klare Rückmeldungen',
     'Nachvollziehbare Kosten und verbindliche Aussagen',
     'Sorgfältige Dokumentation der Arbeiten',
@@ -123,6 +124,29 @@ export default function WorkshopPage() {
             <p className="section-copy text-gray-200">
               Wir halten Ihr Equipment in Berlin und Brandenburg einsatzbereit - mit Reparatur, Wartung und Sicherheitsprüfung. So reduzieren Sie Ausfälle und sichern Ihre Eventqualität.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section-shell--tight">
+        <div className="content-container">
+          <div className="glass-panel card border-emerald-400/30 p-5 md:p-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-500/12">
+                  <ShieldCheck className="icon-std text-emerald-300" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-emerald-200">DGUV V3 Prüfung für B2B-Kunden</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-300">
+                    Auf Wunsch mit dokumentierten Prüfnachweisen, Kennzeichnung und klaren Empfehlungen zu Nachbesserungen.
+                  </p>
+                </div>
+              </div>
+              <a href="/?subject=Werkstatt#kontakt" className="btn-secondary focus-ring tap-target interactive text-center">
+                DGUV V3 Prüfung anfragen
+              </a>
+            </div>
           </div>
         </div>
       </section>

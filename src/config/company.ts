@@ -49,5 +49,7 @@ export const COMPANY_INFO = {
     defaultDescription:
       'Seit 2014 im Einsatz: Mietshop und Full-Service für Veranstaltungen bis ca. 2.500 Personen – deutschlandweit verfügbar, Schwerpunkt Berlin/Brandenburg.',
     keywords: 'Eventtechnik mieten, Full-Service, Veranstaltungstechnik, Berlin, Brandenburg',
+    localSeoRegion: 'Berlin und Brandenburg',
+    localSeoPlaceholder: '[Stadt/Region]',
   },
 } as const;

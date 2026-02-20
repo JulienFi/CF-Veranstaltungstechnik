@@ -1,36 +1,58 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Copy, ExternalLink, Mail, MessageCircle, Phone } from 'lucide-react';
 import { useAuth } from '../../contexts/useAuth';
-import {
-  inquiryRepository,
-  type InquiryDTO,
-  type InquiryStatus,
-} from '../../repositories/inquiryRepository';
+import { inquiryRepository, type InquiryDTO } from '../../repositories/inquiryRepository';
+import { updateInquiryStatus } from '../../services/inquiryService';
 
-type InquiryFilterStatus = 'all' | InquiryStatus;
+type AdminInquiryStatus = 'new' | 'pending' | 'completed' | 'cancelled';
+type InquiryFilterStatus = 'all' | AdminInquiryStatus;
+type InquiryHandoverType = 'pickup' | 'delivery';
 
 const STATUS_OPTIONS: Array<{ value: InquiryFilterStatus; label: string }> = [
   { value: 'all', label: 'Alle' },
   { value: 'new', label: 'Neu' },
-  { value: 'in_progress', label: 'In Bearbeitung' },
-  { value: 'closed', label: 'Abgeschlossen' },
+  { value: 'pending', label: 'In Bearbeitung' },
+  { value: 'completed', label: 'Abgeschlossen' },
+  { value: 'cancelled', label: 'Storniert' },
 ];
 
-const STATUS_LABELS: Record<InquiryStatus, string> = {
+const STATUS_LABELS: Record<AdminInquiryStatus, string> = {
   new: 'Neu',
-  in_progress: 'In Bearbeitung',
-  closed: 'Abgeschlossen',
+  pending: 'In Bearbeitung',
+  completed: 'Abgeschlossen',
+  cancelled: 'Storniert',
 };
 
-const STATUS_BADGE_CLASSES: Record<InquiryStatus, string> = {
-  new: 'badge--warning',
-  in_progress: 'badge--info',
-  closed: 'badge--success',
+const STATUS_BADGE_CLASSES: Record<AdminInquiryStatus, string> = {
+  new: 'border border-pink-400/45 bg-pink-500/15 text-pink-200',
+  pending: 'border border-amber-400/45 bg-amber-500/15 text-amber-200',
+  completed: 'border border-emerald-400/45 bg-emerald-500/15 text-emerald-200',
+  cancelled: 'border border-slate-400/45 bg-slate-500/15 text-slate-200',
 };
 
-function toStatus(value: string | null): InquiryStatus {
-  if (value === 'in_progress' || value === 'closed') {
-    return value;
+const HANDOVER_LABELS: Record<InquiryHandoverType, string> = {
+  pickup: 'Dry-Hire',
+  delivery: 'Lieferung',
+};
+
+const HANDOVER_BADGE_CLASSES: Record<InquiryHandoverType, string> = {
+  pickup: 'border border-sky-400/45 bg-sky-500/15 text-sky-200',
+  delivery: 'border border-emerald-400/45 bg-emerald-500/15 text-emerald-200',
+};
+
+function toStatus(value: string | null): AdminInquiryStatus {
+  const normalized = (value ?? '').trim().toLowerCase();
+
+  if (normalized === 'pending' || normalized === 'in_progress') {
+    return 'pending';
+  }
+
+  if (normalized === 'completed' || normalized === 'closed') {
+    return 'completed';
+  }
+
+  if (normalized === 'cancelled') {
+    return 'cancelled';
   }
 
   return 'new';
@@ -50,6 +72,43 @@ function formatDateTime(value: string | null): string {
     dateStyle: 'medium',
     timeStyle: 'short',
   });
+}
+
+function formatDate(value: string | null): string {
+  if (!value) {
+    return '-';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleDateString('de-DE', { dateStyle: 'medium' });
+}
+
+function toHandoverType(value: string | null): InquiryHandoverType | null {
+  if (value === 'pickup' || value === 'delivery') {
+    return value;
+  }
+
+  return null;
+}
+
+function formatRentalPeriod(inquiry: InquiryDTO): string {
+  if (inquiry.start_date && inquiry.end_date) {
+    return `${formatDate(inquiry.start_date)} - ${formatDate(inquiry.end_date)}`;
+  }
+
+  if (inquiry.start_date) {
+    return formatDate(inquiry.start_date);
+  }
+
+  if (inquiry.end_date) {
+    return formatDate(inquiry.end_date);
+  }
+
+  return formatDate(inquiry.event_date);
 }
 
 function sanitizePhoneNumber(value: string): string {
@@ -76,16 +135,21 @@ function buildWhatsAppReplyLink(inquiry: InquiryDTO): string | null {
 }
 
 function buildInquirySummary(inquiry: InquiryDTO): string {
+  const handoverType = toHandoverType(inquiry.handover_type);
   const lines: string[] = [
     `Anfrage: ${inquiry.id}`,
-    `Status: ${toStatus(inquiry.status)}`,
+    `Status: ${STATUS_LABELS[toStatus(inquiry.status)]}`,
     `Name: ${inquiry.name}`,
     `E-Mail: ${inquiry.email || '-'}`,
     `Telefon: ${inquiry.phone || '-'}`,
     `Produkt: ${inquiry.product_name || inquiry.product_slug || '-'}`,
-    `Datum: ${inquiry.event_date || '-'}`,
+    `Mietzeitraum: ${formatRentalPeriod(inquiry)}`,
+    `Start: ${formatDate(inquiry.start_date)}`,
+    `Ende: ${formatDate(inquiry.end_date)}`,
     `Ort: ${inquiry.event_location || '-'}`,
     `Eventtyp: ${inquiry.event_type || '-'}`,
+    `Übergabe: ${handoverType ? HANDOVER_LABELS[handoverType] : '-'}`,
+    `Gästezahl: ${inquiry.guest_count ?? '-'}`,
   ];
 
   if (inquiry.message) {
@@ -116,9 +180,7 @@ export default function AdminInquiriesPage() {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await inquiryRepository.listInquiries({
-          status: statusFilter === 'all' ? undefined : statusFilter,
-        });
+        const data = await inquiryRepository.listInquiries();
         setInquiries(data);
       } catch (error) {
         console.error('Error loading inquiries:', error);
@@ -128,7 +190,7 @@ export default function AdminInquiriesPage() {
     };
 
     load();
-  }, [user, statusFilter]);
+  }, [user]);
 
   const stats = useMemo(() => {
     return inquiries.reduce(
@@ -137,14 +199,22 @@ export default function AdminInquiriesPage() {
         result[status] += 1;
         return result;
       },
-      { new: 0, in_progress: 0, closed: 0 }
+      { new: 0, pending: 0, completed: 0, cancelled: 0 }
     );
   }, [inquiries]);
 
-  const handleStatusChange = async (id: string, status: InquiryStatus) => {
+  const filteredInquiries = useMemo(() => {
+    if (statusFilter === 'all') {
+      return inquiries;
+    }
+
+    return inquiries.filter((inquiry) => toStatus(inquiry.status) === statusFilter);
+  }, [inquiries, statusFilter]);
+
+  const handleStatusChange = async (id: string, status: AdminInquiryStatus) => {
     setUpdatingInquiryId(id);
     try {
-      const updated = await inquiryRepository.updateInquiryStatus(id, status);
+      const updated = await updateInquiryStatus(id, status);
       setInquiries((current) =>
         current.map((inquiry) => (inquiry.id === updated.id ? updated : inquiry))
       );
@@ -195,8 +265,9 @@ export default function AdminInquiriesPage() {
 
             <div className="flex flex-wrap items-center gap-3 text-sm text-gray-300">
               <span>Neu: {stats.new}</span>
-              <span>In Bearbeitung: {stats.in_progress}</span>
-              <span>Abgeschlossen: {stats.closed}</span>
+              <span>In Bearbeitung: {stats.pending}</span>
+              <span>Abgeschlossen: {stats.completed}</span>
+              <span>Storniert: {stats.cancelled}</span>
             </div>
           </div>
         </div>
@@ -227,14 +298,15 @@ export default function AdminInquiriesPage() {
 
         {loading ? (
           <div className="text-gray-300">Lade Anfragen...</div>
-        ) : inquiries.length === 0 ? (
+        ) : filteredInquiries.length === 0 ? (
           <div className="panel panel--neutral p-8 text-center">
             Keine Anfragen für den gewählten Status.
           </div>
         ) : (
           <div className="space-y-4">
-            {inquiries.map((inquiry) => {
+            {filteredInquiries.map((inquiry) => {
               const status = toStatus(inquiry.status);
+              const handoverType = toHandoverType(inquiry.handover_type);
               const selectedProductsCount = Array.isArray(inquiry.selected_products)
                 ? inquiry.selected_products.length
                 : 0;
@@ -255,7 +327,7 @@ export default function AdminInquiriesPage() {
 
                     <div className="flex flex-col gap-2 md:items-end">
                       <span
-                        className={`badge ${STATUS_BADGE_CLASSES[status]}`}
+                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_BADGE_CLASSES[status]}`}
                       >
                         {STATUS_LABELS[status]}
                       </span>
@@ -263,13 +335,14 @@ export default function AdminInquiriesPage() {
                         value={status}
                         disabled={updatingInquiryId === inquiry.id}
                         onChange={(event) =>
-                          handleStatusChange(inquiry.id, event.target.value as InquiryStatus)
+                          handleStatusChange(inquiry.id, event.target.value as AdminInquiryStatus)
                         }
                         className="field-control focus-ring py-2 text-sm disabled:opacity-60"
                       >
                         <option value="new">Neu</option>
-                        <option value="in_progress">In Bearbeitung</option>
-                        <option value="closed">Abgeschlossen</option>
+                        <option value="pending">In Bearbeitung</option>
+                        <option value="completed">Abgeschlossen</option>
+                        <option value="cancelled">Storniert</option>
                       </select>
                     </div>
                   </div>
@@ -280,8 +353,8 @@ export default function AdminInquiriesPage() {
                       {inquiry.product_name || inquiry.product_slug || '-'}
                     </p>
                     <p className="text-gray-300">
-                      <span className="text-gray-500">Eventdatum: </span>
-                      {inquiry.event_date || '-'}
+                      <span className="text-gray-500">Mietzeitraum: </span>
+                      {formatRentalPeriod(inquiry)}
                     </p>
                     <p className="text-gray-300">
                       <span className="text-gray-500">Ort: </span>
@@ -290,6 +363,30 @@ export default function AdminInquiriesPage() {
                     <p className="text-gray-300">
                       <span className="text-gray-500">Eventtyp: </span>
                       {inquiry.event_type || '-'}
+                    </p>
+                    <p className="text-gray-300">
+                      <span className="text-gray-500">Startdatum: </span>
+                      {formatDate(inquiry.start_date)}
+                    </p>
+                    <p className="text-gray-300">
+                      <span className="text-gray-500">Enddatum: </span>
+                      {formatDate(inquiry.end_date)}
+                    </p>
+                    <div className="text-gray-300">
+                      <span className="text-gray-500">Übergabe: </span>
+                      {handoverType ? (
+                        <span
+                          className={`ml-2 inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${HANDOVER_BADGE_CLASSES[handoverType]}`}
+                        >
+                          {HANDOVER_LABELS[handoverType]}
+                        </span>
+                      ) : (
+                        '-'
+                      )}
+                    </div>
+                    <p className="text-gray-300">
+                      <span className="text-gray-500">Gästezahl: </span>
+                      {inquiry.guest_count ?? '-'}
                     </p>
                   </div>
 

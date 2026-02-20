@@ -10,10 +10,12 @@ import { useInquiryList } from '../hooks/useInquiryList';
 import { usePriceMode } from '../hooks/usePriceMode';
 import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
 import type { Json } from '../lib/database.types';
+import type { ProductWithCategory } from '../types/shop.types';
 import { resolveImageUrl } from '../utils/image';
 import PriceDisplay from '../components/PriceDisplay';
 import PriceModeToggle from '../components/PriceModeToggle';
 import MobileStickyCTA from '../components/MobileStickyCTA';
+import ShopProductCard from '../components/ShopProductCard';
 import { navigate } from '../lib/navigation';
 import { useSEO } from '../contexts/seo-state';
 import { generateProductSchema } from '../lib/seo';
@@ -25,25 +27,7 @@ interface ProductSpec {
   value: string;
 }
 
-interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  short_description: string;
-  full_description: string;
-  specs: ProductSpec[];
-  suitable_for: string;
-  scope_of_delivery: string;
-  tags: string[];
-  category_id: string;
-  image_url?: string;
-  price_net?: number | null;
-  vat_rate?: number | null;
-  show_price?: boolean;
-  categories: {
-    name: string;
-  };
-}
+type Product = ProductWithCategory;
 
 interface ProductDetailPageProps {
   slug: string;
@@ -65,8 +49,13 @@ interface ProductQueryRow {
   price_net: number | null;
   vat_rate: number | null;
   show_price: boolean | null;
+  is_active?: boolean | null;
+  created_at?: string | null;
+  updated_at?: string | null;
   categories: {
+    id: string | null;
     name: string | null;
+    slug: string | null;
   } | null;
 }
 
@@ -112,8 +101,13 @@ function mapProductRow(row: ProductQueryRow): Product {
     price_net: row.price_net,
     vat_rate: row.vat_rate,
     show_price: row.show_price ?? false,
+    is_active: row.is_active ?? true,
+    created_at: row.created_at ?? '',
+    updated_at: row.updated_at ?? '',
     categories: {
+      id: row.categories?.id ?? '',
       name: row.categories?.name ?? '',
+      slug: row.categories?.slug ?? '',
     },
   };
 }
@@ -133,7 +127,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [isNotFound, setIsNotFound] = useState(false);
   const [showStickyCta, setShowStickyCta] = useState(false);
-  const { addToInquiry, isInInquiry } = useInquiryList();
+  const { addToInquiry, removeFromInquiry, isInInquiry } = useInquiryList();
   const { priceMode } = usePriceMode();
   const { addToRecentlyViewed } = useRecentlyViewed();
   const { setSEO } = useSEO();
@@ -260,6 +254,11 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
     showToast('success', 'Produkt zur Anfrageliste hinzugefügt');
   };
 
+  const handleRemoveFromInquiry = (productId: string, productSlug?: string | null) => {
+    removeFromInquiry(productId, productSlug);
+    showToast('info', 'Produkt von der Anfrageliste entfernt');
+  };
+
   const isProductInInquiry = product ? isInInquiry(product.id, product.slug) : false;
   const categoryLabel = product?.categories?.name?.trim() || 'Produkt';
   const shortDescription =
@@ -333,62 +332,65 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
             ]}
           />
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 md:gap-10">
-            <div>
+          <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-10">
+            <aside className="self-start md:sticky md:top-[6.4rem]">
               <div className="glass-panel card overflow-hidden">
-                <img
-                  src={resolveImageUrl(product.image_url, 'product', product.slug)}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
+                <div className="card-inner overflow-hidden bg-gradient-to-br from-card-hover to-card-bg">
+                  <img
+                    src={resolveImageUrl(product.image_url, 'product', product.slug)}
+                    alt={product.name}
+                    className="h-full max-h-[500px] w-full object-cover"
+                    loading="eager"
+                  />
+                </div>
               </div>
-            </div>
+            </aside>
 
-            <div>
-              <div className="mb-4 flex flex-wrap gap-2">
-                <span className="card-inner rounded-md bg-blue-500/14 px-3 py-1.5 text-sm font-medium text-blue-300">
-                  {categoryLabel}
-                </span>
-                {product.tags.map(tag => (
-                  <span key={tag} className="glass-panel--soft card-inner px-3 py-1.5 text-sm text-gray-200">
-                    {tag}
+            <div className="space-y-5">
+              <div>
+                <div className="mb-3 flex flex-wrap gap-2">
+                  <span className="card-inner rounded-md bg-blue-500/14 px-3 py-1.5 text-sm font-medium text-blue-300">
+                    {categoryLabel}
                   </span>
-                ))}
+                  {product.tags.map((tag) => (
+                    <span key={tag} className="glass-panel--soft card-inner px-3 py-1.5 text-sm text-gray-200">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <h1 className="mb-3 text-3xl font-bold leading-tight md:text-4xl">{product.name}</h1>
+                <p className="text-base leading-relaxed text-gray-200">{shortDescription}</p>
               </div>
 
-              <h1 className="section-title mb-4 font-bold">{product.name}</h1>
-              <p className="section-copy mb-8 text-gray-200">{shortDescription}</p>
-              <div className="glass-panel--soft card-inner mb-8 p-4 md:mb-10 md:p-5">
-                <div className="mb-3">
+              <div className="glass-panel--soft card-inner p-4 md:p-5">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="mb-1 text-sm text-gray-300">Preis</p>
+                    <div className="text-3xl">
+                      <PriceDisplay
+                        priceNet={product.price_net}
+                        showPrice={product.show_price}
+                        vatRate={product.vat_rate}
+                        mode={priceMode}
+                      />
+                    </div>
+                  </div>
                   <PriceModeToggle />
                 </div>
-                <div>
-                  <p className="mb-1 text-sm text-gray-300">Preis</p>
-                  <div className="text-3xl">
-                    <PriceDisplay
-                      priceNet={product.price_net}
-                      showPrice={product.show_price}
-                      vatRate={product.vat_rate}
-                      mode={priceMode}
-                    />
-                  </div>
-                </div>
-              </div>
 
-              <div className="mb-10 flex flex-col gap-3 sm:flex-row md:mb-12">
                 {isProductInInquiry ? (
                   <a
                     href={`/mietshop/anfrage?product=${encodeURIComponent(product.slug || product.id)}`}
-                    className="btn-primary focus-ring tap-target interactive flex-1 text-center text-base md:text-lg"
+                    className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 text-base"
                   >
                     <CheckCircle2 className="icon-std" />
-                    <span>Zur Angebotsanfrage</span>
+                    <span>Mietanfrage stellen</span>
                   </a>
                 ) : (
                   <button
                     onClick={() => handleAddToInquiry(product.id, product.slug)}
-                    className="btn-primary focus-ring tap-target interactive flex-1 text-base md:text-lg"
+                    className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 text-base"
                   >
                     <Plus className="icon-std" />
                     <span>Zur Anfrageliste hinzufügen</span>
@@ -396,53 +398,46 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
                 )}
               </div>
 
-              <div className="space-y-4 md:space-y-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="glass-panel--soft card-inner p-4">
-                  <h3 className="mb-3 flex items-center gap-2 text-xl font-bold">
+                  <h2 className="mb-2 flex items-center gap-2 text-lg font-bold">
                     <Target className="icon-std text-blue-400" />
                     <span>Geeignet für</span>
-                  </h3>
-                  <p className="text-gray-200 leading-relaxed">{suitableForDescription}</p>
+                  </h2>
+                  <p className="text-sm leading-relaxed text-gray-200">{suitableForDescription}</p>
                 </div>
 
                 <div className="glass-panel--soft card-inner p-4">
-                  <h3 className="mb-3 flex items-center gap-2 text-xl font-bold">
+                  <h2 className="mb-2 flex items-center gap-2 text-lg font-bold">
                     <Package className="icon-std text-blue-400" />
                     <span>Lieferumfang</span>
-                  </h3>
-                  <p className="text-gray-200 leading-relaxed">{scopeOfDeliveryDescription}</p>
+                  </h2>
+                  <p className="text-sm leading-relaxed text-gray-200">{scopeOfDeliveryDescription}</p>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="section-shell bg-card-bg/50">
-        <div className="content-container">
-          <div className="max-w-4xl">
-            <h2 className="section-title mb-6 font-bold">Beschreibung</h2>
-            <p className="mb-10 text-lg leading-relaxed text-gray-200 md:mb-12">{fullDescription}</p>
+              <div className="glass-panel--soft card-inner p-4 md:p-5">
+                <h2 className="mb-3 text-xl font-bold">Beschreibung</h2>
+                <p className="text-sm leading-relaxed text-gray-200 md:text-base">{fullDescription}</p>
+              </div>
 
-            <h2 className="section-title mb-6 font-bold">Technische Spezifikationen</h2>
-            <div className="glass-panel--soft card-inner overflow-hidden">
-              {hasSpecs ? (
-                product.specs.map((spec, index) => (
-                  <div
-                    key={index}
-                    className={`grid grid-cols-1 gap-3 p-5 md:grid-cols-2 md:gap-4 md:p-6 ${
-                      index !== product.specs.length - 1 ? 'border-subtle-bottom' : ''
-                    }`}
-                  >
-                    <div className="font-medium text-gray-300">{spec.label}</div>
-                    <div className="text-white">{spec.value}</div>
+              <div className="glass-panel--soft card-inner p-4 md:p-5">
+                <h2 className="mb-3 text-xl font-bold">Technische Spezifikationen</h2>
+                {hasSpecs ? (
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {product.specs.map((spec, index) => (
+                      <div key={`${spec.label}-${index}`} className="card-inner border-subtle rounded-lg bg-[rgb(var(--card)/0.45)] p-3">
+                        <div className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-400">{spec.label}</div>
+                        <div className="text-sm text-slate-100">{spec.value}</div>
+                      </div>
+                    ))}
                   </div>
-                ))
-              ) : (
-                <div className="p-5 text-gray-200 md:p-6">
-                  Technische Spezifikationen werden gerade ergänzt. Gern senden wir Ihnen alle Details auf Anfrage.
-                </div>
-              )}
+                ) : (
+                  <p className="text-sm text-gray-200">
+                    Technische Spezifikationen werden gerade ergänzt. Gern senden wir Ihnen alle Details auf Anfrage.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -453,27 +448,16 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
           <div className="content-container">
             <h2 className="section-title mb-8 font-bold">Passende Ergänzungen</h2>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
-              {relatedProducts.map(relatedProduct => (
-                <a
+              {relatedProducts.map((relatedProduct) => (
+                <ShopProductCard
                   key={relatedProduct.id}
-                  href={`/mietshop/${relatedProduct.slug}`}
-                  className="glass-panel card interactive-card focus-ring group overflow-hidden"
-                >
-                  <div className="card-inner aspect-video overflow-hidden bg-gradient-to-br from-card-hover to-card-bg">
-                    <img
-                      src={resolveImageUrl(relatedProduct.image_url, 'product', relatedProduct.slug)}
-                      alt={relatedProduct.name}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="p-5 md:p-6">
-                    <h3 className="mb-2 text-lg font-bold transition-colors group-hover:text-blue-300">
-                      {relatedProduct.name}
-                    </h3>
-                    <p className="line-clamp-2 text-sm leading-relaxed text-gray-300">{relatedProduct.short_description}</p>
-                  </div>
-                </a>
+                  product={relatedProduct}
+                  priceMode={priceMode}
+                  inInquiry={isInInquiry(relatedProduct.id, relatedProduct.slug)}
+                  onQuickView={() => navigate(`/mietshop/${relatedProduct.slug}`)}
+                  onAddToInquiry={() => handleAddToInquiry(relatedProduct.id, relatedProduct.slug)}
+                  onRemoveFromInquiry={() => handleRemoveFromInquiry(relatedProduct.id, relatedProduct.slug)}
+                />
               ))}
             </div>
           </div>
@@ -501,7 +485,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
       <ScrollToTop />
 
       <MobileStickyCTA
-        label="Dieses Produkt anfragen"
+        label="Mietanfrage stellen"
         isVisible={showStickyCta}
         onClick={() => navigate(`/mietshop/anfrage?product=${encodeURIComponent(product.slug || product.id)}`)}
       />

@@ -67,13 +67,13 @@ Expected behavior:
 
 - Receives Supabase Database Webhook payload for `INSERT` on table `public.inquiries`.
 - Validates `x-webhook-secret` header against `WEBHOOK_SECRET`.
-- Sends a Discord message to `DISCORD_WEBHOOK_URL`.
+- Sends an email via Resend API to `ADMIN_EMAIL`.
 
 Required function secrets:
 
 - `WEBHOOK_SECRET`
-- `DISCORD_WEBHOOK_URL`
-- `ADMIN_URL` (optional, used for admin link in message)
+- `RESEND_API_KEY`
+- `ADMIN_EMAIL`
 
 ### Activation steps (Supabase Dashboard)
 
@@ -81,8 +81,8 @@ Required function secrets:
    - `supabase functions deploy inquiry-notify`
 2. Set secrets:
    - `supabase secrets set WEBHOOK_SECRET=...`
-   - `supabase secrets set DISCORD_WEBHOOK_URL=...`
-   - Optional: `supabase secrets set ADMIN_URL=https://your-domain.tld`
+   - `supabase secrets set RESEND_API_KEY=...`
+   - `supabase secrets set ADMIN_EMAIL=admin@your-domain.tld`
 3. Open `Database` -> `Webhooks` -> create webhook:
    - Table: `public.inquiries`
    - Events: `INSERT`
@@ -94,5 +94,5 @@ Required function secrets:
 ### Verification
 
 - New inquiry row is created in `public.inquiries`.
-- Discord channel receives one notification.
+- Admin inbox (`ADMIN_EMAIL`) receives one notification email.
 - Duplicate sends within a short interval are deduplicated by the function.

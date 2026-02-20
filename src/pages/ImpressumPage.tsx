@@ -6,7 +6,7 @@ export default function ImpressumPage() {
     hasLegalValue(LEGAL_INFO.registerCourt) || hasLegalValue(LEGAL_INFO.registerNumber);
 
   return (
-    <div className="bg-app-bg text-white min-h-screen">
+    <div className="bg-zinc-900 text-slate-200 min-h-screen">
       <section className="section-shell">
         <div className="content-container content-container--narrow">
           <div className="mx-auto max-w-4xl">
@@ -16,7 +16,7 @@ export default function ImpressumPage() {
               <div>
                 <h2 className="text-2xl font-bold mb-4">Angaben gemäß Paragraf 5 TMG</h2>
                 <div className="muted-readable space-y-1">
-                  <p className="font-semibold text-white">
+                  <p className="font-semibold text-slate-100">
                     {COMPANY_INFO.legalName}
                     {hasLegalValue(LEGAL_INFO.legalForm) ? ` (${LEGAL_INFO.legalForm})` : ''}
                   </p>

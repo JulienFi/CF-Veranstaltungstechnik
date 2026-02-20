@@ -36,9 +36,12 @@ interface InquiryFormData {
   name: string;
   email: string;
   phone: string;
+  rentalStartDate: string;
+  rentalEndDate: string;
+  handoverType: '' | 'pickup' | 'delivery';
   eventType: string;
-  eventDate: string;
   eventLocation: string;
+  guestCount: string;
   budget: string;
   message: string;
 }
@@ -47,6 +50,11 @@ interface InquiryValidationErrors {
   name?: string;
   email?: string;
   contact?: string;
+  rentalPeriod?: string;
+  handoverType?: string;
+  eventType?: string;
+  eventLocation?: string;
+  guestCount?: string;
   message?: string;
 }
 
@@ -63,9 +71,12 @@ const INITIAL_FORM_DATA: InquiryFormData = {
   name: '',
   email: '',
   phone: '',
+  rentalStartDate: '',
+  rentalEndDate: '',
+  handoverType: '',
   eventType: '',
-  eventDate: '',
   eventLocation: '',
+  guestCount: '',
   budget: '',
   message: '',
 };
@@ -128,11 +139,34 @@ function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function formatDateRange(startDate: string, endDate: string): string | null {
+  if (!startDate || !endDate) {
+    return null;
+  }
+
+  return `${startDate} bis ${endDate}`;
+}
+
+function mapHandoverTypeLabel(handoverType: InquiryFormData['handoverType']): string {
+  if (handoverType === 'pickup') {
+    return 'Selbstabholung (Dry-Hire)';
+  }
+
+  if (handoverType === 'delivery') {
+    return 'Lieferung & Aufbau';
+  }
+
+  return '';
+}
+
 function validateInquiryForm(formData: InquiryFormData): InquiryValidationErrors {
   const errors: InquiryValidationErrors = {};
   const name = formData.name.trim();
   const email = formData.email.trim();
   const phone = formData.phone.trim();
+  const eventType = formData.eventType.trim();
+  const eventLocation = formData.eventLocation.trim();
+  const guestCount = formData.guestCount.trim();
   const message = formData.message.trim();
 
   if (!name) {
@@ -145,6 +179,31 @@ function validateInquiryForm(formData: InquiryFormData): InquiryValidationErrors
 
   if (email && !isValidEmail(email)) {
     errors.email = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+  }
+
+  if (!formData.rentalStartDate || !formData.rentalEndDate) {
+    errors.rentalPeriod = 'Bitte wählen Sie den Mietzeitraum (von/bis).';
+  } else if (formData.rentalEndDate < formData.rentalStartDate) {
+    errors.rentalPeriod = 'Das Enddatum muss am oder nach dem Startdatum liegen.';
+  }
+
+  if (!formData.handoverType) {
+    errors.handoverType = 'Bitte wählen Sie die Art der Übergabe.';
+  }
+
+  if (!eventLocation) {
+    errors.eventLocation = 'Bitte geben Sie den Veranstaltungsort an.';
+  }
+
+  if (!eventType) {
+    errors.eventType = 'Bitte wählen Sie die Art der Veranstaltung.';
+  }
+
+  if (guestCount.length > 0) {
+    const parsedGuestCount = Number(guestCount);
+    if (!Number.isInteger(parsedGuestCount) || parsedGuestCount < 1) {
+      errors.guestCount = 'Bitte geben Sie eine ganze Zahl ab 1 ein.';
+    }
   }
 
   if (!message) {
@@ -191,19 +250,33 @@ function buildWhatsAppMessage(
 ): string {
   const lines: string[] = [
     'Hallo CF Veranstaltungstechnik,',
-    'ich möchte ein Angebot anfragen.',
+    'ich möchte eine Mietanfrage stellen.',
   ];
+  const eventDateRange = formatDateRange(formData.rentalStartDate, formData.rentalEndDate);
+  const handoverLabel = mapHandoverTypeLabel(formData.handoverType);
 
   if (primaryProduct) {
     lines.push(`Produkt: ${primaryProduct.name}`);
   }
 
-  if (formData.eventDate.trim()) {
-    lines.push(`Datum: ${formData.eventDate.trim()}`);
+  if (eventDateRange) {
+    lines.push(`Mietzeitraum: ${eventDateRange}`);
   }
 
   if (formData.eventLocation.trim()) {
     lines.push(`Ort: ${formData.eventLocation.trim()}`);
+  }
+
+  if (formData.eventType.trim()) {
+    lines.push(`Eventart: ${formData.eventType.trim()}`);
+  }
+
+  if (handoverLabel) {
+    lines.push(`Übergabe: ${handoverLabel}`);
+  }
+
+  if (formData.guestCount.trim()) {
+    lines.push(`Geschätzte Gästezahl: ${formData.guestCount.trim()}`);
   }
 
   if (queryContext.category) {
@@ -373,12 +446,15 @@ export default function InquiryPage() {
       if (field === 'email' || field === 'phone') {
         next.contact = true;
       }
+      if (field === 'rentalStartDate' || field === 'rentalEndDate') {
+        next.rentalPeriod = true;
+      }
       return next;
     });
     setFormData((current) => ({ ...current, [field]: value }));
   };
 
-  const handleBlur = (field: keyof InquiryFormData | 'contact') => {
+  const handleBlur = (field: keyof InquiryFormData | 'contact' | 'rentalPeriod') => {
     setTouchedFields((current) => ({ ...current, [field]: true }));
   };
 
@@ -399,7 +475,7 @@ export default function InquiryPage() {
       product_slug: primaryProduct?.slug ?? queryContext.productParam ?? '',
       product_id: primaryProduct?.id ?? '',
       has_message: formData.message.trim().length > 0,
-      has_date: formData.eventDate.trim().length > 0,
+      has_date: Boolean(formData.rentalStartDate && formData.rentalEndDate),
       has_location: formData.eventLocation.trim().length > 0,
     });
   };
@@ -419,6 +495,13 @@ export default function InquiryPage() {
         email: true,
         phone: true,
         contact: true,
+        rentalPeriod: true,
+        rentalStartDate: true,
+        rentalEndDate: true,
+        handoverType: true,
+        eventType: true,
+        eventLocation: true,
+        guestCount: true,
         message: true,
       }));
       return;
@@ -435,6 +518,11 @@ export default function InquiryPage() {
       }));
 
       const messagePayload = buildMessagePayload(formData, queryContext);
+      const guestCountValue = formData.guestCount.trim();
+      const parsedGuestCount = guestCountValue ? Number.parseInt(guestCountValue, 10) : null;
+      const guestCount = parsedGuestCount && Number.isInteger(parsedGuestCount) && parsedGuestCount > 0
+        ? parsedGuestCount
+        : null;
 
       await createInquiry({
         source: 'shop',
@@ -443,8 +531,12 @@ export default function InquiryPage() {
         email: formData.email.trim() || '',
         phone: formData.phone.trim() || null,
         event_type: formData.eventType.trim() || null,
-        event_date: formData.eventDate.trim() || null,
+        event_date: formData.rentalStartDate.trim() || null,
         event_location: formData.eventLocation.trim() || null,
+        start_date: formData.rentalStartDate.trim() || null,
+        end_date: formData.rentalEndDate.trim() || null,
+        handover_type: formData.handoverType || null,
+        guest_count: guestCount,
         selected_products: products.length > 0 ? selectedProductsData : null,
         product_id: primaryProduct?.id ?? null,
         product_slug: primaryProduct?.slug ?? queryContext.productParam ?? null,
@@ -530,7 +622,7 @@ export default function InquiryPage() {
         <BackButton href="/mietshop" label="Zurück zum Shop" className="mb-6 md:mb-8" />
 
         <div className="mx-auto max-w-4xl">
-          <h1 className="section-title mb-4 font-bold">Angebotsanfrage</h1>
+          <h1 className="section-title mb-4 font-bold">Mietanfrage</h1>
           <p className="section-copy mb-8 text-gray-200 md:mb-12">
             Wenige Angaben reichen für den Start. Wir melden uns mit einer passenden Lösung für Miete oder Full-Service.
           </p>
@@ -644,21 +736,7 @@ export default function InquiryPage() {
               </div>
 
               <div>
-                <label htmlFor="inquiry-date" className="mb-2 block text-sm font-medium">Datum (optional)</label>
-                <input
-                  id="inquiry-date"
-                  type="date"
-                  name="event-date"
-                  autoComplete="off"
-                  value={formData.eventDate}
-                  onChange={(event) => updateField('eventDate', event.target.value)}
-                  onBlur={() => handleBlur('eventDate')}
-                  className={fieldClassName}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="inquiry-location" className="mb-2 block text-sm font-medium">Ort (optional)</label>
+                <label htmlFor="inquiry-location" className="mb-2 block text-sm font-medium">Veranstaltungsort / Stadt *</label>
                 <input
                   id="inquiry-location"
                   type="text"
@@ -667,24 +745,139 @@ export default function InquiryPage() {
                   value={formData.eventLocation}
                   onChange={(event) => updateField('eventLocation', event.target.value)}
                   onBlur={() => handleBlur('eventLocation')}
-                  className={fieldClassName}
+                  className={touchedFields.eventLocation && validationErrors.eventLocation ? fieldErrorClassName : fieldClassName}
+                  aria-invalid={touchedFields.eventLocation && Boolean(validationErrors.eventLocation)}
+                  aria-describedby={touchedFields.eventLocation && validationErrors.eventLocation ? 'inquiry-location-error' : undefined}
                   placeholder="z. B. Berlin, Halle 3"
                 />
+                {touchedFields.eventLocation && validationErrors.eventLocation && (
+                  <p id="inquiry-location-error" className="mt-2 text-sm text-red-300">{validationErrors.eventLocation}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="inquiry-eventtype" className="mb-2 block text-sm font-medium">Eventtyp (optional)</label>
-                <input
+                <label htmlFor="inquiry-eventtype" className="mb-2 block text-sm font-medium">Art der Veranstaltung *</label>
+                <select
                   id="inquiry-eventtype"
-                  type="text"
                   name="event-type"
                   autoComplete="off"
                   value={formData.eventType}
                   onChange={(event) => updateField('eventType', event.target.value)}
                   onBlur={() => handleBlur('eventType')}
-                  className={fieldClassName}
-                  placeholder="z. B. Firmenfeier, Hochzeit"
+                  className={touchedFields.eventType && validationErrors.eventType ? fieldErrorClassName : fieldClassName}
+                  aria-invalid={touchedFields.eventType && Boolean(validationErrors.eventType)}
+                  aria-describedby={touchedFields.eventType && validationErrors.eventType ? 'inquiry-eventtype-error' : undefined}
+                >
+                  <option value="">Bitte auswählen</option>
+                  <option value="Hochzeit">Hochzeit</option>
+                  <option value="Firmenfeier">Firmenfeier</option>
+                  <option value="Club-Event">Club-Event</option>
+                  <option value="Sonstiges">Sonstiges</option>
+                </select>
+                {touchedFields.eventType && validationErrors.eventType && (
+                  <p id="inquiry-eventtype-error" className="mt-2 text-sm text-red-300">{validationErrors.eventType}</p>
+                )}
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-medium">Mietzeitraum (Von - Bis) *</label>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label htmlFor="inquiry-date-start" className="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-300">
+                      Von
+                    </label>
+                    <input
+                      id="inquiry-date-start"
+                      type="date"
+                      name="event-date-start"
+                      autoComplete="off"
+                      value={formData.rentalStartDate}
+                      onChange={(event) => updateField('rentalStartDate', event.target.value)}
+                      onBlur={() => handleBlur('rentalPeriod')}
+                      className={
+                        touchedFields.rentalPeriod && validationErrors.rentalPeriod ? fieldErrorClassName : fieldClassName
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="inquiry-date-end" className="mb-2 block text-xs font-medium uppercase tracking-wide text-gray-300">
+                      Bis
+                    </label>
+                    <input
+                      id="inquiry-date-end"
+                      type="date"
+                      name="event-date-end"
+                      autoComplete="off"
+                      value={formData.rentalEndDate}
+                      min={formData.rentalStartDate || undefined}
+                      onChange={(event) => updateField('rentalEndDate', event.target.value)}
+                      onBlur={() => handleBlur('rentalPeriod')}
+                      className={
+                        touchedFields.rentalPeriod && validationErrors.rentalPeriod ? fieldErrorClassName : fieldClassName
+                      }
+                    />
+                  </div>
+                </div>
+                {(touchedFields.rentalPeriod || touchedFields.rentalStartDate || touchedFields.rentalEndDate) &&
+                  validationErrors.rentalPeriod && (
+                    <p id="inquiry-daterange-error" className="mt-2 text-sm text-red-300">{validationErrors.rentalPeriod}</p>
+                  )}
+              </div>
+
+              <div className="md:col-span-2">
+                <fieldset>
+                  <legend className="mb-2 block text-sm font-medium">Art der Übergabe *</legend>
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <label className="glass-panel--soft card-inner flex cursor-pointer items-start gap-3 p-4">
+                      <input
+                        type="radio"
+                        name="handover-type"
+                        value="pickup"
+                        checked={formData.handoverType === 'pickup'}
+                        onChange={(event) => updateField('handoverType', event.target.value)}
+                        onBlur={() => handleBlur('handoverType')}
+                        className="mt-1"
+                      />
+                      <span className="text-sm leading-relaxed text-gray-200">Selbstabholung (Dry-Hire)</span>
+                    </label>
+                    <label className="glass-panel--soft card-inner flex cursor-pointer items-start gap-3 p-4">
+                      <input
+                        type="radio"
+                        name="handover-type"
+                        value="delivery"
+                        checked={formData.handoverType === 'delivery'}
+                        onChange={(event) => updateField('handoverType', event.target.value)}
+                        onBlur={() => handleBlur('handoverType')}
+                        className="mt-1"
+                      />
+                      <span className="text-sm leading-relaxed text-gray-200">Lieferung & Aufbau</span>
+                    </label>
+                  </div>
+                </fieldset>
+                {touchedFields.handoverType && validationErrors.handoverType && (
+                  <p id="inquiry-handover-error" className="mt-2 text-sm text-red-300">{validationErrors.handoverType}</p>
+                )}
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="inquiry-guests" className="mb-2 block text-sm font-medium">Geschätzte Gästezahl (optional)</label>
+                <input
+                  id="inquiry-guests"
+                  type="number"
+                  name="guest-count"
+                  min={1}
+                  step={1}
+                  value={formData.guestCount}
+                  onChange={(event) => updateField('guestCount', event.target.value)}
+                  onBlur={() => handleBlur('guestCount')}
+                  className={touchedFields.guestCount && validationErrors.guestCount ? fieldErrorClassName : fieldClassName}
+                  aria-invalid={touchedFields.guestCount && Boolean(validationErrors.guestCount)}
+                  aria-describedby={touchedFields.guestCount && validationErrors.guestCount ? 'inquiry-guests-error' : undefined}
+                  placeholder="z. B. 180"
                 />
+                {touchedFields.guestCount && validationErrors.guestCount && (
+                  <p id="inquiry-guests-error" className="mt-2 text-sm text-red-300">{validationErrors.guestCount}</p>
+                )}
               </div>
 
               <div className="md:col-span-2">
@@ -748,7 +941,7 @@ export default function InquiryPage() {
                 className="btn-primary focus-ring tap-target interactive inline-flex w-full items-center justify-center gap-2 text-base disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Send className="icon-std" />
-                <span>{loading ? 'Wird gesendet...' : 'Angebot anfragen (Antwort in der Regel innerhalb von 24 Stunden)'}</span>
+                <span>{loading ? 'Wird gesendet...' : 'Mietanfrage stellen'}</span>
               </button>
 
               {whatsappHref ? (
