@@ -1,11 +1,12 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
-import { CheckCircle2, Send, MessageCircle, ExternalLink, X } from 'lucide-react';
+import { Send, MessageCircle, ExternalLink, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Json } from '../lib/database.types';
 import BackButton from '../components/BackButton';
 import { track } from '../lib/analytics';
 import { useSEO } from '../contexts/seo-state';
 import { getBaseUrl } from '../lib/site';
+import { navigate } from '../lib/navigation';
 import { resolveImageUrl } from '../utils/image';
 import { COMPANY_INFO } from '../config/company';
 import { createInquiry } from '../services/inquiryService';
@@ -309,7 +310,6 @@ export default function InquiryPage() {
   const [prefilledProduct, setPrefilledProduct] = useState<ProductSummary | null>(null);
   const [formData, setFormData] = useState<InquiryFormData>(INITIAL_FORM_DATA);
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [hasWhatsAppClick, setHasWhatsAppClick] = useState(false);
@@ -560,7 +560,7 @@ export default function InquiryPage() {
         has_whatsapp_click: hasWhatsAppClick,
       });
 
-      setSubmitted(true);
+      navigate('/danke');
     } catch (error) {
       console.error('Error submitting inquiry:', error);
       setSubmitError('Die Anfrage konnte nicht gesendet werden. Bitte prüfen Sie Ihre Angaben und versuchen Sie es erneut.');
@@ -571,50 +571,6 @@ export default function InquiryPage() {
 
   const fieldClassName = 'field-control focus-ring';
   const fieldErrorClassName = 'field-control field-control--error focus-ring';
-
-  if (submitted) {
-    return (
-      <div className="bg-app-bg text-white min-h-screen flex items-center justify-center p-4">
-        <div className="content-container">
-          <div className="glass-panel card mx-auto max-w-2xl px-6 py-10 text-center md:px-10">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10">
-              <CheckCircle2 className="icon-std icon-std--lg text-green-400" />
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4">Vielen Dank für Ihre Anfrage!</h1>
-            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Wir haben Ihre Anfrage erhalten und melden uns in der Regel innerhalb von 24 Stunden mit den nächsten Schritten.
-            </p>
-            <div className="mb-4 flex flex-col justify-center gap-3 sm:flex-row">
-              <a
-                href="/mietshop"
-                className="btn-primary focus-ring tap-target interactive"
-              >
-                Zurück zum Shop
-              </a>
-              <a
-                href="/"
-                className="btn-secondary focus-ring tap-target interactive"
-              >
-                Zur Startseite
-              </a>
-            </div>
-            {whatsappHref && (
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleWhatsAppClick}
-                className="focus-ring tap-target interactive inline-flex items-center justify-center gap-2 rounded-lg border border-emerald-400/70 bg-emerald-500 px-6 py-3 font-medium text-white hover:bg-emerald-600"
-              >
-                <MessageCircle className="icon-std" />
-                <span>Rückfrage per WhatsApp</span>
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="section-shell bg-app-bg text-white min-h-screen">

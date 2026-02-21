@@ -71,7 +71,7 @@ export const HOME_PROOF_FALLBACK: HomeProofContent = {
 
 export const HOME_SERVICES_FALLBACK: HomeServicesContent = {
   title: 'Leistungen für Veranstaltungen mit klarem Ablauf',
-  copy: 'Mietshop, Full-Service und Werkstatt: Wir liefern passende Technik und klare Zuständigkeiten.',
+  copy: 'Drei Säulen für dein Event: Hochwertiges Material, professionelle Planung und ein Team, das anpackt.',
   cards: [
     {
       title: 'Mietshop',

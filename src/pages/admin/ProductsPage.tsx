@@ -18,7 +18,7 @@
  * 11. "Produkt ist aktiv" aktivieren für Sichtbarkeit im Shop
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Eye, EyeOff, Filter, Upload, X, FolderOpen } from 'lucide-react';
 import { useAuth } from '../../contexts/useAuth';
 import type { Database, Json } from '../../lib/database.types';
@@ -96,6 +96,7 @@ const DEFAULT_PRODUCT_FORM_DATA: ProductFormData = {
   price_net_input: '',
   vat_rate_input: '19',
 };
+const MIN_SHORT_DESCRIPTION_LENGTH = 20;
 
 function mapProductListRow(row: AdminProductListRow): Product {
   return {
@@ -152,12 +153,36 @@ export default function ProductsPage() {
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  const [productSubmitError, setProductSubmitError] = useState<string | null>(null);
   const [categoryFormData, setCategoryFormData] = useState({
     name: '',
     slug: '',
     description: '',
     display_order: 0
   });
+
+  const productValidationErrors = useMemo(() => {
+    const errors: string[] = [];
+    const normalizedPriceNet = parseMoneyToCents(formData.price_net_input);
+
+    if (!formData.name.trim()) {
+      errors.push('Bitte einen Produktnamen angeben.');
+    }
+
+    if (!formData.category_id.trim()) {
+      errors.push('Bitte eine Kategorie auswählen.');
+    }
+
+    if (formData.short_description.trim().length < MIN_SHORT_DESCRIPTION_LENGTH) {
+      errors.push(`Die Beschreibung muss mindestens ${MIN_SHORT_DESCRIPTION_LENGTH} Zeichen enthalten.`);
+    }
+
+    if (formData.show_price && (!normalizedPriceNet || normalizedPriceNet <= 0)) {
+      errors.push('Bei aktiviertem Preis muss der Nettopreis größer als 0 sein.');
+    }
+
+    return errors;
+  }, [formData.name, formData.category_id, formData.short_description, formData.show_price, formData.price_net_input]);
 
   useEffect(() => {
     if (!user) {
@@ -229,10 +254,35 @@ export default function ProductsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setProductSubmitError(null);
+
+    if (productValidationErrors.length > 0) {
+      return;
+    }
+
+    const hasImage = Boolean(imageFile) || formData.image_url.trim().length > 0;
+    if (!hasImage) {
+      const shouldContinue = window.confirm(
+        'Ein Produkt ohne Bild wirkt unprofessionell. Möchtest du trotzdem fortfahren?'
+      );
+      if (!shouldContinue) {
+        return;
+      }
+    }
+
+    let specs: Json = [] as Json;
+    if (formData.specs.trim()) {
+      try {
+        specs = JSON.parse(formData.specs) as Json;
+      } catch {
+        setProductSubmitError('Technische Spezifikationen müssen gültiges JSON sein.');
+        return;
+      }
+    }
+
     setUploading(true);
 
     try {
-      const specs = formData.specs ? (JSON.parse(formData.specs) as Json) : ([] as Json);
       const tags = formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean);
       const imageUrl = await uploadImage();
       const normalizedPriceNet = parseMoneyToCents(formData.price_net_input);
@@ -266,7 +316,7 @@ export default function ProductsPage() {
       await loadData();
     } catch (error) {
       console.error('Error saving product:', error);
-      alert('Fehler beim Speichern: ' + (error as Error).message);
+      setProductSubmitError('Fehler beim Speichern: ' + (error as Error).message);
     } finally {
       setUploading(false);
     }
@@ -337,6 +387,7 @@ export default function ProductsPage() {
     setImageFile(null);
     setImagePreview('');
     setEditingProduct(null);
+    setProductSubmitError(null);
     setShowForm(false);
   };
 
@@ -883,10 +934,21 @@ export default function ProductsPage() {
                 </div>
               </div>
 
+              {(productValidationErrors.length > 0 || productSubmitError) && (
+                <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-4">
+                  <ul className="space-y-1 text-sm text-red-200">
+                    {productValidationErrors.map((errorMessage) => (
+                      <li key={errorMessage}>{errorMessage}</li>
+                    ))}
+                    {productSubmitError ? <li>{productSubmitError}</li> : null}
+                  </ul>
+                </div>
+              )}
+
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   type="submit"
-                  disabled={uploading}
+                  disabled={uploading || productValidationErrors.length > 0}
                   className="btn-primary focus-ring tap-target interactive px-6 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploading ? 'Wird gespeichert...' : (editingProduct ? 'Änderungen speichern' : 'Produkt erstellen')}

@@ -32,9 +32,9 @@ export const SITE_URL = getBaseUrl();
  */
 export const PAGE_META: Record<string, PageMeta> = {
   home: {
-    title: 'Eventtechnik, die einfach läuft | CF Veranstaltungstechnik',
+    title: 'CF Veranstaltungstechnik | Eventtechnik in Berlin & Brandenburg',
     description:
-      'Miete im Shop oder Full-Service: Planung, Aufbau, Betrieb und Abbau – deutschlandweit verfügbar, Schwerpunkt Berlin/Brandenburg.',
+      'Eventtechnik mieten oder Full-Service buchen: Wir planen, liefern und betreuen Ihr Event in Berlin, Brandenburg und deutschlandweit. Jetzt unverbindlich anfragen.',
     keywords:
       'Eventtechnik, Veranstaltungstechnik, Mietshop, Full-Service, Berlin, Brandenburg, deutschlandweit',
     ogImage: DEFAULT_OG_IMAGE,
@@ -42,9 +42,9 @@ export const PAGE_META: Record<string, PageMeta> = {
   },
 
   mietshop: {
-    title: 'Mietshop für Eventtechnik | CF Veranstaltungstechnik',
+    title: 'Mietshop | Professionelle Veranstaltungstechnik leihen',
     description:
-      'Licht-, Ton- und Bühnentechnik mieten mit klaren Positionen und persönlicher Beratung. Für kleine Formate bis ca. 2.500 Personen.',
+      'Professionelle Licht-, Ton- und B\u00fchnentechnik flexibel leihen. Transparent kalkuliert, schnell verf\u00fcgbar und pers\u00f6nlich beraten. Jetzt passende Technik finden.',
     keywords:
       'Mietshop Eventtechnik, Veranstaltungstechnik mieten, Lichttechnik, Tontechnik, Bühnentechnik',
     ogImage: DEFAULT_OG_IMAGE,

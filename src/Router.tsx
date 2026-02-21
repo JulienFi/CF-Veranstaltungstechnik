@@ -15,6 +15,7 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShopPage from './pages/ShopPage';
+const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 
 const ImpressumPage = lazy(() => import('./pages/ImpressumPage'));
 const DatenschutzPage = lazy(() => import('./pages/DatenschutzPage'));
@@ -241,6 +242,9 @@ function RouterContent() {
     }
   } else if (currentPath === '/mietshop/anfrage') {
     content = <InquiryPage />;
+    seoPageKey = 'anfrage';
+  } else if (currentPath === '/danke') {
+    content = <SuccessPage />;
     seoPageKey = 'anfrage';
   } else if (currentPath === '/projekte') {
     content = <ProjectsPage />;

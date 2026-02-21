@@ -3,14 +3,16 @@ import {
   CheckCircle2,
   ChevronDown,
   ClipboardList,
-  ImageOff,
-  Layers3,
+  Layers,
+  Lightbulb,
   Mail,
   Phone,
   Sparkles,
   Store,
+  Volume2,
   Wrench,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FAQ_ITEMS } from '../content/faq';
 import {
@@ -28,8 +30,10 @@ import {
   normalizeHomeServicesContent,
 } from '../content/siteContent';
 import { COMPANY_INFO } from '../config/company';
+import FadeIn from '../components/FadeIn';
 import { useSiteContent } from '../hooks/useSiteContent';
 import { trackAnalyticsEvent } from '../lib/analytics';
+import { navigate } from '../lib/navigation';
 import { type ProjectDTO, projectRepository } from '../repositories/projectRepository';
 import { type TeamMemberDTO, teamRepository } from '../repositories/teamRepository';
 import { createInquiry } from '../services/inquiryService';
@@ -42,25 +46,25 @@ type TeamCardItem = Pick<TeamMemberDTO, 'id' | 'name' | 'role' | 'bio' | 'image_
 const PROJECT_GRID_FALLBACK: ProjectCardItem[] = [
   {
     id: 'dummy-project-1',
-    title: 'Muster-Projekt 1',
-    category: 'Corporate Event',
-    description: 'Technikpaket für ein Firmenevent mit klarer Ablaufplanung und verlässlicher Betreuung.',
+    title: 'Mainstage Festival',
+    category: 'Festival & Großevent',
+    description: 'Komplette technische Ausstattung einer Festival-Hauptbühne. Traversenbau, Line-Array-Beschallung und massives Licht-Setup für 5.000 Besucher.',
     image_url: '',
     slug: null,
   },
   {
     id: 'dummy-project-2',
-    title: 'Muster-Projekt 2',
-    category: 'Live & Konzert',
-    description: 'Ton-, Licht- und Bühnen-Setup für ein kompaktes Live-Format inklusive Vor-Ort-Begleitung.',
+    title: 'Exklusive Hochzeit',
+    category: 'Private Event',
+    description: 'Dezente Ambiente-Beleuchtung und glasklare Sprachbeschallung für eine freie Trauung und abendliche Gala.',
     image_url: '',
     slug: null,
   },
   {
     id: 'dummy-project-3',
-    title: 'Muster-Projekt 3',
-    category: 'Outdoor',
-    description: 'Wetterfestes Event-Setup mit Fokus auf Strom, Sicherheit und pünktlichem Betriebsstart.',
+    title: 'Unternehmenskonferenz',
+    category: 'Corporate Event',
+    description: 'Bühnenbau, Videotechnik und Streaming-Setup für eine internationale Fachkonferenz mit Live-Schalten.',
     image_url: '',
     slug: null,
   },
@@ -69,21 +73,21 @@ const PROJECT_GRID_FALLBACK: ProjectCardItem[] = [
 const TEAM_GRID_FALLBACK: TeamCardItem[] = [
   {
     id: 'dummy-team-1',
-    name: 'Max Mustermann',
+    name: 'Max S.',
     role: 'Projektleitung',
     bio: 'Koordiniert Briefing, Ablauf und Abstimmungen mit allen Beteiligten.',
     image_url: null,
   },
   {
     id: 'dummy-team-2',
-    name: 'Julia Beispiel',
+    name: 'Julia K.',
     role: 'Technikplanung',
     bio: 'Plant passgenaue Setups für Ton, Licht und Bühne auf Basis der Anforderungen.',
     image_url: null,
   },
   {
     id: 'dummy-team-3',
-    name: 'Leon Muster',
+    name: 'Leon M.',
     role: 'Aufbau & Betrieb',
     bio: 'Sorgt für einen strukturierten Aufbau und einen stabilen Betrieb vor Ort.',
     image_url: null,
@@ -113,18 +117,42 @@ const shopHighlights = [
     title: 'Lichttechnik',
     description: 'Moving Heads, Washes, Spots und Ambient-Licht für klare Stimmung und Führung.',
     categorySlug: 'lichttechnik',
+    icon: Lightbulb,
   },
   {
     title: 'Tontechnik',
     description: 'PA, Monitoring, Funkstrecken und Mischpulte für Sprache und Musik.',
     categorySlug: 'tontechnik',
+    icon: Volume2,
   },
   {
     title: 'Bühne und Infrastruktur',
     description: 'Bühnenmodule, Traversen, Stromverteilung und sichere Verkabelung.',
     categorySlug: 'buehne-infrastruktur',
+    icon: Layers,
   },
 ];
+
+const WORKFLOW_TIMELINE_CONTAINER_VARIANTS = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+} as const;
+
+const WORKFLOW_TIMELINE_ITEM_VARIANTS = {
+  hidden: { opacity: 0, x: 30 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+    },
+  },
+} as const;
 
 type ContactFormState = {
   name: string;
@@ -177,7 +205,6 @@ export default function HomePage() {
   }));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const { data: heroContent } = useSiteContent('home.hero', HOME_HERO_FALLBACK, normalizeHomeHeroContent);
   const { data: proofContent } = useSiteContent('home.proof', HOME_PROOF_FALLBACK, normalizeHomeProofContent);
   const { data: servicesContent } = useSiteContent('home.services', HOME_SERVICES_FALLBACK, normalizeHomeServicesContent);
@@ -215,8 +242,16 @@ export default function HomePage() {
   const validTeamMembers = teamMembers.filter((member) => member.name?.trim().length > 0 && member.role?.trim().length > 0);
   const projectCards: ProjectCardItem[] = projects.length === 0 ? PROJECT_GRID_FALLBACK : validProjects;
   const teamCards: TeamCardItem[] = teamMembers.length === 0 ? TEAM_GRID_FALLBACK : validTeamMembers;
-  const isUsingProjectFallback = projects.length === 0;
-  const isUsingTeamFallback = teamMembers.length === 0;
+  const placeholderImages = [
+    'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=800&q=80',
+  ];
+  const teamPlaceholders = [
+    'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&q=80',
+    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80',
+    'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=256&q=80',
+  ];
 
   useEffect(() => {
     let isMounted = true;
@@ -275,14 +310,40 @@ export default function HomePage() {
       trackAnalyticsEvent('Onepager Kontaktformular abgesendet', {
         subject: formData.subject,
       });
-
-      setSubmitSuccess(true);
-      setFormData(DEFAULT_FORM_STATE);
+      navigate('/danke');
     } catch (error) {
       console.error('Error submitting onepager inquiry:', error);
       setSubmitError('Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleServiceClick = (title: string) => {
+    if (title.includes('Mietshop')) {
+      navigate('/mietshop');
+      return;
+    }
+
+    if (title.includes('Technik')) {
+      setFormData((prev) => ({
+        ...prev,
+        subject: 'Dienstleistung',
+        message:
+          'Hallo CF-Team,\n\nich plane eine Veranstaltung am [Datum] in [Location] und benötige Unterstützung bei der Technikplanung und Durchführung.\n\nBitte kontaktiert mich für ein erstes Angebot.\n\nViele Grüße',
+      }));
+      document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    if (title.includes('Werkstatt')) {
+      setFormData((prev) => ({
+        ...prev,
+        subject: 'Werkstatt',
+        message:
+          'Hallo CF-Team,\n\nich habe defektes Event-Equipment ([Geräte-Name/Typ]) und benötige eine schnelle Reparatur bzw. Wartung.\n\nBitte kontaktiert mich bezüglich des weiteren Vorgehens.\n\nViele Grüße',
+      }));
+      document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -297,7 +358,7 @@ export default function HomePage() {
         <div className="content-container relative z-10">
           <div className="mx-auto max-w-4xl text-center">
             {shouldShowHeroBadge ? (
-              <div className="hero-badge mb-6">
+              <div className="hero-badge mb-6 !px-4 !py-2 !text-sm !text-gray-200 border-white/15 bg-black/50 backdrop-blur-sm">
                 <span className="hero-badge-dot" aria-hidden="true"></span>
                 <span>{heroBadge}</span>
               </div>
@@ -316,11 +377,11 @@ export default function HomePage() {
               ) : null}
             </h1>
 
-            <p className="hero-copy type-lead mx-auto mb-10 max-w-[66ch] text-gray-300">
+            <p className="hero-copy type-lead mx-auto max-w-[66ch] !text-lg !text-gray-300 sm:!text-xl">
               Miete im Shop oder Full-Service. Wir liefern passgenaue Technik und sorgen für einen reibungslosen Ablauf.
             </p>
 
-            <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+            <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
               <a
                 href="/#kontakt"
                 className="btn-primary focus-ring tap-target interactive group w-full text-base sm:w-auto"
@@ -335,11 +396,14 @@ export default function HomePage() {
                 {ctaContent.secondaryLabel}
               </a>
             </div>
-            <div className="hero-proofChips !mt-12" aria-label="Kennzahlen">
+            <div className="hero-proofChips !mt-16" aria-label="Kennzahlen">
               {proofContent.items.map((item) => (
-                <div key={item.label} className="hero-proofChip">
-                  <span className="hero-proofValue !text-xs sm:!text-sm">{item.value}</span>
-                  <span className="hero-proofLabel !text-xs sm:!text-sm">{item.label}</span>
+                <div
+                  key={item.label}
+                  className="hero-proofChip glass-panel--soft !rounded-2xl !border-white/10 !bg-white/5 !px-5 !py-3 transition duration-300 hover:-translate-y-1 hover:!border-white/30"
+                >
+                  <span className="hero-proofValue !text-sm !font-bold !text-white sm:!text-base">{item.value}</span>
+                  <span className="hero-proofLabel !text-xs !text-gray-400">{item.label}</span>
                 </div>
               ))}
             </div>
@@ -347,7 +411,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="leistungen" className="section-shell section-surface brand-motif brand-motif--left scroll-anchor">
+      <FadeIn viewport={{ once: true }}>
+        <section id="leistungen" className="section-shell section-surface brand-motif brand-motif--left scroll-anchor">
         <div className="content-container">
           <div className="section-head">
             <h2 className="section-title type-h2 font-bold">{servicesContent.title}</h2>
@@ -355,122 +420,170 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {serviceCards.map((card) => (
-              <article key={card.id} className="service-card">
-                <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgb(var(--accent)/0.3)] bg-[rgb(var(--primary)/0.14)]">
+            {serviceCards.map((card, index) => (
+              <article
+                key={card.id}
+                className="cursor-pointer group glass-panel--soft border border-white/5 transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col h-full"
+                onClick={() => handleServiceClick(card.title)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleServiceClick(card.title);
+                  }
+                }}
+              >
+                <div className="flex h-full flex-col p-6">
+                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[rgb(var(--accent)/0.1)] border border-[rgb(var(--accent)/0.2)] shadow-[0_0_15px_rgb(var(--accent)/0.15)]">
                   <card.icon className="icon-std text-[rgb(var(--accent))]" />
                 </div>
                 <h3 className="type-h3 mb-3 font-bold">{card.title}</h3>
-                <p className="type-body mb-6 text-gray-300">{card.description}</p>
-                <ul className="space-y-2.5">
+                <p className={`type-body mb-6 text-gray-300 ${index === 0 ? 'max-w-[50ch]' : ''}`}>{card.description}</p>
+                <ul className="space-y-2 sm:space-y-2.5">
                   {card.highlights.map((highlight) => (
-                    <li key={highlight} className="type-body flex items-center gap-2 text-gray-100">
+                    <li key={highlight} className="flex items-center gap-3 text-sm leading-relaxed text-gray-100 sm:text-base">
                       <CheckCircle2 className="icon-std icon-std--sm text-[rgb(var(--accent))]" />
                       <span>{highlight}</span>
                     </li>
                   ))}
                 </ul>
+                <span className="text-sm text-[rgb(var(--accent))] opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1 mt-auto pt-4 font-medium">
+                  Weiter <ArrowRight size={16} />
+                </span>
+                </div>
               </article>
             ))}
           </div>
 
-          <div className="mt-10 flex justify-center">
-            <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
-              {ctaContent.secondaryLabel}
-            </a>
-          </div>
         </div>
-      </section>
+        </section>
+      </FadeIn>
 
       <section id="prozess" className="section-shell section-surface section-surface--alt brand-motif scroll-anchor">
         <div className="content-container">
           <div className="workflow-split">
-            <div className="workflow-left">
+            <div className="workflow-left flex flex-col justify-center space-y-6 lg:space-y-8">
               <h2 className="section-title type-h2 font-bold">{workflowTitle}</h2>
               <p className="workflow-subline type-lead">{workflowSubline}</p>
 
-              <ul className="workflow-bullets">
-                <li className="type-body">
+              <ul className="workflow-bullets gap-4">
+                <li className="type-body leading-relaxed text-gray-300">
                   <strong>Klare Zuständigkeiten</strong> – ein Ansprechpartner, sauberer Ablauf.
                 </li>
-                <li className="type-body">
+                <li className="type-body leading-relaxed text-gray-300">
                   <strong>Timing im Blick</strong> – Aufbau nach festen Timings, pünktlich zum Einlass.
                 </li>
-                <li className="type-body">
+                <li className="type-body leading-relaxed text-gray-300">
                   <strong>Transparentes Angebot</strong> – Umfang, Zeiten und Budget nachvollziehbar.
                 </li>
               </ul>
 
-              <div className="workflow-ctaRow justify-center">
-                <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
-                  {ctaContent.secondaryLabel}
-                </a>
+              <div className="workflow-ctaRow self-start">
+                <button
+                  type="button"
+                  onClick={() => handleServiceClick('Technik')}
+                  className="btn-primary focus-ring tap-target interactive inline-flex self-start items-center gap-2"
+                >
+                  <span>Projekt anfragen</span>
+                  <ArrowRight size={16} />
+                </button>
               </div>
             </div>
 
-            <ol className="workflow-stepper" aria-label="Ablauf in 4 Schritten">
-              {workflowSteps.map((step, index) => (
-                <li key={`${step.title}-${index}`} className="workflow-step">
-                  <div className="workflow-stepRail" aria-hidden="true">
-                    <div className="workflow-stepDot" />
-                    <div className="workflow-stepLine" />
-                  </div>
-
-                  <div className="workflow-stepBody">
-                    <div className="workflow-stepMeta">
-                      <span className="workflow-stepNum">{String(index + 1).padStart(2, '0')}</span>
-                      <span className="workflow-stepTitle type-h3">{step.title}</span>
-                    </div>
-                    <p className="workflow-stepDesc type-body">{step.description}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+            <motion.div
+              className="relative pl-6"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={WORKFLOW_TIMELINE_CONTAINER_VARIANTS}
+            >
+              <div
+                className="absolute left-[1.15rem] top-8 bottom-8 w-px bg-gradient-to-b from-[rgb(var(--accent)/0.5)] via-white/10 to-transparent md:left-[1.65rem]"
+                aria-hidden="true"
+              />
+              <ol className="space-y-4" aria-label="Ablauf in 4 Schritten">
+                {workflowSteps.map((step, index) => (
+                  <li key={`${step.title}-${index}`} className="relative">
+                    <span
+                      aria-hidden="true"
+                      className="absolute -left-6 top-6 h-2.5 w-2.5 rounded-full bg-[rgb(var(--accent))] shadow-[0_0_10px_rgb(var(--accent)/0.6)]"
+                    />
+                    <motion.article
+                      variants={WORKFLOW_TIMELINE_ITEM_VARIANTS}
+                      className="glass-panel--soft border border-white/5 p-5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.08]"
+                    >
+                      <div className="mb-2 flex items-center gap-3">
+                        <span className="font-mono text-lg font-bold text-[rgb(var(--accent))] tracking-[0.14em]">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                        <span className="type-h3 text-white">{step.title}</span>
+                      </div>
+                      <p className="type-body text-gray-300">{step.description}</p>
+                    </motion.article>
+                  </li>
+                ))}
+              </ol>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      <section id="mietshop" className="section-shell section-surface scroll-anchor">
+      <FadeIn viewport={{ once: true }}>
+        <section id="mietshop" className="section-shell section-surface scroll-anchor">
         <div className="content-container">
           <div className="section-head">
             <h2 className="section-title type-h2 font-bold">Mietshop im Überblick</h2>
             <p className="section-copy type-lead">
-              Eine schnelle Orientierung zu Kategorien und Einsatzbereichen. Die komplette Auswahl bleibt im Shop.
+              Die passende Technik für Ihr Projekt. Eine schnelle Übersicht unserer Kategorien – das gesamte Inventar
+              erwartet Sie im Shop.
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
-            {shopHighlights.map((item) => (
-              <a
-                key={item.title}
-                href={`/mietshop?category=${encodeURIComponent(item.categorySlug)}`}
-                className="glass-panel--soft card-inner interactive-card block p-5 md:p-6"
-              >
-                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgb(var(--accent)/0.3)] bg-[rgb(var(--primary)/0.14)]">
-                  <Layers3 className="icon-std text-[rgb(var(--accent))]" />
-                </div>
-                <h3 className="type-h3 mb-2 font-bold">{item.title}</h3>
-                <p className="type-body text-gray-300">{item.description}</p>
-              </a>
-            ))}
+            {shopHighlights.map((item) => {
+              const ItemIcon = item.icon;
+              const categoryHref = `/mietshop?category=${encodeURIComponent(item.categorySlug)}`;
+
+              return (
+                <a
+                  key={item.title}
+                  href={categoryHref}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    navigate(categoryHref);
+                  }}
+                  className="cursor-pointer group glass-panel--soft border border-white/5 transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col h-full p-5 md:p-6"
+                >
+                  <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[rgb(var(--accent)/0.1)] border border-[rgb(var(--accent)/0.2)] shadow-[0_0_15px_rgb(var(--accent)/0.15)]">
+                    <ItemIcon className="h-5 w-5 text-[rgb(var(--accent))]" />
+                  </div>
+                  <h3 className="type-h3 mb-2 font-bold">{item.title}</h3>
+                  <p className="type-body text-gray-300">{item.description}</p>
+                  <span className="text-sm text-[rgb(var(--accent))] opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1 mt-auto pt-4 font-medium">
+                    Zur Kategorie <ArrowRight size={16} />
+                  </span>
+                </a>
+              );
+            })}
           </div>
 
           <div className="mt-10 flex justify-center">
-            <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
+            <a href="/mietshop" className="btn-primary focus-ring tap-target interactive">
               {ctaContent.secondaryLabel}
             </a>
           </div>
         </div>
-      </section>
+        </section>
+      </FadeIn>
 
-      <section id="projekte" className="section-shell section-surface section-surface--alt scroll-anchor">
+      <FadeIn viewport={{ once: true }}>
+        <section id="projekte" className="section-shell section-surface section-surface--alt scroll-anchor">
         <div className="content-container">
           <div className="section-head">
             <h2 className="section-title type-h2 font-bold">Ausgewählte Projekte</h2>
             <p className="section-copy type-lead">
-              {isUsingProjectFallback
-                ? 'Beispielhafte Kartenansicht im Leerlauf – sobald Projekte gepflegt sind, erscheinen hier die echten Referenzen.'
-                : 'Referenzen aus realen Produktionen mit unterschiedlichen Anforderungen.'}
+              Technik in Aktion. Entdecken Sie eine Auswahl unserer vergangenen Produktionen und Setups.
             </p>
           </div>
 
@@ -485,30 +598,28 @@ export default function HomePage() {
               ) : null}
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {projectCards.map((project) => {
+                {projectCards.map((project, index) => {
                   const hasProjectImage = (project.image_url ?? '').trim().length > 0;
                   const projectImageSrc = hasProjectImage
                     ? resolveImageUrl(project.image_url, 'project', project.slug ?? project.title)
                     : null;
+                  const displayImage = projectImageSrc || placeholderImages[index % placeholderImages.length];
 
                   return (
-                    <article key={project.id} className="glass-panel card interactive-card group overflow-hidden">
-                      <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-800">
-                        {projectImageSrc ? (
-                          <img
-                            src={projectImageSrc}
-                            alt={project.title}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center">
-                            <ImageOff className="icon-std icon-std--lg text-slate-600" />
-                          </div>
-                        )}
+                    <article
+                      key={project.id}
+                      className="group glass-panel--soft border border-white/5 transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col h-full rounded-2xl"
+                    >
+                      <div className="relative aspect-video w-full overflow-hidden">
+                        <img
+                          src={displayImage}
+                          alt={project.title}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
                       </div>
 
-                      <div className="pt-4">
+                      <div className="flex flex-col flex-grow p-6">
                         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[rgb(var(--accent))]">
                           {(project.category ?? '').trim() || 'Projekt'}
                         </p>
@@ -517,7 +628,7 @@ export default function HomePage() {
                         {project.slug ? (
                           <a
                             href={`/projekte/${project.slug}`}
-                            className="btn-ghost focus-ring tap-target interactive mt-4 inline-flex"
+                            className="btn-ghost focus-ring tap-target interactive mt-auto inline-flex"
                           >
                             Projekt ansehen
                           </a>
@@ -531,21 +642,25 @@ export default function HomePage() {
           )}
 
           <div className="mt-10 flex justify-center">
-            <a href="/projekte" className="btn-ghost focus-ring tap-target interactive">
-              Alle Projekte ansehen
+            <a
+              href="/projekte"
+              className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-8 py-3.5 text-base font-medium text-white transition-all duration-300 hover:border-[rgb(var(--accent)/0.5)] hover:bg-[rgb(var(--accent)/0.1)] hover:text-[rgb(var(--accent))] hover:shadow-[0_0_20px_rgb(var(--accent)/0.15)]"
+            >
+              <span>Alle Projekte ansehen</span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
           </div>
         </div>
-      </section>
+        </section>
+      </FadeIn>
 
-      <section id="team" className="section-shell section-surface scroll-anchor">
+      <FadeIn viewport={{ once: true }}>
+        <section id="team" className="section-shell section-surface scroll-anchor">
         <div className="content-container">
           <div className="section-head">
             <h2 className="section-title type-h2 font-bold">Team im Überblick</h2>
             <p className="section-copy type-lead">
-              {isUsingTeamFallback
-                ? 'Beispielhafte Teamkarten im Leerlauf – sobald Teammitglieder gepflegt sind, wird hier das echte Team gezeigt.'
-                : 'Kernteam mit klaren Rollen, bei Bedarf skalierbar mit eingespielter Crew.'}
+              Die Köpfe hinter den Kulissen. Ein eingespieltes Team aus erfahrenen Technikern und Projektleitern.
             </p>
           </div>
 
@@ -559,29 +674,25 @@ export default function HomePage() {
                 </div>
               ) : null}
 
-              <div className="mx-auto grid max-w-6xl grid-cols-1 justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {teamCards.map((member) => {
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 max-w-5xl mx-auto">
+                {teamCards.map((member, index) => {
                   const hasMemberImage = (member.image_url ?? '').trim().length > 0;
                   const memberImageSrc = hasMemberImage
                     ? resolveImageUrl(member.image_url, 'team', member.name)
                     : null;
+                  const displayMemberImage = memberImageSrc || teamPlaceholders[index % teamPlaceholders.length];
 
                   return (
-                    <article key={member.id} className="glass-panel card interactive-card group p-6 text-center">
-                      <div className="mx-auto mb-4 h-32 w-32 overflow-hidden rounded-full border border-[rgb(var(--accent)/0.35)] bg-slate-800">
-                        {memberImageSrc ? (
-                          <img
-                            src={memberImageSrc}
-                            alt={member.name}
-                            loading="lazy"
-                            className="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center">
-                            <ImageOff className="icon-std icon-std--lg text-slate-600" />
-                          </div>
-                        )}
-                      </div>
+                    <article
+                      key={member.id}
+                      className="group glass-panel--soft border border-white/5 transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col items-center p-8 text-center h-full rounded-2xl"
+                    >
+                      <img
+                        src={displayMemberImage}
+                        alt={member.name}
+                        loading="lazy"
+                        className="h-24 w-24 rounded-full object-cover mb-4 border-2 border-[rgb(var(--accent)/0.3)] transition-transform duration-500 group-hover:scale-105 group-hover:border-[rgb(var(--accent))]"
+                      />
 
                       <h3 className="type-h3 font-bold">{member.name}</h3>
                       <p className="mb-3 text-sm font-medium text-[rgb(var(--accent))]">{member.role}</p>
@@ -593,15 +704,12 @@ export default function HomePage() {
             </>
           )}
 
-          <div className="mt-10 flex justify-center">
-            <a href="/mietshop" className="btn-ghost focus-ring tap-target interactive">
-              {ctaContent.secondaryLabel}
-            </a>
-          </div>
         </div>
-      </section>
+        </section>
+      </FadeIn>
 
-      <section id="faq" className="section-shell section-surface section-surface--alt scroll-anchor">
+      <FadeIn viewport={{ once: true }}>
+        <section id="faq" className="section-shell section-surface section-surface--alt scroll-anchor">
         <div className="content-container">
           <div className="section-head">
             <h2 className="section-title type-h2 font-bold">{faqContent.title}</h2>
@@ -633,7 +741,8 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+        </section>
+      </FadeIn>
 
       <section id="kontakt" className="section-shell section-surface brand-motif brand-motif--right scroll-anchor">
         <div className="content-container">
@@ -679,21 +788,6 @@ export default function HomePage() {
 
             <div className="lg:col-span-2">
               <div className="glass-panel card p-5 sm:p-6 lg:p-8">
-                {submitSuccess ? (
-                  <div className="card-inner rounded-xl border border-[rgb(var(--accent)/0.3)] bg-[rgb(var(--primary)/0.1)] p-6 text-center">
-                    <h3 className="type-h3 mb-2 font-bold">Anfrage eingegangen</h3>
-                    <p className="type-body mx-auto mb-6 max-w-[56ch] text-gray-200">
-                      Danke für Ihre Anfrage. Wir melden uns in der Regel innerhalb von 24 Stunden zurück.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setSubmitSuccess(false)}
-                      className="btn-ghost focus-ring tap-target interactive"
-                    >
-                      Neue Anfrage erfassen
-                    </button>
-                  </div>
-                ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                       <div>
@@ -799,7 +893,6 @@ export default function HomePage() {
                       {ctaContent.secondaryLabel}
                     </a>
                   </form>
-                )}
               </div>
             </div>
           </div>

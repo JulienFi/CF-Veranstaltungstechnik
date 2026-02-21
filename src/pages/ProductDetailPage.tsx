@@ -212,7 +212,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
 
     if (!product) {
       setSEO({
-        title: 'Produkt mieten in Berlin | CF Veranstaltungstechnik',
+        title: 'Produkt mieten | CF Veranstaltungstechnik',
         description: 'Entdecken Sie professionelle Veranstaltungstechnik im Mietshop von CF Veranstaltungstechnik.',
         canonical,
         ogImage: '/images/products/placeholder.png',
@@ -234,7 +234,7 @@ export default function ProductDetailPage({ slug }: ProductDetailPageProps) {
     const imageUrl = resolveImageUrl(product.image_url, 'product', product.slug);
 
     setSEO({
-      title: `${product.name} mieten in Berlin | CF Veranstaltungstechnik`,
+      title: `${product.name} mieten | CF Veranstaltungstechnik`,
       description,
       canonical,
       ogImage: imageUrl,

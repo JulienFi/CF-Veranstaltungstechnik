@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, ChevronDown } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, ChevronDown } from 'lucide-react';
 import { COMPANY_INFO } from '../config/company';
 import BackButton from '../components/BackButton';
 import { trackAnalyticsEvent } from '../lib/analytics';
 import { FAQ_ITEMS } from '../content/faq';
+import { navigate } from '../lib/navigation';
 import { createInquiry } from '../services/inquiryService';
 
 export default function ContactPage() {
@@ -14,7 +15,6 @@ export default function ContactPage() {
     subject: 'Allgemeine Anfrage',
     message: '',
   });
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -48,7 +48,7 @@ export default function ContactPage() {
         inquiry_type: inquiryType,
         subject: formData.subject,
       });
-      setSubmitted(true);
+      navigate('/danke');
     } catch (error) {
       console.error('Error submitting inquiry:', error);
       setSubmitError('Die Anfrage konnte nicht gesendet werden. Bitte prüfen Sie Ihre Angaben und versuchen Sie es erneut.');
@@ -57,31 +57,6 @@ export default function ContactPage() {
     }
   };
 
-  if (submitted) {
-    return (
-      <div className="bg-app-bg text-white min-h-screen flex items-center justify-center p-4">
-        <div className="content-container">
-          <div className="glass-panel card mx-auto max-w-2xl px-6 py-10 text-center md:px-10">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10">
-              <CheckCircle2 className="icon-std icon-std--lg text-green-400" />
-            </div>
-            <h1 className="mb-4 text-3xl font-bold sm:text-4xl">Ihre Anfrage ist eingegangen</h1>
-            <p className="mb-8 text-xl leading-relaxed text-gray-300">
-              Vielen Dank. Wir melden uns in der Regel innerhalb von 24 Stunden mit den nächsten Schritten.
-            </p>
-            <div className="flex flex-col justify-center gap-3 sm:flex-row">
-              <a href="/" className="btn-primary focus-ring tap-target interactive">
-                Zur Startseite
-              </a>
-              <a href="/mietshop" className="btn-secondary focus-ring tap-target interactive">
-                Zum Mietshop
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-app-bg text-white min-h-screen">
